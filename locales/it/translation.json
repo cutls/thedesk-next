@@ -1,0 +1,336 @@
+{
+  "alert": {
+    "no_server": "Non ci sono server, innanzitutto aggiungine uno.",
+    "need_auth": "Devi autorizzare un server.",
+    "failed_add_server": "Impossibile collegarsi a {domain}, assicurati che l'indirizzo sia valido e il server sia raggiungibile.",
+    "failed_add_application": "Impossibile aggiungere l'applicazione.",
+    "failed_authorize": "Impossibile autorizzare.",
+    "failed_post": "Impossibile pubblicare.",
+    "failed_load": "Impossibile caricare {timeline}.",
+    "failed_mark": "Impossibile segnare come letta",
+    "failed_unreblog": "Impossibile rimuovere la condivisione",
+    "failed_reblog": "Impossibile ricondividere",
+    "failed_unfavourite": "Impossibile rimuovere dai preferiti",
+    "failed_favourite": "Impossibile aggiungere tra i preferiti",
+    "failed_unbookmark": "Impossibile rimuovere il segnalibro",
+    "failed_bookmark": "Impossibile aggiungere il segnalibro",
+    "failed_follow": "Impossibile seguire",
+    "failed_unfollow": "Impossibile smettere di seguire",
+    "validation_error": "Convalida fallita.",
+    "validation_attachments_length": "Non puoi allegare più di {limit} file.",
+    "validation_attachments_type": "Puoi soltanto allegare immagini o video",
+    "upload_error": "Impossibile caricare il file",
+    "failed_to_report": "Impossibile inviare il report",
+    "notifications_not_found": "Impossibile recuperare le notifiche"
+  },
+  "dialog": {
+    "account_not_found": {
+      "title": "Profilo non trovato",
+      "message": "Nel server, non esiste questo profilo, vuoi provare ad aprirlo nel browser?",
+      "button": "Apri"
+    }
+  },
+  "walkthrough": {
+    "navigator": {
+      "servers": {
+        "title": "Server",
+        "description": "Tramite click destro puoi rimuovere o autorizzare i server.",
+        "ok": "Ok"
+      }
+    },
+    "timeline": {
+      "settings": {
+        "title": "Impostazioni della timeline",
+        "description": "Puoi spostare e rimuovere la timeline.",
+        "ok": "Ok"
+      },
+      "new": {
+        "title": "Aggiungi timeline",
+        "description": "Questo bottone aggiunge una timeline.",
+        "ok": "Ok"
+      }
+    }
+  },
+  "navigator": {
+    "add_server": {
+      "title": "Aggiungi un nuovo server"
+    },
+    "settings": {
+      "title": "Modifica impostazioni",
+      "app_menu": "Visibilità menu applicazione",
+      "settings": "Impostazioni",
+      "thirdparty": "Licenze software"
+    },
+    "servers": {
+      "authorize": "Autorizza",
+      "profile": "Apri il profilo",
+      "remove": "Rimuovi",
+      "announcements": "Annunci",
+      "lists": "Liste",
+      "followed_hashtags": "Hashtag seguiti"
+    }
+  },
+  "servers": {
+    "new": {
+      "title": "Aggiungi un server",
+      "domain": "Dominio",
+      "add": "Aggiungi",
+      "cancel": "Annulla",
+      "server_description": "Puoi anche smettere senza autenticarti. In questo caso vedrai soltanto la timeline locale e quella remota.",
+      "sign_in": "Accedi",
+      "finish": "Fine",
+      "authorization_code": "Codice di autorizzazione",
+      "authorization_help": "Per favore, incolla il codice di autorizzazione dal tuo browser",
+      "without_code_authorize": "Occorre approvare la App Fedistar nel proprio browser e, successivamente, usare il codice di autorizzazione",
+      "authorization_url": "Normally, the browser will open automatically, but if it doesn't, please open the following URL in your browser and approve it.",
+      "authorize": "Autorizza",
+      "loading": "Caricamento"
+    }
+  },
+  "settings": {
+    "settings": {
+      "title": "Impostazioni",
+      "appearance": {
+        "title": "Aspetto",
+        "font_size": "Dimensione caratteri",
+        "language": "Lingua",
+        "color_theme": "Tema cromatico"
+      },
+      "save": "Salva",
+      "close": "Chiudi",
+      "validation": {
+        "font_size": {
+          "type": "Inserire un numero",
+          "range": "Inserire un numero tra {from} e {to}",
+          "required": "Indicare la dimensione caratteri"
+        },
+        "language": {
+          "required": "Indicare la lingua"
+        }
+      }
+    },
+    "thirdparty": {
+      "title": "Licenze software"
+    }
+  },
+  "compose": {
+    "title": "Scrivi qualcosa",
+    "from": "Da",
+    "visibility": {
+      "public": "Pubblico",
+      "unlisted": "Non in elenco",
+      "private": "Privato",
+      "direct": "Diretto"
+    },
+    "spoiler": {
+      "placeholder": "Scrivi l'avvertenza"
+    },
+    "status": {
+      "title": "Messaggio",
+      "placeholder": "A cosa stai pensando?"
+    },
+    "nsfw": {
+      "sensitive": "Arreca disagio",
+      "not_sensitive": "Non arreca disagio"
+    },
+    "poll": {
+      "add_choice": "Aggiungi opzione",
+      "multiple": "scelta multipla",
+      "simple": "scelta singola",
+      "5min": "5 minuti",
+      "30min": "30 minuti",
+      "1h": "1 ora",
+      "6h": "6 ore",
+      "1d": "1 giorno",
+      "3d": "3 giorni",
+      "7d": "7 giorni"
+    },
+    "cancel": "Annulla",
+    "post": "Pubblica",
+    "edit_attachment": {
+      "title": "Modifica allegati",
+      "label": "Descrizione accessibile per ipovedenti",
+      "submit": "Invia"
+    }
+  },
+  "search": {
+    "title": "Cerca",
+    "placeholder": "Cerca o incolla URL",
+    "results": {
+      "accounts": "Persone",
+      "hashtags": "Hashtag",
+      "statuses": "Pubblicazioni",
+      "more": "Leggi di più"
+    }
+  },
+  "timeline": {
+    "reload": "Aggiorna",
+    "settings": {
+      "title": "Impostazioni",
+      "unpin": "Nascondi",
+      "column_width": "Larghezza colonna"
+    },
+    "mark_as_read": "Segna come già letto",
+    "notification": {
+      "follow": {
+        "title": "Segui",
+        "body": "{user} ti segue"
+      },
+      "follow_request": {
+        "title": "Richiesta",
+        "body": "{user} vorrebbe seguirti"
+      },
+      "favourite": {
+        "title": "Preferito",
+        "body": "{user} ha preferito"
+      },
+      "reblog": {
+        "title": "Condivisione",
+        "body": "{user} ha condiviso"
+      },
+      "poll_expired": {
+        "title": "Sondaggio",
+        "body": "Terminato il sondaggio di {user}"
+      },
+      "poll_vote": {
+        "title": "Voto al sondaggio",
+        "body": "{user} ha votato il tuo sondaggio"
+      },
+      "quote": {
+        "title": "Citazione",
+        "body": "{user} ti ha citato"
+      },
+      "status": {
+        "title": "Pubblicazione",
+        "body": "{user} ha scritto"
+      },
+      "update": {
+        "title": "Correzione",
+        "body": "{user} ha corretto"
+      },
+      "emoji_reaction": {
+        "title": "Reazione",
+        "body": "{user} ha reagito"
+      },
+      "move": {
+        "title": "Migrazione",
+        "body": "{user} ha migrato su"
+      }
+    },
+    "actions": {
+      "reply": "Risposta",
+      "reblog": "Condivisione",
+      "favourite": "Preferito",
+      "emoji_reaction": "Reazione emoji",
+      "bookmark": "Segnalibro",
+      "detail": {
+        "title": "Dettagli",
+        "browser": "Apri la pagina originale",
+        "copy": "Copia il collegamento",
+        "edit": "Modifica",
+        "delete": "Elimina",
+        "report": "Segnala {user}",
+        "from_other_account": "Reagisci da altri profili"
+      }
+    },
+    "status": {
+      "show_more": "Leggi di più",
+      "show_less": "Leggi di meno",
+      "media_hidden": "Allegati nascosti",
+      "pinned_post": "Post selezionato",
+      "filtered": "Filtrato",
+      "show_anyway": "Mostra comunque"
+    },
+    "poll": {
+      "vote": "Vota",
+      "refresh": "Aggiorna",
+      "people": "{count} persone",
+      "closed": "Concluso",
+      "left": "rimasti"
+    },
+    "new": "Aggiungi una nuova timeline",
+    "home": "Home",
+    "notifications": "Notifiche",
+    "favourites": "Preferiti",
+    "bookmarks": "Segnalibri",
+    "direct": "Messaggi diretti",
+    "local": "Locale",
+    "public": "Federata",
+    "back": "Indietro"
+  },
+  "detail": {
+    "back": "Indietro",
+    "close": "Chiudi",
+    "pin": "Seleziona",
+    "follow_tag": "Seguire hashtag",
+    "unfollow_tag": "Non seguire hashtag",
+    "profile": {
+      "follow": "Segui",
+      "unfollow": "Non seguire",
+      "not_following": "Non ti segue",
+      "follow_requested": "Richiesta inviata",
+      "follows_you": "Ti segue",
+      "posts": "Pubblicazioni",
+      "following": "Chi segui",
+      "followers": "Chi ti segue",
+      "open_page": "Apri la pagina originale",
+      "mute": "Silenzia {user}",
+      "unmute": "Non silenziare {user}",
+      "block": "Blocca {user}",
+      "unblock": "Sblocca {user}",
+      "unblock_domain": "Sblocca il dominio {server}",
+      "list_management": "Aggiungi o rimuovi dalle liste",
+      "block_domain": "Blocca il dominio {server}"
+    }
+  },
+  "report": {
+    "title": "Segnala {user}",
+    "category": {
+      "title": "Racconta che problema c'è",
+      "description": "Scegli di che si tratta",
+      "spam": "Sembra spamming",
+      "violation": "Violazione del regolamento",
+      "other": "Qualcos'altro",
+      "next": "Avanti"
+    },
+    "rules": {
+      "title": "Quali regole sono state violate?",
+      "description": "Seleziona quelle che ritieni violate",
+      "no_rules": "Non ci sono regole in questo server.",
+      "next": "Avanti"
+    },
+    "statuses": {
+      "title": "Ci sono pubblicazioni a sostegno della segnalazione?",
+      "description": "Seleziona quelle che ritieni opportune",
+      "no_status": "Non ci sono pubblicazioni.",
+      "next": "Avanti"
+    },
+    "comment": {
+      "title": "C'è qualcos'altro che vorresti dirci?",
+      "placeholder": "Commento aggiuntivo",
+      "forward": "Inoltra segnalazione al server remoto",
+      "next": "Invia"
+    }
+  },
+  "announcements": {
+    "title": "Annuncio su {domain}",
+    "close": "Chiudi"
+  },
+  "from_other_account": {
+    "title": "Reagisci da altri profili",
+    "accounts": {
+      "title": "Da quale profilo intendi reagire?",
+      "next": "Avanti"
+    },
+    "status": {
+      "title": "Reagisci come {account}",
+      "searching": "Ricerca",
+      "not_found": "Spiacente ma non ho trovato la pubblicazione su {server}",
+      "next": "Chiudi"
+    }
+  },
+  "list_memberships": {
+    "title": "Elenco membri",
+    "search_placeholder": "Cerca tra le persone che segui"
+  }
+}

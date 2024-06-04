@@ -1,0 +1,317 @@
+.server-icon {
+  background-color: transparent;
+}
+
+@keyframes slideInCompose {
+  from {
+    width: 0;
+  }
+
+  50% {
+    width: 200px;
+    min-width: 200px;
+  }
+
+  to {
+    width: 320px;
+    min-width: 320px;
+  }
+}
+
+@keyframes slideOutCompose {
+  from {
+    width: 320px;
+    min-width: 320px;
+  }
+
+  50% {
+    width: 100px;
+    min-width: 100px;
+  }
+
+  to {
+    width: 0;
+  }
+}
+
+.compose-exiting,
+.compose-entering {
+  animation: .3s linear;
+  animation-fill-mode: forwards;
+}
+
+
+.compose-exiting {
+  animation-name: slideOutCompose;
+}
+
+.compose-entering {
+  animation-name: slideInCompose;
+}
+
+
+.compose-entered {
+  width: 320px;
+  flex-basis: 320px;
+  min-width: 320px;
+}
+
+.compose-exited {
+  width: 0;
+}
+
+@keyframes slideInDetail {
+  from {
+    width: 0;
+  }
+
+  50% {
+    width: 200px;
+    min-width: 200px;
+  }
+
+  to {
+    width: 340px;
+    min-width: 340px;
+    max-width: 340px;
+  }
+}
+
+@keyframes slideOutDetail {
+  from {
+    width: 340px;
+    min-width: 340px;
+    max-width: 340px;
+  }
+
+  50% {
+    width: 100px;
+    min-width: 100px;
+  }
+
+  to {
+    width: 0;
+  }
+}
+
+
+.detail-exiting,
+.detail-entering {
+  animation: .3s liner;
+  animation-fill-mode: forwards;
+}
+
+.detail-exiting {
+  animation-name: slideOutDetail;
+}
+
+.detail-entering {
+  animation-name: slideInDetail;
+}
+
+.detail-entered {
+  width: 341x;
+  min-width: 341px;
+  max-width: 341px;
+}
+
+.detail-exited {
+  width: 0;
+}
+
+
+.emojione {
+  width: 1rem;
+  height: 1rem;
+}
+
+.favourite-action.activating {
+  animation: spring-rotate-in 2s linear;
+}
+
+.favourite-action.deactivating {
+  animation: spring-rotate-out 2s linear;
+}
+
+.reblog-action.activating {
+  animation: spring-rotate-in 2s linear;
+}
+
+.reblog-action.deactivating {
+  animation: spring-rotate-out 2s linear;
+}
+
+@keyframes spring-rotate-in {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  30% {
+    transform: rotate(-484.8deg);
+  }
+
+  60% {
+    transform: rotate(-316.7deg);
+  }
+
+  90% {
+    transform: rotate(-375deg);
+  }
+
+  100% {
+    transform: rotate(-360deg);
+  }
+}
+
+@keyframes spring-rotate-out {
+  0% {
+    transform: rotate(-360deg);
+  }
+
+  30% {
+    transform: rotate(124.8deg);
+  }
+
+  60% {
+    transform: rotate(-43.27deg);
+  }
+
+  90% {
+    transform: rotate(15deg);
+  }
+
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+.attachment {
+  cursor: pointer;
+}
+
+.status {
+  .body {
+    cursor: pointer;
+  }
+
+  time {
+    cursor: pointer;
+  }
+}
+
+.status-body {
+  img {
+    max-width: 240px;
+  }
+
+  blockquote {
+    padding-left: 10px;
+    border-left: 3px solid #9baec8;
+    color: #9baec8;
+    margin: 0;
+  }
+}
+
+.status-detail {
+  .status {
+    .body {
+      cursor: default;
+    }
+
+    time {
+      cursor: default;
+    }
+  }
+}
+
+.media-dialog {
+  height: 100%;
+
+  .rs-modal-content {
+    height: 100%;
+  }
+}
+
+.report-statuses .rs-checkbox-wrapper .rs-checkbox-inner:after,
+.report-statuses .rs-checkbox-wrapper .rs-checkbox-inner:before,
+.report-statuses .rs-checkbox-wrapper:before {
+  margin-top: 30px;
+}
+
+.timeline-space {
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  &::-webkit-scrollbar {
+    height: 7px !important;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--rs-progress-bg);
+    border-radius: 4px !important;
+  }
+
+  &::-webkit-scrollbar-track {
+    border-radius: 4px !important;
+    background-color: transparent;
+  }
+
+}
+
+.timeline-scrollable {
+  overflow-y: auto;
+  overflow-x: auto;
+
+  &::-webkit-scrollbar {
+    width: 6px !important;
+    height: 6px !important;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--rs-border-primary);
+    border-radius: 4px !important;
+    opacity: 0;
+  }
+
+  &::-webkit-scrollbar-track {
+    border-radius: 4px !important;
+    background-color: var(--rs-bg-card);
+  }
+
+  &:hover {
+    &::-webkit-scrollbar-thumb {
+      opacity: 1;
+    }
+  }
+}
+
+.sidepanel-scrollable {
+  overflow-y: auto;
+  overflow-x: auto;
+
+  &::-webkit-scrollbar {
+    width: 6px !important;
+    height: 6px !important;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--rs-divider-border);
+    border-radius: 4px !important;
+    opacity: 0;
+  }
+
+  &::-webkit-scrollbar-track {
+    border-radius: 4px !important;
+    background-color: var(--rs-border-secondary);
+  }
+
+  &:hover {
+    &::-webkit-scrollbar-thumb {
+      opacity: 1;
+    }
+  }
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}

@@ -1,0 +1,336 @@
+{
+  "alert": {
+    "no_server": "Nie ma serwera, więc najpierw go dodaj.",
+    "need_auth": "Musisz autoryzować serwer.",
+    "failed_add_server": "Nie udało się połączyć z {domain}, upewnij się, że adres URL serwera jest prawidłowy.",
+    "failed_add_application": "Nie udało się dodać aplikacji.",
+    "failed_authorize": "Nie udało się autoryzować.",
+    "failed_post": "Nie udało się opublikować statusu.",
+    "failed_load": "Nie udało się załadować {timeline}.",
+    "failed_mark": "Nie udało się oznaczyć jako przeczytane",
+    "failed_unreblog": "Nie udało się cofnąć podbicia",
+    "failed_reblog": "Nie udało się podbić",
+    "failed_unfavourite": "Nie udało się usunąć wpisu z ulubionych",
+    "failed_favourite": "Nie udało się dodać wpisu do ulubionych",
+    "failed_unbookmark": "Nie udało się usunąć zakładki",
+    "failed_bookmark": "Nie udało się dodać zakładki",
+    "failed_follow": "Nie udało się zaobserwować",
+    "failed_unfollow": "Nie udało się cofnąć obserwacji",
+    "validation_error": "Błąd walidacji.",
+    "validation_attachments_length": "Nie można załączyć więcej niż {limit} plików.",
+    "validation_attachments_type": "Można załączyć tylko zdjęcia i filmy",
+    "upload_error": "Nie udało się przesłać pliku",
+    "failed_to_report": "Nie udało się przesłać zgłoszenia",
+    "notifications_not_found": "Nie udało się znaleźć powiadomień"
+  },
+  "dialog": {
+    "account_not_found": {
+      "title": "Nie znaleziono konta",
+      "message": "Konto nie istnieje na serwerze, czy chcesz otworzyć konto w przeglądarce?",
+      "button": "Otwórz"
+    }
+  },
+  "walkthrough": {
+    "navigator": {
+      "servers": {
+        "title": "Serwery",
+        "description": "Możesz usunąć lub autoryzować serwery, kliknij prawym przyciskiem myszy.",
+        "ok": "OK"
+      }
+    },
+    "timeline": {
+      "settings": {
+        "title": "Ustawienia osi czasu",
+        "description": "Możesz przenieść lub usunąć oś czasu.",
+        "ok": "OK"
+      },
+      "new": {
+        "title": "Dodaj oś czasu",
+        "description": "Kliknij ten przycisk, aby dodać oś czasu.",
+        "ok": "OK"
+      }
+    }
+  },
+  "navigator": {
+    "add_server": {
+      "title": "Dodaj nowy serwer"
+    },
+    "settings": {
+      "title": "Ustawienia",
+      "app_menu": "Przełącz menu aplikacji",
+      "settings": "Ustawienia",
+      "thirdparty": "Licencje stron trzecich"
+    },
+    "servers": {
+      "authorize": "Autoryzuj",
+      "profile": "Otwórz profil",
+      "remove": "Usuń",
+      "announcements": "Ogłoszenia",
+      "lists": "Listy",
+      "followed_hashtags": "Obserwowane hasztagi"
+    }
+  },
+  "servers": {
+    "new": {
+      "title": "Dodaj serwer",
+      "domain": "Domena",
+      "add": "Dodaj",
+      "cancel": "Anuluj",
+      "server_description": "Możesz również wyjść bez logowania. W takim przypadku możesz zobaczyć tylko sfederowane i lokalne osi czasu.",
+      "sign_in": "Zaloguj się",
+      "finish": "Zakończ",
+      "authorization_code": "Kod autoryzacji",
+      "authorization_help": "Wklej kod autoryzacji z przeglądarki",
+      "without_code_authorize": "Please approve Fedistar in your browser, and after you approve it please authorize",
+      "authorization_url": "Normally, the browser will open automatically, but if it doesn't, please open the following URL in your browser and approve it.",
+      "authorize": "Autoryzuj",
+      "loading": "Ładowanie"
+    }
+  },
+  "settings": {
+    "settings": {
+      "title": "Ustawienia",
+      "appearance": {
+        "title": "Wygląd",
+        "font_size": "Rozmiar czcionki",
+        "language": "Język",
+        "color_theme": "Motyw kolorystyczny"
+      },
+      "save": "Zapisz",
+      "close": "Zamknij",
+      "validation": {
+        "font_size": {
+          "type": "Wprowadź poprawny numer",
+          "range": "Wprowadź numer od {from} do {to}",
+          "required": "Rozmiar czcionki jest wymagany"
+        },
+        "language": {
+          "required": "Język jest wymagany"
+        }
+      }
+    },
+    "thirdparty": {
+      "title": "Licencje stron trzecich"
+    }
+  },
+  "compose": {
+    "title": "Nowy wpis",
+    "from": "Od",
+    "visibility": {
+      "public": "Publiczne",
+      "unlisted": "Niewidoczne",
+      "private": "Prywatne",
+      "direct": "Bezpośrednie"
+    },
+    "spoiler": {
+      "placeholder": "Wpisz ostrzeżenie tutaj"
+    },
+    "status": {
+      "title": "Status",
+      "placeholder": "Co masz na myśli?"
+    },
+    "nsfw": {
+      "sensitive": "Wrażliwe",
+      "not_sensitive": "Niewrażliwe"
+    },
+    "poll": {
+      "add_choice": "Dodaj opcję",
+      "multiple": "wielokrotnego wyboru",
+      "simple": "prosta",
+      "5min": "5 minut",
+      "30min": "30 minut",
+      "1h": "1 godzina",
+      "6h": "6 godzin",
+      "1d": "1 dzień",
+      "3d": "3 dni",
+      "7d": "7 dni"
+    },
+    "cancel": "Anuluj",
+    "post": "Opublikuj",
+    "edit_attachment": {
+      "title": "Edytuj multimedia",
+      "label": "Wprowadź opis dla niewidomych i niedowidzących",
+      "submit": "Zastosuj"
+    }
+  },
+  "search": {
+    "title": "Szukaj",
+    "placeholder": "Szukaj lub wklej adres URL",
+    "results": {
+      "accounts": "Ludzie",
+      "hashtags": "Hasztagi",
+      "statuses": "Statusy",
+      "more": "Wczytaj więcej"
+    }
+  },
+  "timeline": {
+    "reload": "Przeładuj",
+    "settings": {
+      "title": "Ustawienia",
+      "unpin": "Odepnij",
+      "column_width": "Szerokość kolumny"
+    },
+    "mark_as_read": "Oznacz jako przeczytane",
+    "notification": {
+      "follow": {
+        "title": "Obserwacja",
+        "body": "{user} Cię obserwuje"
+      },
+      "follow_request": {
+        "title": "Prośba o obserwowanie",
+        "body": "{user} prosi Cię o pozwolenie na obserwację"
+      },
+      "favourite": {
+        "title": "Ulubione",
+        "body": "{user} dodał(a) Twój wpis do ulubionych"
+      },
+      "reblog": {
+        "title": "Podbij",
+        "body": "Twój post został podbity przez {user}"
+      },
+      "poll_expired": {
+        "title": "Ankieta",
+        "body": "Ankieta {user} wygasła"
+      },
+      "poll_vote": {
+        "title": "Ankieta",
+        "body": "{user} zagłosował/a w twojej ankiecie"
+      },
+      "quote": {
+        "title": "Cytat",
+        "body": "Twój post został zacytowany przez {user}"
+      },
+      "status": {
+        "title": "Status",
+        "body": "{user} opublikował/a wpis"
+      },
+      "update": {
+        "title": "Aktualizuj",
+        "body": "{user} zaktualizował/a post"
+      },
+      "emoji_reaction": {
+        "title": "Reakcja",
+        "body": "{user} zareagował/a na twój post"
+      },
+      "move": {
+        "title": "Przesunięcie",
+        "body": "Użytkownik {user} przeniósł się na"
+      }
+    },
+    "actions": {
+      "reply": "Odpowiedz",
+      "reblog": "Podbij",
+      "favourite": "Ulubione",
+      "emoji_reaction": "Reakcja emoji",
+      "bookmark": "Zakładka",
+      "detail": {
+        "title": "Szczegół",
+        "browser": "Otwórz oryginalną stronę",
+        "copy": "Skopiuj link do wpisu",
+        "edit": "Edytuj",
+        "delete": "Usuń",
+        "report": "Zgłoś {user}",
+        "from_other_account": "Zareaguj z innych kont"
+      }
+    },
+    "status": {
+      "show_more": "Pokaż więcej",
+      "show_less": "Pokaż mniej",
+      "media_hidden": "Media ukryte",
+      "pinned_post": "Przypięty wpis",
+      "filtered": "Filtered",
+      "show_anyway": "Show anyway"
+    },
+    "poll": {
+      "vote": "Zagłosuj",
+      "refresh": "Odśwież",
+      "people": "{count} ludzi",
+      "closed": "Zamknięte",
+      "left": "zostało"
+    },
+    "new": "Dodaj nową oś czasu",
+    "home": "Strona główna",
+    "notifications": "Powiadomienia",
+    "favourites": "Ulubione",
+    "bookmarks": "Zakładki",
+    "direct": "Wiadomości prywatne",
+    "local": "Lokalne",
+    "public": "Sfederowane",
+    "back": "Wstecz"
+  },
+  "detail": {
+    "back": "Wstecz",
+    "close": "Zamknij",
+    "pin": "Przypnij",
+    "follow_tag": "Obserwuj hasztag",
+    "unfollow_tag": "Przestań obserwować hasztag",
+    "profile": {
+      "follow": "Obserwuj",
+      "unfollow": "Przestań obserwować",
+      "not_following": "Nie obserwuje",
+      "follow_requested": "Wysłano prośbę o obserwację",
+      "follows_you": "OBSERWUJE CIĘ",
+      "posts": "Wpisy",
+      "following": "Obserwuje",
+      "followers": "Obserwujący",
+      "open_page": "Otwórz oryginalną stronę",
+      "mute": "Wycisz {user}",
+      "unmute": "Wycisz {user}",
+      "block": "Zablokuj {user}",
+      "unblock": "Odblokuj {user}",
+      "unblock_domain": "Odblokuj domenę {server}",
+      "list_management": "Dodaj lub usuń z list",
+      "block_domain": "Zablokuj domenę {server}"
+    }
+  },
+  "report": {
+    "title": "Zgłoś {user}",
+    "category": {
+      "title": "Powiedz nam, co jest nie tak z tym wpisem",
+      "description": "Wybierz najbardziej pasującą opcję",
+      "spam": "To jest spam",
+      "violation": "Narusza to zasady serwera",
+      "other": "Coś innego",
+      "next": "Dalej"
+    },
+    "rules": {
+      "title": "Które zasady zostały złamane?",
+      "description": "Wybierz wszystkie pasujące",
+      "no_rules": "Na tym serwerze nie ma reguł.",
+      "next": "Dalej"
+    },
+    "statuses": {
+      "title": "Czy są jakieś wpisy, które obrazują opisany w zgłoszeniu problem?",
+      "description": "Wybierz wszystkie pasujące",
+      "no_status": "Brak statusu.",
+      "next": "Dalej"
+    },
+    "comment": {
+      "title": "Czy jest jeszcze coś, co uważasz, że powinniśmy wiedzieć?",
+      "placeholder": "Dodatkowe uwagi",
+      "forward": "Przekaż do oryginalnego serwera",
+      "next": "Wyślij"
+    }
+  },
+  "announcements": {
+    "title": "Ogłoszenie @{domain}",
+    "close": "Zamknij"
+  },
+  "from_other_account": {
+    "title": "Zareaguj z innych kont",
+    "accounts": {
+      "title": "Z którego konta chcesz zareagować?",
+      "next": "Dalej"
+    },
+    "status": {
+      "title": "Zareaguj na status z konta {account}",
+      "searching": "Wyszukiwanie",
+      "not_found": "Przepraszamy, status nie został znaleziony w {server}",
+      "next": "Zamknij"
+    }
+  },
+  "list_memberships": {
+    "title": "Lista członków",
+    "search_placeholder": "Szukaj wśród osób, które obserwujesz"
+  }
+}
