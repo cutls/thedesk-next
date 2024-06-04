@@ -1,15 +1,15 @@
 import { FlexboxGrid, useToaster, Popover, Whisper, IconButton, Dropdown } from 'rsuite'
 import {
-  BsChat,
+  BsReply,
   BsEmojiSmile,
   BsThreeDots,
   BsStar,
   BsStarFill,
   BsBookmark,
   BsFillBookmarkFill,
-  BsArrowRepeat,
   BsEnvelope,
-  BsLock
+  BsLock,
+  BsRepeat
 } from 'react-icons/bs'
 import { Icon } from '@rsuite/icons'
 import { Dispatch, SetStateAction, ReactElement, useState, forwardRef, useRef, useContext } from 'react'
@@ -154,7 +154,7 @@ const Actions: React.FC<Props> = props => {
         <FlexboxGrid.Item>
           <ActionButton
             disabled={typeof props.disabled === 'boolean' ? props.disabled : props.disabled.reply}
-            icon={<Icon as={BsChat} />}
+            icon={<Icon as={BsReply} />}
             onClick={() => props.setShowReply(current => !current)}
             title={formatMessage({ id: 'timeline.actions.reply' })}
           />
@@ -253,7 +253,7 @@ const Actions: React.FC<Props> = props => {
 
 const reblogIcon = (status: Entity.Status): ReactElement => {
   if (status.reblogged) {
-    return <Icon as={BsArrowRepeat} color="green" />
+    return <Icon as={BsRepeat} color="green" />
   } else {
     switch (status.visibility) {
       case 'direct':
@@ -261,7 +261,7 @@ const reblogIcon = (status: Entity.Status): ReactElement => {
       case 'private':
         return <Icon as={BsLock} />
       default:
-        return <Icon as={BsArrowRepeat} />
+        return <Icon as={BsRepeat} />
     }
   }
 }
