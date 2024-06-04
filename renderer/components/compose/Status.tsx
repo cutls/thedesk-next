@@ -30,7 +30,9 @@ import {
   BsXCircle,
   BsX,
   BsPencil,
-  BsClock
+  BsClock,
+  BsMusicNoteBeamed,
+  BsSpotify
 } from 'react-icons/bs'
 import { Entity, MegalodonInterface } from 'megalodon'
 import Picker from '@emoji-mart/react'
@@ -45,6 +47,8 @@ import languages from '@/utils/languages'
 import EditMedia from './EditMedia'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Context } from '@/theme'
+import { open } from '@/utils/openBrowser'
+import { nowplaying } from '@/utils/nowplaying'
 
 type Props = {
   server: Server
@@ -116,6 +120,7 @@ const Status: React.FC<Props> = props => {
   const emojiPickerRef = useRef(null)
   const uploaderRef = useRef<HTMLInputElement>()
   const toast = useToaster()
+  const isDarwin = localStorage.getItem('os') === 'darwin'
 
   // Update instance custom emoji
   useEffect(() => {
@@ -342,14 +347,7 @@ const Status: React.FC<Props> = props => {
       uploaderRef.current.click()
     }
   }
-
-  const fileChanged = async (_filepath: string, event: ChangeEvent<HTMLInputElement>) => {
-    if (formValue.attachments && formValue.attachments.length > 4) {
-      toast.push(alert('error', formatMessage({ id: 'alert.validation_attachments_length' }, { limit: 5 })), { placement: 'topStart' })
-      return
-    }
-
-    const file = event.target.files?.item(0)
+  const coreUploader = async (file: File) => {
     if (file === null || file === undefined) {
       return
     }
@@ -373,6 +371,15 @@ const Status: React.FC<Props> = props => {
     } finally {
       setLoading(false)
     }
+  }
+  const fileChanged = async (_filepath: string, event: ChangeEvent<HTMLInputElement>) => {
+    if (formValue.attachments && formValue.attachments.length > 4) {
+      toast.push(alert('error', formatMessage({ id: 'alert.validation_attachments_length' }, { limit: 5 })), { placement: 'topStart' })
+      return
+    }
+
+    const file = event.target.files?.item(0)
+    await coreUploader(file)
   }
 
   const removeAttachment = (index: number) => {
@@ -485,6 +492,32 @@ const Status: React.FC<Props> = props => {
       </Popover>
     )
   }
+  const NowPlayingDropdown = ({ onClose, left, top, className }, ref: any) => {
+    const handleSelect = async (key: string) => {
+      const showToaster = (message: string) => toast.push(alert('info', formatMessage({ id: message })), { placement: 'topStart' })
+      const ret = await nowplaying(key as 'spotify' | 'appleMusic', showToaster)
+      if (!ret) return toast.push(alert('info', formatMessage({ id: 'compose.nowplaying.error' })), { placement: 'topStart' })
+      if(ret.file) coreUploader(ret.file)
+      setFormValue({
+        spoiler: formValue.spoiler,
+        status: ret.text
+      })
+      onClose()
+    }
+
+    return (
+      <Popover ref={ref} className={className} style={{ left, top }} full>
+        <Dropdown.Menu onSelect={handleSelect}>
+          <Dropdown.Item eventKey={'spotify'} icon={<Icon as={BsSpotify} />}>
+            Spotify
+          </Dropdown.Item>
+          {isDarwin && <Dropdown.Item eventKey={'appleMusic'} icon={<Icon as={BsMusicNoteBeamed} />}>
+            Apple Music
+          </Dropdown.Item>}
+        </Dropdown.Menu>
+      </Popover>
+    )
+  }
 
   const targetId = () => {
     if (props.in_reply_to) {
@@ -545,7 +578,7 @@ const Status: React.FC<Props> = props => {
         {formValue.scheduled_at && <Form.Control name="scheduled_at" accepter={DatePicker} format="yyyy-MM-dd HH:mm" />}
 
         <Form.Group controlId="actions" style={{ marginBottom: '4px' }}>
-          <ButtonToolbar>
+          <ButtonToolbar style={{ gap: 0 }}>
             <Input name="attachments" type="file" style={{ display: 'none' }} ref={uploaderRef} onChange={fileChanged} />
             <Button appearance="subtle" onClick={selectFile}>
               <Icon as={BsPaperclip} style={{ fontSize: '1.1em' }} />
@@ -569,6 +602,11 @@ const Status: React.FC<Props> = props => {
             <Button appearance="subtle" onClick={toggleSchedule}>
               <Icon as={BsClock} style={{ fontSize: '1.1em' }} />
             </Button>
+            <Whisper placement="bottomEnd" delay={100} trigger="click" speaker={NowPlayingDropdown} preventOverflow>
+              <Button appearance="subtle">
+                <Icon as={BsMusicNoteBeamed} style={{ fontSize: '1.1em' }} />
+              </Button>
+            </Whisper>
           </ButtonToolbar>
         </Form.Group>
         {formValue.attachments?.length > 0 && (

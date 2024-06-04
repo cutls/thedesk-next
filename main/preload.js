@@ -2,10 +2,25 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const { contextBridge, ipcRenderer } = require('electron');
 contextBridge.exposeInMainWorld('electronAPI', {
-    on: (channel, callback) => {
-        ipcRenderer.on(channel, callback);
+    writeText: (text) => {
+        ipcRenderer.send('writeText', text);
     },
-    removeListener: (channel, callback) => {
-        ipcRenderer.removeListener(channel, callback);
+    openBrowser: (url) => {
+        ipcRenderer.send('openBrowser', url);
+    },
+    requestInitialInfo: () => {
+        ipcRenderer.send('requestInitialInfo');
+    },
+    requestAppleMusic: () => {
+        ipcRenderer.send('requestAppleMusic');
+    },
+    onInitialInfo: (callback) => {
+        ipcRenderer.on('initialInfo', callback);
+    },
+    appleMusic: (callback) => {
+        ipcRenderer.on('appleMusic', callback);
+    },
+    customUrl: (callback) => {
+        ipcRenderer.on('customUrl', callback);
     }
 });

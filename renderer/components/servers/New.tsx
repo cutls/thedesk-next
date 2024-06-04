@@ -1,5 +1,5 @@
 import { Modal, Form, ButtonToolbar, Button, Input, Loader, useToaster } from 'rsuite'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { Server } from '@/entities/server'
 import { OAuth } from 'megalodon'
 import alert from '../utils/alert'
@@ -9,6 +9,7 @@ import { BsClipboard } from 'react-icons/bs'
 import { Icon } from '@rsuite/icons'
 import { addServer } from '@/utils/storage'
 import { addApplication, authorizeCode } from '@/utils/oauth'
+import { StreamingContext } from '@/streaming'
 
 type Props = {
   open: boolean
@@ -24,6 +25,7 @@ const New: React.FC<Props> = props => {
   const [loading, setLoading] = useState<boolean>(false)
   const [domain, setDomain] = useState('')
   const [code, setCode] = useState('')
+  const { timelineRefresh } = useContext(StreamingContext)
 
   const toast = useToaster()
 
@@ -83,7 +85,7 @@ const New: React.FC<Props> = props => {
   }
 
   const finish = async () => {
-    close()
+    location.reload()
     //await invoke('init_instruction')
   }
 

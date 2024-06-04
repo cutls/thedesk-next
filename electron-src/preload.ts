@@ -1,11 +1,27 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('electronAPI', {
-  on: (channel: string, callback: (event: Electron.IpcRendererEvent, data: any) => void) => {
-    ipcRenderer.on(channel, callback);
+  writeText: (text: string) => {
+    ipcRenderer.send('writeText', text);
   },
-  removeListener: (channel: string, callback: (event: Electron.IpcRendererEvent, data: any) => void) => {
-    ipcRenderer.removeListener(channel, callback);
+  openBrowser: (url: string) => {
+    ipcRenderer.send('openBrowser', url);
+  },
+  requestInitialInfo: () => {
+    ipcRenderer.send('requestInitialInfo');
+  },
+  requestAppleMusic: () => {
+    ipcRenderer.send('requestAppleMusic');
+  },
+  onInitialInfo: (callback: (event: Electron.IpcRendererEvent, data: any) => void) => {
+    ipcRenderer.on('initialInfo', callback);
+  },
+
+  appleMusic: (callback: (event: Electron.IpcRendererEvent, data: any) => void) => {
+    ipcRenderer.on('appleMusic', callback);
+  },
+  customUrl: (callback: (event: Electron.IpcRendererEvent, data: any) => void) => {
+    ipcRenderer.on('customUrl', callback);
   }
 });
 export {}

@@ -15,7 +15,7 @@ import { Icon } from '@rsuite/icons'
 import { Dispatch, SetStateAction, ReactElement, useState, forwardRef, useRef, useContext } from 'react'
 import { Entity, MegalodonInterface, Response } from 'megalodon'
 import Picker from '@emoji-mart/react'
-
+import { writeText } from '@/utils/openBrowser'
 import ActionButton from './ActionButton'
 import alert from '@/components/utils/alert'
 import { Server } from '@/entities/server'
@@ -222,8 +222,7 @@ const Actions: React.FC<Props> = props => {
                     open(status.url)
                   },
                   copyLink: async () => {
-                    //[tauri]
-                    //await writeText(status.url)
+                    writeText(status.url)
                   },
                   openEdit: () => {
                     props.setShowEdit(current => !current)

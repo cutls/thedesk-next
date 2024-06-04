@@ -151,6 +151,10 @@
       "title": "メディアを編集",
       "label": "視覚的に閲覧が難しいユーザーへの説明",
       "submit": "適用"
+    },
+    "nowplaying": {
+      "again": "Spotifyとの連携が完了しました。もう一度NowPlayingを実行してください。",
+      "error": "エラーが発生しました。もう一度NowPlayingを実行してください。"
     }
   },
   "search": {

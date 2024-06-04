@@ -94,6 +94,10 @@ function App() {
 
 
     // Push Notification
+    window.electronAPI.requestInitialInfo()
+    window.electronAPI.onInitialInfo((_event, data) => {
+      localStorage.setItem('os', data.os)
+    });
 
     return () => {
       document.removeEventListener('keydown', handleKeyPress)
