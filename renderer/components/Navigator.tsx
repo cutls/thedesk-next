@@ -103,21 +103,11 @@ const Navigator: React.FC<NavigatorProps> = (props): ReactElement => {
 	}
 
 	return (
-		<Sidebar style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', backgroundColor: 'var(--rs-sidenav-default-bg)' }} width="56" collapsible>
-			<Sidenav expanded={false}>
-				<Sidenav.Body style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-					<Button appearance="link" size="lg" onClick={props.toggleCompose}>
-						<Icon as={BsPencilSquare} style={{ fontSize: '1.4em' }} />
-					</Button>
-					<Button appearance="link" size="lg" onClick={props.toggleSearch}>
+		<div style={{ display: 'flex', justifyContent: 'space-between', backgroundColor: 'var(--rs-sidenav-default-bg)', height: '56px' }}>
+			<div style={{ display: 'flex', alignItems: 'center' }}>
+				<div style={{ display: 'flex', alignItems: 'center' }}>
+					<Button appearance="link" size="lg" onClick={props.toggleSearch} style={{ marginRight: '15px' }}>
 						<Icon as={BsSearch} style={{ fontSize: '1.4em' }} />
-					</Button>
-				</Sidenav.Body>
-			</Sidenav>
-			<Sidenav expanded={false}>
-				<Sidenav.Body style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-					<Button appearance="link" size="lg" onClick={props.addNewServer} title={formatMessage({ id: 'navigator.add_server.title' })}>
-						<Icon as={BsPlus} style={{ fontSize: '1.4em' }} />
 					</Button>
 					{walkthrough && (
 						<div style={{ position: 'relative' }}>
@@ -175,12 +165,22 @@ const Navigator: React.FC<NavigatorProps> = (props): ReactElement => {
 							</Whisper>
 						</div>
 					))}
+					<Button appearance="link" size="lg" style={{ padding: 0 }} onClick={props.addNewServer} title={formatMessage({ id: 'navigator.add_server.title' })}>
+						<Icon as={BsPlus} style={{ fontSize: '1.4em' }} />
+					</Button>
+				</div>
+			</div>
+			<div style={{ display: 'flex', alignItems: 'center', paddingRight: '10px' }}>
+				<div style={{ display: 'flex', alignItems: 'center' }}>
 					<Button appearance="link" size="lg" title={formatMessage({ id: 'navigator.settings.title' })} onClick={() => openSettings()}>
 						<Icon as={BsGear} style={{ fontSize: '1.4em' }} />
 					</Button>
-				</Sidenav.Body>
-			</Sidenav>
-		</Sidebar>
+					<Button appearance="primary" color="green" size="lg" onClick={props.toggleCompose} startIcon={<Icon as={BsPencilSquare} />}>
+						<FormattedMessage id="compose.post" />
+					</Button>
+				</div>
+			</div>
+		</div>
 	)
 }
 

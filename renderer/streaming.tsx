@@ -5,7 +5,7 @@ import { set } from 'rsuite/esm/utils/dateUtils'
 
 export const StreamingContext = createContext({
 	start: async () => { },
-	listen: ((channel: string, callback: any, tts?: boolean) => null) as <T>(channel: string, callback: (a: { payload: T }, tts?: boolean) => void) => void | null,
+	listen: ((channel: string, callback: any, tts?: boolean) => null) as <T>(channel: string, callback: (a: { payload: T }) => void, tts?: boolean) => void | null,
 	allClose: () => { },
 	timelineRefresh: () => { },
 	latestTimelineRefreshed: new Date().getTime(),

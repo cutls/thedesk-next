@@ -229,7 +229,7 @@ const Profile: React.FC<Props> = (props) => {
 					<div className="profile-header-body" style={{ padding: '0 20px' }}>
 						<FlexboxGrid justify="space-between" align="bottom" style={{ marginTop: '-50px' }}>
 							<FlexboxGrid.Item>
-								<Image src={user.avatar} alt={user.acct} width={94} height={94} style={{ borderRadius: '4px' }} />
+								<Image src={user.avatar} alt={user.acct} width={94} height={94} style={{ borderRadius: '10px', backgroundColor: 'black' }} />
 							</FlexboxGrid.Item>
 							<FlexboxGrid.Item>
 								<FlexboxGrid style={{ gap: '8px' }}>
@@ -267,10 +267,15 @@ const Profile: React.FC<Props> = (props) => {
 								</FlexboxGrid>
 							</FlexboxGrid.Item>
 						</FlexboxGrid>
-						<div className="username" style={{ margin: '16px 0' }}>
-							<span style={{ fontSize: '1.2em', fontWeight: 'bold', display: 'block' }} dangerouslySetInnerHTML={{ __html: emojify(user.display_name, user.emojis) }} />
-							<span style={{ display: 'block', color: 'var(--rs-text-secondary)' }}>@{user.acct}</span>
-						</div>
+						<FlexboxGrid>
+							<FlexboxGrid.Item className="username" style={{ margin: '16px 0' }}>
+								<span style={{ fontSize: '1.2em', fontWeight: 'bold', display: 'block' }} dangerouslySetInnerHTML={{ __html: emojify(user.display_name, user.emojis) }} />
+								<span style={{ display: 'block', color: 'var(--rs-text-secondary)' }}>@{user.acct}</span>
+							</FlexboxGrid.Item>
+							<FlexboxGrid.Item style={{ margin: '5px 0' }}>
+								{!relationship?.following && <FormattedMessage id="detail.profile.not_following" />}
+							</FlexboxGrid.Item>
+						</FlexboxGrid>
 						<div className="bio">
 							<div dangerouslySetInnerHTML={{ __html: user.note }} style={{ overflow: 'hidden', wordBreak: 'break-word' }} onClick={onClick} />
 						</div>
@@ -433,9 +438,6 @@ type FollowButtonProps = {
 
 const FollowButton: React.FC<FollowButtonProps> = (props) => {
 	const { formatMessage } = useIntl()
-	const [followMessage, setFollowMessage] = useState(formatMessage({ id: 'detail.profile.not_following' }))
-	const [followColor, setFollowColor] = useState<'default' | 'primary'>('default')
-	const [unfollowMessage, setUnfollowMessage] = useState(formatMessage({ id: 'detail.profile.following' }))
 	const [unfollowColor, setUnfollowColor] = useState<'green' | 'red'>('green')
 
 	if (!props.relationship) {
@@ -449,18 +451,16 @@ const FollowButton: React.FC<FollowButtonProps> = (props) => {
 			<Button
 				appearance="primary"
 				color={unfollowColor}
-				onClick={props.unfollow}
 				onMouseEnter={() => {
-					setUnfollowMessage(formatMessage({ id: 'detail.profile.unfollow' }))
 					setUnfollowColor('red')
 				}}
 				onMouseLeave={() => {
-					setUnfollowMessage(formatMessage({ id: 'detail.profile.following' }))
 					setUnfollowColor('green')
 				}}
+				onClick={props.unfollow}
 				block
 			>
-				{unfollowMessage}
+				{formatMessage({ id: 'detail.profile.unfollow' })}
 			</Button>
 		)
 	}
@@ -469,18 +469,11 @@ const FollowButton: React.FC<FollowButtonProps> = (props) => {
 	}
 	return (
 		<Button
-			appearance={followColor}
+			appearance="primary"
+			color="green"
 			onClick={props.follow}
-			onMouseEnter={() => {
-				setFollowMessage(formatMessage({ id: 'detail.profile.follow' }))
-				setFollowColor('primary')
-			}}
-			onMouseLeave={() => {
-				setFollowMessage(formatMessage({ id: 'detail.profile.not_following' }))
-				setFollowColor('default')
-			}}
 		>
-			{followMessage}
+			{formatMessage({ id: 'detail.profile.follow' })}
 		</Button>
 	)
 }

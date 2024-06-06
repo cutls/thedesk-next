@@ -47,6 +47,75 @@
   display: none;
 }
 
+@keyframes slideInCompose {
+  from {
+    width: 0;
+  }
+
+  50% {
+    width: 200px;
+    min-width: 200px;
+  }
+
+  to {
+    width: 320px;
+    min-width: 320px;
+  }
+}
+
+@keyframes slideOutCompose {
+  from {
+    width: 320px;
+    min-width: 320px;
+  }
+
+  50% {
+    width: 100px;
+    min-width: 100px;
+  }
+
+  to {
+    width: 0px;
+  }
+}
+
+.search-exiting,
+.search-entering {
+  position: fixed;
+  overflow: hidden;
+  height: 100vh;
+  z-index: 3;
+  animation: .3s linear;
+  animation-fill-mode: forwards;
+  .hideen-in-animating {
+    display: none;
+  }
+}
+
+
+.search-exiting {
+  animation-name: slideOutCompose;
+}
+
+.search-entering {
+  animation-name: slideInCompose;
+}
+
+
+.search-entered {
+  top: 0;
+  width: 320px;
+  min-width: 320px;
+  height: 100vh;
+  position: fixed;
+  z-index: 3;
+}
+
+.search-exited {
+  width: 0px;
+  display: none;
+}
+
 @keyframes slideInDetail {
   from {
     width: 0;
@@ -86,6 +155,10 @@
 .detail-entering {
   animation: .3s liner;
   animation-fill-mode: forwards;
+  height: 100vh;
+  position: fixed;
+  right: 0;
+  z-index: 3;
 }
 
 .detail-exiting {
@@ -100,10 +173,15 @@
   width: 341x;
   min-width: 341px;
   max-width: 341px;
+  height: 100vh;
+  right: 0;
+  position: fixed;
+  z-index: 3;
 }
 
 .detail-exited {
   width: 0;
+  display: none;
 }
 
 
@@ -298,4 +376,10 @@
 
 .no-scrollbar::-webkit-scrollbar {
   display: none;
+}
+
+.rs-modal-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

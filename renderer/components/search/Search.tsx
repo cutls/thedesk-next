@@ -60,7 +60,7 @@ export default function Search(props: Props) {
 					<FlexboxGrid.Item style={{ lineHeight: '53px', paddingLeft: '12px', fontSize: '18px' }}>
 						<FormattedMessage id="search.title" />
 					</FlexboxGrid.Item>
-					<FlexboxGrid.Item>
+					<FlexboxGrid.Item className="hideen-in-animating">
 						<Button appearance="link" onClick={() => props.setOpened(false)}>
 							<Icon as={BsX} style={{ fontSize: '1.4em' }} />
 						</Button>
@@ -72,7 +72,7 @@ export default function Search(props: Props) {
 					<FlexboxGrid.Item>
 						<Dropdown renderToggle={(props, ref) => renderAccountIcon(props, ref, fromAccount)} onSelect={selectAccount}>
 							{accounts.map((account, index) => (
-								<Dropdown.Item eventKey={index} key={index}>
+								<Dropdown.Item eventKey={index} key={`@${account[0].username}@${account[1].domain}`}>
 									@{account[0].username}@{account[1].domain}
 								</Dropdown.Item>
 							))}

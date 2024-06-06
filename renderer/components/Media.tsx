@@ -4,6 +4,11 @@ import Image from 'next/image'
 import { type ReactElement, useCallback, useEffect, useState } from 'react'
 import { BsChevronLeft, BsChevronRight } from 'react-icons/bs'
 import { Button, FlexboxGrid, Modal } from 'rsuite'
+import dynamic from 'next/dynamic'
+const Viewer = dynamic(
+	() => import('react-viewer'),
+	{ ssr: false }
+)
 
 type Props = {
 	index: number
@@ -13,6 +18,19 @@ type Props = {
 }
 
 const Media: React.FC<Props> = (props) => {
+	const { media } = props
+	const isAllPhoto = media.length && media.every((m) => m && m.type === 'image')
+	if (isAllPhoto) {
+		const srcs = media.map((m) => {
+			return { src: m.url }
+		})
+		return <Viewer
+			onClose={() => props.close()}
+			onMaskClick={() => props.close()}
+			visible={true}
+			images={srcs}
+		/>
+	}
 	const [index, setIndex] = useState<number>(0)
 
 	useEffect(() => {
@@ -65,7 +83,7 @@ const Media: React.FC<Props> = (props) => {
 			style={{ height: 'calc(100% - 30px)' }}
 			dialogClassName="media-dialog"
 		>
-			<Modal.Header></Modal.Header>
+			<Modal.Header />
 			<Modal.Body style={{ height: '100%' }}>
 				<FlexboxGrid style={{ height: '100%' }} align="middle">
 					<FlexboxGrid.Item colspan={2}>
@@ -97,6 +115,7 @@ const mediaComponent = (media: Entity.Attachment): ReactElement => {
 		case 'gifv':
 			return (
 				<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+					{/* biome-ignore lint/a11y/useMediaCaption: <explanation> */}
 					<video src={media.url} autoPlay loop style={{ maxWidth: '100%', objectFit: 'contain' }} />
 				</div>
 			)
@@ -104,6 +123,7 @@ const mediaComponent = (media: Entity.Attachment): ReactElement => {
 		case 'audio':
 			return (
 				<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+					{/* biome-ignore lint/a11y/useMediaCaption: <explanation> */}
 					<video src={media.url} autoPlay loop controls style={{ maxWidth: '100%', objectFit: 'contain' }} />
 				</div>
 			)

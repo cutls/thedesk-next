@@ -89,16 +89,16 @@ function App() {
 		})
 
 		/*
-    listen('updated-servers', async () => {
-      const res = await invoke<Array<[Server, Account | null]>>('list_servers')
-      setServers(
-        res.map(r => ({
-          server: r[0],
-          account: r[1]
-        }))
-      )
-    })
-    */
+	listen('updated-servers', async () => {
+	  const res = await invoke<Array<[Server, Account | null]>>('list_servers')
+	  setServers(
+		res.map(r => ({
+		  server: r[0],
+		  account: r[1]
+		}))
+	  )
+	})
+	*/
 
 		// Push Notification
 		window.electronAPI.requestInitialInfo()
@@ -148,7 +148,7 @@ function App() {
 		}
 	}, [highlighted])
 
-	const handleKeyPress = useCallback(async (event: KeyboardEvent) => {}, [])
+	const handleKeyPress = useCallback(async (event: KeyboardEvent) => { }, [])
 
 	const loadAppearance = () => {
 		readSettings().then((res) => {
@@ -217,21 +217,7 @@ function App() {
 				close={() => dispatch({ target: 'addListMember', value: false, object: null, client: null })}
 			/>
 			{/** Modals **/}
-
-			<Container style={{ height: '100%' }}>
-				<Navigator
-					servers={servers}
-					unreads={unreads}
-					addNewServer={() => dispatch({ target: 'newServer', value: true, object: null })}
-					openAuthorize={(server: Server) => dispatch({ target: 'newServer', value: true, object: server })}
-					openAnnouncements={(server: Server, account: Account) => dispatch({ target: 'announcements', value: true, object: { server, account } })}
-					openThirdparty={() => dispatch({ target: 'thirdparty', value: true })}
-					openSettings={() => dispatch({ target: 'settings', value: true })}
-					toggleCompose={toggleCompose}
-					toggleSearch={toggleSearch}
-					setHighlighted={setHighlighted}
-					setUnreads={setUnreads}
-				/>
+			<Container style={{ height: 'calc(100% - 56px)' }}>
 				<Animation.Transition in={composeOpened} exitedClassName="compose-exited" exitingClassName="compose-exiting" enteredClassName="compose-entered" enteringClassName="compose-entering">
 					{(props, ref) => (
 						<Draggable handle=".draggable" position={draggalePosition} onStop={(_e, data) => setComposePosition([data.x, data.y])}>
@@ -241,7 +227,7 @@ function App() {
 						</Draggable>
 					)}
 				</Animation.Transition>
-				<Animation.Transition in={searchOpened} exitedClassName="compose-exited" exitingClassName="compose-exiting" enteredClassName="compose-entered" enteringClassName="compose-entering">
+				<Animation.Transition in={searchOpened} exitedClassName="search-exited" exitingClassName="search-exiting" enteredClassName="search-entered" enteringClassName="search-entering">
 					{(props, ref) => (
 						<div {...props} ref={ref} style={{ overflow: 'hidden' }}>
 							<Search
@@ -280,6 +266,20 @@ function App() {
 					}}
 				/>
 			</Container>
+
+			<Navigator
+				servers={servers}
+				unreads={unreads}
+				addNewServer={() => dispatch({ target: 'newServer', value: true, object: null })}
+				openAuthorize={(server: Server) => dispatch({ target: 'newServer', value: true, object: server })}
+				openAnnouncements={(server: Server, account: Account) => dispatch({ target: 'announcements', value: true, object: { server, account } })}
+				openThirdparty={() => dispatch({ target: 'thirdparty', value: true })}
+				openSettings={() => dispatch({ target: 'settings', value: true })}
+				toggleCompose={toggleCompose}
+				toggleSearch={toggleSearch}
+				setHighlighted={setHighlighted}
+				setUnreads={setUnreads}
+			/>
 		</div>
 	)
 }
