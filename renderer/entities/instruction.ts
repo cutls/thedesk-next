@@ -1,4 +1,4 @@
 export type Instruction = {
-  id: number
-  instruction: number
+	id: number
+	instruction: number
 }

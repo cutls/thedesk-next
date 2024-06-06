@@ -1,37 +1,37 @@
-import { createContext, useState, useEffect } from 'react'
-import { CustomProvider, CustomProviderProps } from 'rsuite'
+import { createContext, useEffect, useState } from 'react'
+import { CustomProvider, type CustomProviderProps } from 'rsuite'
 import { Settings } from './entities/settings'
 import { UpdatedSettingsPayload } from './payload'
 
 type Props = {
-  children: React.ReactNode
+	children: React.ReactNode
 }
 
 const initValue: CustomProviderProps = {
-  theme: 'dark'
+	theme: 'dark',
 }
 
 export const Context = createContext(initValue)
 
-export const RsuiteProviderWrapper: React.FC<Props> = props => {
-  const [theme, setTheme] = useState<'dark' | 'light' | 'high-contrast'>('dark')
-  // useEffect(() => {
-  //   listen<UpdatedSettingsPayload>('updated-settings', () => {
-  //     loadTheme()
-  //   })
+export const RsuiteProviderWrapper: React.FC<Props> = (props) => {
+	const [theme, setTheme] = useState<'dark' | 'light' | 'high-contrast'>('dark')
+	// useEffect(() => {
+	//   listen<UpdatedSettingsPayload>('updated-settings', () => {
+	//     loadTheme()
+	//   })
 
-  //   loadTheme()
-  // }, [])
+	//   loadTheme()
+	// }, [])
 
-  // const loadTheme = () => {
-  //   invoke<Settings>('read_settings').then(res => {
-  //     setTheme(res.appearance.color_theme)
-  //   })
-  // }
+	// const loadTheme = () => {
+	//   invoke<Settings>('read_settings').then(res => {
+	//     setTheme(res.appearance.color_theme)
+	//   })
+	// }
 
-  return (
-    <Context.Provider value={{ theme }}>
-      <CustomProvider theme={theme}>{props.children}</CustomProvider>
-    </Context.Provider>
-  )
+	return (
+		<Context.Provider value={{ theme }}>
+			<CustomProvider theme={theme}>{props.children}</CustomProvider>
+		</Context.Provider>
+	)
 }
