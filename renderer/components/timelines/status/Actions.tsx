@@ -16,15 +16,15 @@ import ActionButton from './ActionButton'
 
 type Props = {
 	disabled:
-		| boolean
-		| {
-				reply: boolean
-				reblog: boolean
-				favourite: boolean
-				bookmark: boolean
-				emoji: boolean
-				detail: boolean
-		  }
+	| boolean
+	| {
+		reply: boolean
+		reblog: boolean
+		favourite: boolean
+		bookmark: boolean
+		emoji: boolean
+		detail: boolean
+	}
 	server: Server
 	account: Account | null
 	status: Entity.Status
@@ -229,34 +229,27 @@ const Actions: React.FC<Props> = (props) => {
 }
 
 const reblogIcon = (status: Entity.Status): ReactElement => {
-	if (status.reblogged) {
-		return <Icon as={BsRepeat} color="green" />
-	} else {
-		switch (status.visibility) {
-			case 'direct':
-				return <Icon as={BsEnvelope} />
-			case 'private':
-				return <Icon as={BsLock} />
-			default:
-				return <Icon as={BsRepeat} />
-		}
+	if (status.reblogged) return <Icon as={BsRepeat} color="green" />
+	switch (status.visibility) {
+		case 'direct':
+			return <Icon as={BsEnvelope} />
+		case 'private':
+			return <Icon as={BsLock} />
+		default:
+			return <Icon as={BsRepeat} />
 	}
 }
 
 const favouriteIcon = (status: Entity.Status): ReactElement => {
 	if (status.favourited) {
 		return <Icon as={BsStarFill} color="orange" />
-	} else {
-		return <Icon as={BsStar} />
 	}
+	return <Icon as={BsStar} />
 }
 
 const bookmarkIcon = (status: Entity.Status): ReactElement => {
-	if (status.bookmarked) {
-		return <Icon as={BsFillBookmarkFill} color="red" />
-	} else {
-		return <Icon as={BsBookmark} />
-	}
+	if (status.bookmarked) return <Icon as={BsFillBookmarkFill} color="red" />
+	return <Icon as={BsBookmark} />
 }
 
 type DetailMenuProps = {

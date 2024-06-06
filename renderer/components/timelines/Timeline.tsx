@@ -406,7 +406,7 @@ export default function TimelineColumn(props: Props) {
 						<FlexboxGrid.Item style={{ width: '80px' }}>
 							<FlexboxGrid align="middle" justify="end">
 								<FlexboxGrid.Item>
-									<Button appearance="link" onClick={reload} style={{ padding: '4px', color: 'white' }} title={formatMessage({ id: 'timeline.reload' })}>
+									<Button appearance="subtle" onClick={reload} style={{ padding: '4px' }} title={formatMessage({ id: 'timeline.reload' })}>
 										<Icon as={BsArrowClockwise} />
 									</Button>
 								</FlexboxGrid.Item>
@@ -439,7 +439,7 @@ export default function TimelineColumn(props: Props) {
 										onOpen={closeWalkthrough}
 										speaker={<OptionPopover timeline={props.timeline} close={closeOptionPopover} />}
 									>
-										<Button appearance="link" style={{ padding: '4px 8px 4px 4px', color: 'white' }} title={formatMessage({ id: 'timeline.settings.title' })}>
+										<Button appearance="subtle" style={{ padding: '4px 8px 4px 4px' }} title={formatMessage({ id: 'timeline.settings.title' })}>
 											<Icon as={BsSliders} />
 										</Button>
 									</Whisper>
@@ -475,7 +475,7 @@ export default function TimelineColumn(props: Props) {
 								overscan={TIMELINE_STATUSES_COUNT}
 								defaultItemHeight={44}
 								itemContent={(_, status) => (
-									<List.Item key={status.id} style={{ paddingTop: '2px', paddingBottom: '2px', backgroundColor: 'var(--rs-bg-card)' }}>
+									<List.Item key={status.id} style={{ paddingTop: '2px', paddingBottom: '2px', backgroundColor: 'var(--rs-bg-well)' }}>
 										<Status
 											status={status}
 											client={client}
@@ -505,7 +505,6 @@ export default function TimelineColumn(props: Props) {
 }
 const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: () => void }>((props, ref) => {
 	const { timelineRefresh } = useContext(StreamingContext)
-	const newRef = useRef()
 	const removeTimelineFn = async (timeline: Timeline) => {
 		removeTimeline(timeline)
 		timelineRefresh()

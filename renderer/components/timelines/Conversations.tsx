@@ -173,7 +173,7 @@ const Conversations: React.FC<Props> = (props) => {
 							<FlexboxGrid align="middle" justify="end">
 								<FlexboxGrid.Item>
 									<Whisper trigger="click" placement="bottomEnd" controlId="option-popover" ref={triggerRef} speaker={<OptionPopover timeline={props.timeline} close={closeOptionPopover} />}>
-										<Button appearance="link" style={{ padding: '4px 8px 4px 4px', color: 'white' }} title={formatMessage({ id: 'timeline.settings.title' })}>
+										<Button appearance="subtle" style={{ padding: '4px 8px 4px 4px' }} title={formatMessage({ id: 'timeline.settings.title' })}>
 											<Icon as={BsSliders} />
 										</Button>
 									</Whisper>
@@ -203,7 +203,7 @@ const Conversations: React.FC<Props> = (props) => {
 								endReached={loadMore}
 								overscan={TIMELINE_STATUSES_COUNT}
 								itemContent={(_, conversation) => (
-									<List.Item key={conversation.id} style={{ paddingTop: '2px', paddingBottom: '2px', backgroundColor: 'var(--rs-bg-card)' }}>
+									<List.Item key={conversation.id} style={{ paddingTop: '2px', paddingBottom: '2px', backgroundColor: 'var(--rs-bg-well)' }}>
 										<Conversation conversation={conversation} openMedia={props.openMedia} selectStatus={selectStatus} />
 									</List.Item>
 								)}

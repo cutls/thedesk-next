@@ -130,7 +130,7 @@ export default function Settings(props: Props) {
 					</Panel>
 					<Form.Group>
 						<ButtonToolbar style={{ justifyContent: 'flex-end' }}>
-							<Button appearance="primary" type="submit" onClick={handleSubmit}>
+							<Button appearance="primary" color="green" type="submit" onClick={handleSubmit}>
 								<FormattedMessage id="settings.settings.save" />
 							</Button>
 							<Button onClick={props.onClose}>

@@ -138,8 +138,8 @@ const Navigator: React.FC<NavigatorProps> = (props): ReactElement => {
 							</Popover>
 						</div>
 					)}
-					{servers.map((server) => (
-						<div key={server.server.id}>
+					{servers.map((server, i) => (
+						<div key={server.account.id} style={{ marginTop: '5px' }}>
 							<Whisper
 								placement="right"
 								controlId="control-id-context-menu"

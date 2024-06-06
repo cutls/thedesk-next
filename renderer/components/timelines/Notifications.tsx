@@ -299,23 +299,23 @@ const Notifications: React.FC<Props> = (props) => {
 							<FlexboxGrid align="middle" justify="end">
 								<FlexboxGrid.Item>
 									<Button
-										appearance="link"
+										appearance="subtle"
 										title={formatMessage({ id: 'timeline.mark_as_read' })}
 										disabled={!props.unreads.find((u) => u.server_id === props.server.id && u.count > 0)}
 										onClick={read}
-										style={{ padding: '4px', color: 'white' }}
+										style={{ padding: '4px' }}
 									>
 										<Icon as={BsCheck2} />
 									</Button>
 								</FlexboxGrid.Item>
 								<FlexboxGrid.Item>
-									<Button appearance="link" onClick={reload} style={{ padding: '4px', color: 'white' }} title={formatMessage({ id: 'timeline.reload' })}>
+									<Button appearance="subtle" onClick={reload} style={{ padding: '4px' }} title={formatMessage({ id: 'timeline.reload' })}>
 										<Icon as={BsArrowClockwise} />
 									</Button>
 								</FlexboxGrid.Item>
 								<FlexboxGrid.Item>
 									<Whisper trigger="click" placement="bottomEnd" controlId="option-popover" ref={triggerRef} speaker={<OptionPopover timeline={props.timeline} close={closeOptionPopover} />}>
-										<Button appearance="link" style={{ padding: '4px 8px 4px 4px', color: 'white' }} title={formatMessage({ id: 'timeline.settings.title' })}>
+										<Button appearance="subtle" style={{ padding: '4px 8px 4px 4px' }} title={formatMessage({ id: 'timeline.settings.title' })}>
 											<Icon as={BsSliders} />
 										</Button>
 									</Whisper>
@@ -360,7 +360,7 @@ const Notifications: React.FC<Props> = (props) => {
 												{
 													paddingTop: '2px',
 													paddingBottom: '2px',
-													backgroundColor: 'var(--rs-bg-card)',
+													backgroundColor: 'var(--rs-bg-well)',
 												},
 												shadow,
 											)}

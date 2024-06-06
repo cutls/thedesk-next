@@ -215,67 +215,65 @@ const Status: React.FC<Props> = (props) => {
 		if (loading) {
 			return
 		}
-		if (formRef === undefined || formRef.current === undefined) {
-			return
-		} else if (!formRef.current.check()) {
+		if (formRef === undefined || formRef.current === undefined) return
+		if (!formRef.current.check()) {
 			toast.push(alert('error', formatMessage({ id: 'alert.validation_error' })), { placement: 'topStart' })
 			return
-		} else {
-			setLoading(true)
-			try {
-				let options = { visibility: visibility }
-				if (props.in_reply_to) {
-					options = Object.assign({}, options, {
-						in_reply_to_id: props.in_reply_to.id,
-					})
-				}
-				if (formValue.attachments) {
-					options = Object.assign({}, options, {
-						media_ids: formValue.attachments.map((m) => m.id),
-					})
-				}
-				if (formValue.nsfw !== undefined) {
-					options = Object.assign({}, options, {
-						sensitive: formValue.nsfw,
-					})
-				}
-				if (language) {
-					options = Object.assign({}, options, {
-						language: language,
-					})
-				}
-				if (formValue.spoiler.length > 0) {
-					options = Object.assign({}, options, {
-						spoiler_text: formValue.spoiler,
-					})
-				}
-				if (formValue.poll !== undefined && formValue.poll.options.length > 0) {
-					options = Object.assign({}, options, {
-						poll: formValue.poll,
-					})
-				}
-				if (formValue.scheduled_at !== undefined) {
-					options = Object.assign({}, options, {
-						scheduled_at: formValue.scheduled_at.toISOString(),
-					})
-				}
-				if (props.edit_target) {
-					await props.client.editStatus(
-						props.edit_target.id,
-						Object.assign({}, options, {
-							status: formValue.status,
-						}),
-					)
-				} else {
-					await props.client.postStatus(formValue.status, options)
-				}
-				clear()
-			} catch (err) {
-				console.error(err)
-				toast.push(alert('error', formatMessage({ id: 'alert.failed_post' })), { placement: 'topStart' })
-			} finally {
-				setLoading(false)
+		}
+		setLoading(true)
+		try {
+			let options = { visibility: visibility }
+			if (props.in_reply_to) {
+				options = Object.assign({}, options, {
+					in_reply_to_id: props.in_reply_to.id,
+				})
 			}
+			if (formValue.attachments) {
+				options = Object.assign({}, options, {
+					media_ids: formValue.attachments.map((m) => m.id),
+				})
+			}
+			if (formValue.nsfw !== undefined) {
+				options = Object.assign({}, options, {
+					sensitive: formValue.nsfw,
+				})
+			}
+			if (language) {
+				options = Object.assign({}, options, {
+					language: language,
+				})
+			}
+			if (formValue.spoiler.length > 0) {
+				options = Object.assign({}, options, {
+					spoiler_text: formValue.spoiler,
+				})
+			}
+			if (formValue.poll !== undefined && formValue.poll.options.length > 0) {
+				options = Object.assign({}, options, {
+					poll: formValue.poll,
+				})
+			}
+			if (formValue.scheduled_at !== undefined) {
+				options = Object.assign({}, options, {
+					scheduled_at: formValue.scheduled_at.toISOString(),
+				})
+			}
+			if (props.edit_target) {
+				await props.client.editStatus(
+					props.edit_target.id,
+					Object.assign({}, options, {
+						status: formValue.status,
+					}),
+				)
+			} else {
+				await props.client.postStatus(formValue.status, options)
+			}
+			clear()
+		} catch (err) {
+			console.error(err)
+			toast.push(alert('error', formatMessage({ id: 'alert.failed_post' })), { placement: 'topStart' })
+		} finally {
+			setLoading(false)
 		}
 	}
 
@@ -472,7 +470,7 @@ const Status: React.FC<Props> = (props) => {
 			<Popover ref={ref} className={className} style={{ left, top }} full>
 				<Dropdown.Menu onSelect={handleSelect} style={{ maxHeight: '300px', overflowX: 'scroll' }}>
 					{languages.map((l, index) => (
-						<Dropdown.Item key={index} eventKey={l.value}>
+						<Dropdown.Item key={l.value} eventKey={l.value}>
 							{l.label}
 						</Dropdown.Item>
 					))}
@@ -512,11 +510,11 @@ const Status: React.FC<Props> = (props) => {
 	const targetId = () => {
 		if (props.in_reply_to) {
 			return `emoji-picker-reply-${props.in_reply_to.id}`
-		} else if (props.edit_target) {
-			return `emoji-picker-edit-${props.edit_target.id}`
-		} else {
-			return `emoji-picker-compose`
 		}
+		if (props.edit_target) {
+			return `emoji-picker-edit-${props.edit_target.id}`
+		}
+		return 'emoji-picker-compose'
 	}
 
 	return (
@@ -598,7 +596,7 @@ const Status: React.FC<Props> = (props) => {
 				<Form.Group controlId="attachments-preview" style={{ marginBottom: '4px' }}>
 					<div>
 						{formValue.attachments?.map((media, index) => (
-							<div key={index} style={{ position: 'relative' }}>
+							<div key={media.id} style={{ position: 'relative' }}>
 								<IconButton
 									icon={<Icon as={BsXCircle} style={{ fontSize: '1.0em' }} />}
 									appearance="subtle"
@@ -616,6 +614,7 @@ const Status: React.FC<Props> = (props) => {
 
 								<img
 									src={media.preview_url}
+									alt={media.description}
 									style={{
 										width: '100%',
 										height: '140px',
@@ -636,7 +635,7 @@ const Status: React.FC<Props> = (props) => {
 								<FormattedMessage id="compose.cancel" />
 							</Button>
 						)}
-						<Button appearance="primary" onClick={handleSubmit} loading={loading} style={{ flexGrow: 1 }}>
+						<Button appearance="primary" color={props.account.color || 'green'} onClick={handleSubmit} loading={loading} style={{ flexGrow: 1 }}>
 							<FormattedMessage id="compose.post" />
 						</Button>
 					</ButtonToolbar>
@@ -742,6 +741,7 @@ const PollInputControl: FormControlProps<Poll, any> = ({ value, onChange, fieldE
 		<>
 			<Form.Group controlId="poll">
 				{poll.options.map((option, index) => (
+					// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
 					<div key={index}>
 						<FlexboxGrid align="middle">
 							<FlexboxGrid.Item>{poll.multiple ? <Checkbox disabled /> : <Radio />}</FlexboxGrid.Item>

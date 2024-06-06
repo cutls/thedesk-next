@@ -16,6 +16,23 @@
   -webkit-text-size-adjust: 100%;
   user-select: none;
 }
+.rs-theme-dark {
+  --rs-bg-well: #212121;
+  --rs-sidenav-default-bg: #424242;
+  --rs-text-link: #039be5;
+  --rs-btn-link-text: var(--rs-text-secondary);
+  --rs-btn-link-hover-text: var(--rs-text-disabled);
+  --rs-btn-ghost-border: var(--rs-text-primary);
+  --rs-btn-ghost-text: var(--rs-text-primary);
+  --rs-btn-ghost-hover-border: var(--rs-green-500);
+  --rs-btn-ghost-hover-text: var(--rs-green-500);
+  --rs-btn-link-hover-text: var(--rs-green-10);
+  --rs-picker-value: var(--rs-green-primary);
+  --rs-listbox-option-selected-bg: var(--rs-green-500);
+  --rs-listbox-option-selected-text: var(--rs-green-10);
+  --rs-state-focus-shadow: 0 0 0 2px var(--rs-green-500);
+  --rs-input-focus-border: var(--rs-green-500);
+}
 
 body {
   font-family: Apple-System,"Hiragino Kaku Gothic ProN",Hiragino Sans GB,Arial,Helvetica,PingFang SC,Meiryo,Microsoft YaHei,STXihei,sans-serif;

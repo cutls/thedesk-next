@@ -33,6 +33,7 @@ import Draggable from 'react-draggable'
 import { useIntl } from 'react-intl'
 import { set } from 'rsuite/esm/utils/dateUtils'
 import { listServers, listTimelines, readSettings } from 'utils/storage'
+import { ContextLoadTheme } from '@/theme'
 
 const { scrollLeft } = DOMHelper
 
@@ -40,6 +41,7 @@ function App() {
 	const { formatMessage } = useIntl()
 	const [width, height] = useWindowSize()
 	const { start, latestTimelineRefreshed, allClose } = useContext(StreamingContext)
+	const { loadTheme } = useContext(ContextLoadTheme)
 
 	const [servers, setServers] = useState<Array<ServerSet>>([])
 	const [timelines, setTimelines] = useState<Array<[Timeline, Server]>>([])
@@ -155,6 +157,7 @@ function App() {
 			})
 			switchLang(res.appearance.language)
 			dayjs.locale(res.appearance.language)
+			loadTheme()
 			document.documentElement.setAttribute('lang', res.appearance.language)
 		})
 	}
