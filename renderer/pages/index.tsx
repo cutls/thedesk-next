@@ -30,11 +30,15 @@ import { Context as i18nContext } from '@/i18n'
 import { StreamingContext } from '@/streaming'
 import Search from '@/components/search/Search'
 import { listServers, listTimelines, readSettings } from 'utils/storage'
+import Draggable from 'react-draggable'
+import { set } from 'rsuite/esm/utils/dateUtils'
+import { useWindowSize } from '@/utils/useWindowSize'
 
 const { scrollLeft } = DOMHelper
 
 function App() {
   const { formatMessage } = useIntl()
+  const [width, height] = useWindowSize()
   const { start, latestTimelineRefreshed } = useContext(StreamingContext)
 
   const [servers, setServers] = useState<Array<ServerSet>>([])
@@ -44,6 +48,7 @@ function App() {
   const [searchOpened, setSearchOpened] = useState<boolean>(false)
   const [style, setStyle] = useState<CSSProperties>({})
   const [highlighted, setHighlighted] = useState<Timeline | null>(null)
+  const [composePosition, setComposePosition] = useState<[number, number]>([0, 0])
 
   const [modalState, dispatch] = useReducer(modalReducer, initialModalState)
   const spaceRef = useRef<HTMLDivElement>()
@@ -62,6 +67,9 @@ function App() {
   useEffect(() => {
     loadAppearance()
     document.addEventListener('keydown', handleKeyPress)
+    const positionStr = localStorage.getItem('composePosition') || '0,0'
+    const [x, y] = positionStr.split(',').map(p => parseInt(p, 10))
+    setComposePosition([x, y])
 
     listServers().then(res => {
       if (res.length === 0) {
@@ -106,6 +114,9 @@ function App() {
   useEffect(() => {
     loadTimelines()
   }, [latestTimelineRefreshed])
+  useEffect(() => {
+    localStorage.setItem('composePosition', composePosition.join(','))
+  }, [composePosition])
 
   useEffect(() => {
     if (!highlighted) return
@@ -125,9 +136,7 @@ function App() {
   }, [highlighted])
 
   const handleKeyPress = useCallback(async (event: KeyboardEvent) => {
-    if (event.key === 'F12') {
-      //await invoke('switch_devtools')
-    }
+    
   }, [])
 
   const loadAppearance = () => {
@@ -158,6 +167,8 @@ function App() {
       toaster.push(alert('info', formatMessage({ id: 'alert.need_auth' })), { placement: 'topStart' })
     }
   }
+  const [px, py] = composePosition
+  const draggalePosition = { x: Math.min(px >= 0 ? px : 0, width - 300), y: Math.min(py >= 0 ? py : 0, height - 300) }
 
   return (
     <div
@@ -239,9 +250,11 @@ function App() {
           enteringClassName="compose-entering"
         >
           {(props, ref) => (
-            <div {...props} ref={ref} style={{ overflow: 'hidden' }}>
-              <Compose setOpened={setComposeOpened} servers={servers} />
-            </div>
+            <Draggable handle='.draggable'  position={draggalePosition} onStop={(_e, data) => setComposePosition([data.x, data.y])}>
+              <div {...props} ref={ref} style={{ position: 'fixed', zIndex: 2 }}>
+                <Compose setOpened={setComposeOpened} servers={servers} />
+              </div>
+            </Draggable>
           )}
         </Animation.Transition>
         <Animation.Transition

@@ -2,35 +2,23 @@
   background-color: transparent;
 }
 
-@keyframes slideInCompose {
+@keyframes fadeInCompose {
   from {
-    width: 0;
-  }
-
-  50% {
-    width: 200px;
-    min-width: 200px;
+    opacity: 0;
   }
 
   to {
-    width: 320px;
-    min-width: 320px;
+    opacity: 1;
   }
 }
 
-@keyframes slideOutCompose {
+@keyframes fadeOutCompose {
   from {
-    width: 320px;
-    min-width: 320px;
-  }
-
-  50% {
-    width: 100px;
-    min-width: 100px;
+    opacity: 1;
   }
 
   to {
-    width: 0;
+    opacity: 0;
   }
 }
 
@@ -42,22 +30,21 @@
 
 
 .compose-exiting {
-  animation-name: slideOutCompose;
+  animation-name: fadeOutCompose;
 }
 
 .compose-entering {
-  animation-name: slideInCompose;
+  animation-name: fadeInCompose;
 }
 
 
 .compose-entered {
-  width: 320px;
-  flex-basis: 320px;
-  min-width: 320px;
+  opacity: 1;
 }
 
 .compose-exited {
-  width: 0;
+  opacity: 0;
+  display: none;
 }
 
 @keyframes slideInDetail {

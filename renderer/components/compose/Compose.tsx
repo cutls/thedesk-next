@@ -88,10 +88,10 @@ const Compose: React.FC<Props> = props => {
   }
 
   return (
-    <Container style={{ backgroundColor: 'var(--rs-border-secondary)', height: '100%', overflowY: 'auto' }}>
-      <Header style={{ borderBottom: '1px solid var(--rs-divider-border)', backgroundColor: 'var(--rs-state-hover-bg)' }}>
+    <Container style={{ backgroundColor: 'var(--rs-border-secondary)', overflowY: 'auto' }}>
+      <Header style={{ borderBottom: '1px solid var(--rs-divider-border)', backgroundColor: 'var(--rs-state-hover-bg)', cursor: 'move' }} className='draggable'>
         <FlexboxGrid justify="space-between" align="middle">
-          <FlexboxGrid.Item style={{ lineHeight: '53px', paddingLeft: '12px', fontSize: '18px' }}>
+          <FlexboxGrid.Item style={{ paddingLeft: '12px' }}>
             <FormattedMessage id="compose.title" />
           </FlexboxGrid.Item>
           <FlexboxGrid.Item>
@@ -102,10 +102,7 @@ const Compose: React.FC<Props> = props => {
         </FlexboxGrid>
       </Header>
       <Content style={{ height: '100%', margin: '12px', backgroundColor: 'var(--rs-border-secondary)' }}>
-        <div style={{ fontSize: '1.2em', padding: '12px 0' }}>
-          <FormattedMessage id="compose.from" />
-        </div>
-        <FlexboxGrid>
+        <FlexboxGrid style={{ marginBottom: '12px' }}>
           <FlexboxGrid.Item>
             <Dropdown renderToggle={(props, ref) => renderAccountIcon(props, ref, fromAccount)} onSelect={selectAccount}>
               {accounts.map((account, index) => (
@@ -116,9 +113,6 @@ const Compose: React.FC<Props> = props => {
             </Dropdown>
           </FlexboxGrid.Item>
         </FlexboxGrid>
-        <div style={{ fontSize: '1.2em', padding: '12px 0' }}>
-          <FormattedMessage id="compose.status.title" />
-        </div>
         {fromAccount && (
           <Status
             client={client}
@@ -127,6 +121,7 @@ const Compose: React.FC<Props> = props => {
             defaultVisibility={defaultVisibility}
             defaultNSFW={defaultNSFW}
             defaultLanguage={defaultLanguage}
+            setOpened={props.setOpened}
           />
         )}
       </Content>

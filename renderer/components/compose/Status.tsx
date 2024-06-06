@@ -60,6 +60,7 @@ type Props = {
   defaultNSFW?: boolean
   defaultLanguage?: string | null
   onClose?: () => void
+  setOpened?: (value: boolean) => void
 }
 
 type FormValue = {
@@ -108,6 +109,9 @@ const Status: React.FC<Props> = props => {
   const [loading, setLoading] = useState<boolean>(false)
   const [visibility, setVisibility] = useState<'public' | 'unlisted' | 'private' | 'direct'>('public')
   const [cw, setCW] = useState<boolean>(false)
+  const [statusForcused, setStatusFocused] = useState(false)
+  const [cwForcused, setCwFocused] = useState(false)
+  const [pollFocused, setPollFocused] = useState(false)
   const [language, setLanguage] = useState<string>('en')
   const [editMediaModal, setEditMediaModal] = useState(false)
   const [editMedia, setEditMedia] = useState<Entity.Attachment | null>(null)
@@ -291,6 +295,12 @@ const Status: React.FC<Props> = props => {
 
   const handleKeyPress = useCallback(
     (event: KeyboardEvent) => {
+      if (event.key === 'x' && !cwForcused && !statusForcused && !pollFocused) {
+        props.setOpened(false)
+      }
+      if (event.key === 'n' && !cwForcused && !statusForcused && !pollFocused) {
+        props.setOpened(true)
+      }
       if (event.ctrlKey === true && event.key === 'Enter') {
         if (
           document.activeElement === statusRef.current?.firstElementChild ||
@@ -497,7 +507,7 @@ const Status: React.FC<Props> = props => {
       const showToaster = (message: string) => toast.push(alert('info', formatMessage({ id: message })), { placement: 'topStart' })
       const ret = await nowplaying(key as 'spotify' | 'appleMusic', showToaster)
       if (!ret) return toast.push(alert('info', formatMessage({ id: 'compose.nowplaying.error' })), { placement: 'topStart' })
-      if(ret.file) coreUploader(ret.file)
+      if (ret.file) coreUploader(ret.file)
       setFormValue({
         spoiler: formValue.spoiler,
         status: ret.text
@@ -534,7 +544,7 @@ const Status: React.FC<Props> = props => {
       <Form fluid model={model} ref={formRef} onChange={setFormValue} onCheck={setFormError} formValue={formValue}>
         {cw && (
           <Form.Group controlId="spoiler">
-            <Form.Control name="spoiler" ref={cwRef} placeholder={formatMessage({ id: 'compose.spoiler.placeholder' })} />
+            <Form.Control name="spoiler" ref={cwRef} onFocus={() => setCwFocused(true)} onBlur={() => setCwFocused(false)} placeholder={formatMessage({ id: 'compose.spoiler.placeholder' })} />
           </Form.Group>
         )}
 
@@ -549,6 +559,7 @@ const Status: React.FC<Props> = props => {
             emojis={customEmojis}
             client={props.client}
             style={{ fontSize: '1em' }}
+            onFocus={() => setStatusFocused(true)} onBlur={() => setStatusFocused(false)}
           />
           {/** delay is required to fix popover position **/}
           <Whisper
@@ -565,7 +576,7 @@ const Status: React.FC<Props> = props => {
             </Button>
           </Whisper>
           {remaining !== null && (
-            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <div style={{ position: 'absolute', bottom: '4px', right: '8px', padding: 0 }}>
               {remaining >= 0 ? (
                 <span style={{ color: 'var(--rs-text-tertiary)' }}>{remaining}</span>
               ) : (
@@ -574,7 +585,7 @@ const Status: React.FC<Props> = props => {
             </div>
           )}
         </Form.Group>
-        {formValue.poll && <Form.Control name="poll" accepter={PollInputControl} fieldError={formError.poll} />}
+        {formValue.poll && <Form.Control name="poll" accepter={PollInputControl} setPollFocused={setPollFocused} fieldError={formError.poll} />}
         {formValue.scheduled_at && <Form.Control name="scheduled_at" accepter={DatePicker} format="yyyy-MM-dd HH:mm" />}
 
         <Form.Group controlId="actions" style={{ marginBottom: '4px' }}>
@@ -661,7 +672,7 @@ const Status: React.FC<Props> = props => {
                 <FormattedMessage id="compose.cancel" />
               </Button>
             )}
-            <Button appearance="primary" onClick={handleSubmit} loading={loading}>
+            <Button appearance="primary" onClick={handleSubmit} loading={loading} style={{ flexGrow: 1 }}>
               <FormattedMessage id="compose.post" />
             </Button>
           </ButtonToolbar>
@@ -703,10 +714,11 @@ const defaultPoll = () => ({
   multiple: false
 })
 
-const PollInputControl: FormControlProps<Poll, any> = ({ value, onChange, fieldError }) => {
+const PollInputControl: FormControlProps<Poll, any> = ({ value, onChange, fieldError, setPollFocused }) => {
   const { formatMessage } = useIntl()
   const [poll, setPoll] = useState<Poll>(value)
   const errors = fieldError ? fieldError.object : {}
+  const [focused, setFocused] = useState<number[]>([0, 0])
 
   const expiresList = [
     { label: formatMessage({ id: 'compose.poll.5min' }), value: 300 },
@@ -739,6 +751,9 @@ const PollInputControl: FormControlProps<Poll, any> = ({ value, onChange, fieldE
     const next = Object.assign({}, current, {
       options: [...current.options, '']
     })
+    const currentFocused = focused
+    currentFocused.push(0)
+    setFocused(currentFocused)
     handleChangePoll(next)
   }
 
@@ -747,7 +762,16 @@ const PollInputControl: FormControlProps<Poll, any> = ({ value, onChange, fieldE
     const next = Object.assign({}, current, {
       options: current.options.filter((_, i) => i !== index)
     })
+    const currentFocused = focused
+    setFocused(currentFocused.splice(index, 1))
     handleChangePoll(next)
+  }
+  const setFocusedOption = (index: number, isFocused: boolean) => {
+    const currentFocused = focused
+    if (isFocused) currentFocused[index] = 1
+    if (!isFocused) currentFocused[index] = 0
+    setFocused(currentFocused)
+    setPollFocused(currentFocused.findIndex(v => v === 1) !== -1)
   }
 
   return (
@@ -758,7 +782,7 @@ const PollInputControl: FormControlProps<Poll, any> = ({ value, onChange, fieldE
             <FlexboxGrid align="middle">
               <FlexboxGrid.Item>{poll.multiple ? <Checkbox disabled /> : <Radio />}</FlexboxGrid.Item>
               <FlexboxGrid.Item>
-                <Input value={option} onChange={value => setOption(value, index)} />
+                <Input value={option} onChange={value => setOption(value, index)} onFocus={() => setFocusedOption(index, true)} onBlur={() => setFocusedOption(index, false)} />
               </FlexboxGrid.Item>
               <FlexboxGrid.Item>
                 <Button appearance="link" onClick={() => removeOption(index)}>
