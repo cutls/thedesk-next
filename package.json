@@ -24,6 +24,7 @@
 		"megalodon": "10.0.1",
 		"parse-link-header": "^2.0.0",
 		"react": "^18.2.0",
+		"react-blurhash": "^0.3.0",
 		"react-dom": "^18.2.0",
 		"react-draggable": "^4.4.6",
 		"react-icons": "^5.2.1",
@@ -49,6 +50,9 @@
 	},
 	"build": {
 		"asar": true,
-		"files": ["main", "renderer/out"]
+		"files": [
+			"main",
+			"renderer/out"
+		]
 	}
 }

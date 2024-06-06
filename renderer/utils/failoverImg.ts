@@ -4,9 +4,8 @@ const failover =
 const failoverImg = (url: string | null) => {
 	if (url) {
 		return url
-	} else {
-		return failover
 	}
+	return failover
 }
 
 export default failoverImg

@@ -59,7 +59,7 @@ function App() {
 	const { switchLang } = useContext(i18nContext)
 
 	const loadTimelines = async () => {
-		allClose()
+		if (latestTimelineRefreshed > 0) allClose()
 		const timelines = await listTimelines()
 		setTimelines(timelines)
 		console.log('start')

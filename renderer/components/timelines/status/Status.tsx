@@ -74,6 +74,7 @@ const Status: React.FC<Props> = (props) => {
 			if (account) {
 				props.setAccountDetail(account.id, props.server.id, props.account?.id)
 			} else {
+				// biome-ignore lint/style/useConst: <explanation>
 				let confirmToaster: any
 				confirmToaster = toaster.push(
 					notification(
@@ -156,7 +157,7 @@ const Status: React.FC<Props> = (props) => {
 					/>
 				</div>
 				{/** status **/}
-				<div style={{ paddingRight: '8px', width: `calc(100% - 56px)`, boxSizing: 'border-box' }}>
+				<div style={{ paddingRight: '8px', width: 'calc(100% - 56px)', boxSizing: 'border-box' }}>
 					<div className="metadata">
 						<FlexboxGrid>
 							{/** account name **/}
@@ -184,7 +185,7 @@ const Status: React.FC<Props> = (props) => {
 									<Button appearance="subtle" size="sm" key={e.name} onClick={() => emojiClicked(e)} active={e.me} disabled={e.name.includes('@') && props.server.sns === 'firefish'} title={e.name}>
 										{e.url ? (
 											<>
-												<img src={e.url} style={{ height: '20px' }} /> <span style={{ marginLeft: '0.2em' }}>{e.count}</span>
+												<img src={e.url} style={{ height: '20px' }} alt={e.name} /> <span style={{ marginLeft: '0.2em' }}>{e.count}</span>
 											</>
 										) : (
 											<span>
@@ -225,11 +226,8 @@ const Status: React.FC<Props> = (props) => {
 }
 
 const originalStatus = (status: Entity.Status) => {
-	if (status.reblog && !status.quote) {
-		return status.reblog
-	} else {
-		return status
-	}
+	if (status.reblog && !status.quote) return status.reblog
+	return status
 }
 
 const pinnedHeader = (pinned?: boolean) => {
@@ -253,9 +251,8 @@ const pinnedHeader = (pinned?: boolean) => {
 				</div>
 			</div>
 		)
-	} else {
-		return null
 	}
+	return null
 }
 
 const rebloggedHeader = (status: Entity.Status) => {
@@ -279,9 +276,8 @@ const rebloggedHeader = (status: Entity.Status) => {
 				</div>
 			</div>
 		)
-	} else {
-		return null
 	}
+	return null
 }
 
 async function searchAccount(account: ParsedAccount, status: Entity.Status, client: MegalodonInterface, server: Server) {

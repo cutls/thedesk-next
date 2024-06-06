@@ -7,6 +7,7 @@ export type Timeline = {
 	list_id: string | null
 	column_width: ColumnWidth
 	color?: Color
+	tts?: boolean
 }
 export type AddTimeline = {
 	kind: TimelineKind

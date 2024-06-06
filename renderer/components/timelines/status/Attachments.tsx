@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react'
 import { BsBoxArrowUpRight, BsCaretRightFill, BsEyeSlash, BsVolumeUp } from 'react-icons/bs'
 import { FormattedMessage } from 'react-intl'
 import { Button, IconButton } from 'rsuite'
+import { Blurhash } from 'react-blurhash'
 
 type Props = {
 	attachments: Array<Entity.Attachment>
@@ -25,13 +26,7 @@ const Attachments: React.FC<Props> = (props) => {
 
 	return (
 		<div style={{ display: 'flex', flexWrap: 'wrap' }}>
-			{sensitive && (
-				<Button appearance="default" block style={{ marginTop: '0.4em' }} onClick={changeSensitive}>
-					<FormattedMessage id="timeline.status.media_hidden" />
-				</Button>
-			)}
-
-			{!sensitive && <AttachmentBox attachments={props.attachments} openMedia={props.openMedia} changeSensitive={changeSensitive} columnWidth={props.columnWidth} />}
+			<AttachmentBox attachments={props.attachments} openMedia={props.openMedia} sensitive={sensitive} changeSensitive={changeSensitive} columnWidth={props.columnWidth} />
 		</div>
 	)
 }
@@ -40,6 +35,7 @@ type AttachmentBoxProps = {
 	attachments: Array<Entity.Attachment>
 	openMedia: (media: Array<Entity.Attachment>, index: number) => void
 	changeSensitive: () => void
+	sensitive: boolean
 	columnWidth: ColumnWidth
 }
 
@@ -70,8 +66,8 @@ function AttachmentBox(props: AttachmentBoxProps) {
 				{props.attachments
 					.filter((_, index) => index < max)
 					.map((media, index) => (
-						<div key={index} style={{ margin: '4px' }}>
-							<Attachment media={media} changeSensitive={props.changeSensitive} openMedia={() => props.openMedia(props.attachments, index)} />
+						<div key={media.id} style={{ margin: '4px' }}>
+							<Attachment media={media} sensitive={props.sensitive} changeSensitive={props.changeSensitive} openMedia={() => props.openMedia(props.attachments, index)} />
 						</div>
 					))}
 				{remains > 0 && (
@@ -108,20 +104,19 @@ type AttachmentProps = {
 	media: Entity.Attachment
 	openMedia: (media: Entity.Attachment) => void
 	changeSensitive: () => void
+	sensitive: boolean
 }
 
 const Attachment: React.FC<AttachmentProps> = (props) => {
-	const { media, changeSensitive } = props
+	const { media, changeSensitive, sensitive } = props
 
 	const externalWindow = async (url: string) => {
 		open(url)
-		//[tauri]
-		//await invoke('open_media', { mediaUrl: url })
 	}
 
 	return (
 		<div style={{ position: 'relative' }}>
-			<IconButton icon={<Icon as={BsEyeSlash} />} size="sm" appearance="subtle" onClick={changeSensitive} style={{ position: 'absolute', top: '4px', left: '4px' }} />
+			<IconButton icon={<Icon as={BsEyeSlash} />} size="sm" appearance="subtle" onClick={changeSensitive} style={{ position: 'absolute', top: '4px', left: '4px', zIndex: 2 }} />
 			<IconButton icon={<Icon as={BsBoxArrowUpRight} />} size="sm" appearance="subtle" onClick={() => externalWindow(media.url)} style={{ position: 'absolute', top: '4px', right: '4px' }} />
 			{(media.type === 'gifv' || media.type === 'video') && (
 				<IconButton icon={<Icon as={BsCaretRightFill} />} circle onClick={() => props.openMedia(media)} style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }} />
@@ -130,15 +125,28 @@ const Attachment: React.FC<AttachmentProps> = (props) => {
 				<IconButton icon={<Icon as={BsVolumeUp} />} circle onClick={() => props.openMedia(media)} style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }} />
 			)}
 
-			<Image
-				width={128}
-				height={128}
-				src={previewImage(media)}
-				alt={media.description ? media.description : media.id}
-				title={media.description ? media.description : media.id}
-				onClick={() => props.openMedia(media)}
-				style={{ objectFit: 'cover', cursor: 'pointer', borderRadius: '4px' }}
-			/>
+			{sensitive ?
+				<>
+					{media.blurhash ? <Blurhash
+						hash={media.blurhash ? media.blurhash : ''}
+						width={128}
+						height={128}
+						resolutionX={32}
+						resolutionY={32}
+						punch={1}
+					/> : <div style={{ width: 128, height: 128, backgroundColor: '#f0f0f0', justifyContent: 'center', display: 'flex', alignItems: 'center' }}>
+						<div style={{ color: 'black', fontSize: '1.2rem' }}>CW</div>
+					</div>}
+				</> :
+				<Image
+					width={128}
+					height={128}
+					src={previewImage(media)}
+					alt={media.description ? media.description : media.id}
+					title={media.description ? media.description : media.id}
+					onClick={() => props.openMedia(media)}
+					style={{ objectFit: 'cover', cursor: 'pointer' }}
+				/>}
 		</div>
 	)
 }
@@ -153,9 +161,8 @@ const previewImage = (media: Entity.Attachment) => {
 			default:
 				return media.preview_url
 		}
-	} else {
-		return failoverImg(null)
 	}
+	return failoverImg(null)
 }
 
 export default Attachments

@@ -32,6 +32,7 @@
   --rs-listbox-option-selected-text: var(--rs-green-10);
   --rs-state-focus-shadow: 0 0 0 2px var(--rs-green-500);
   --rs-input-focus-border: var(--rs-green-500);
+  --rs-navs-selected: var(--rs-green-500);
 }
 
 body {

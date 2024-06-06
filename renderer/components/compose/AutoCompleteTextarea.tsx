@@ -166,7 +166,7 @@ const AutoCompleteTextarea: React.ForwardRefRenderFunction<HTMLTextAreaElement, 
 				onOpen={() => setOpened(true)}
 				onClose={() => setOpened(false)}
 			>
-				<div></div>
+				<div />
 			</Whisper>
 		</>
 	)
@@ -194,7 +194,7 @@ const AutoCompleteList = forwardRef<HTMLDivElement, AutoCompleteListProps>((prop
 			<ul style={{ listStyle: 'none', padding: 0, fontSize: '1.2em' }}>
 				{data.map((d, index) => (
 					<li
-						key={index}
+						key={d.name}
 						onMouseOver={() => props.setHighlight(index)}
 						onClick={() => select(index)}
 						style={{ padding: '4px', backgroundColor: highlight === index ? 'var(--rs-radio-tile-checked-disabled-color)' : 'inherit' }}
@@ -202,7 +202,7 @@ const AutoCompleteList = forwardRef<HTMLDivElement, AutoCompleteListProps>((prop
 						{d.code && <span style={{ paddingRight: '4px' }}>{d.code}</span>}
 						{d.icon && (
 							<span style={{ paddingRight: '4px' }}>
-								<img src={d.icon} style={{ width: '1.2em' }} />
+								<img src={d.icon} alt="" style={{ width: '1.2em' }} />
 							</span>
 						)}
 						<span>{d.name}</span>
@@ -232,11 +232,8 @@ const textAtCursorMatchesToken = (str: string, caretPosition: number): [number |
 
 	word = word.trim().toLowerCase()
 
-	if (word.length > 0) {
-		return [left + 1, word]
-	} else {
-		return [null, null]
-	}
+	if (word.length > 0) return [left + 1, word]
+	return [null, null]
 }
 
 export default AutoCompleteTextarea

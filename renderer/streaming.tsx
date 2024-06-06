@@ -1,19 +1,27 @@
 import generator, { type WebSocketInterface, detector } from 'megalodon'
-import { createContext, useState } from 'react'
+import { createContext, useEffect, useState } from 'react'
 import { getAccount, listServers, listTimelines } from './utils/storage'
+import { set } from 'rsuite/esm/utils/dateUtils'
 
 export const StreamingContext = createContext({
-	start: async () => {},
-	listen: ((channel: string, callback: any) => null) as <T>(channel: string, callback: (a: { payload: T }) => void) => void | null,
-	allClose: () => {},
-	timelineRefresh: () => {},
+	start: async () => { },
+	listen: ((channel: string, callback: any, tts?: boolean) => null) as <T>(channel: string, callback: (a: { payload: T }, tts?: boolean) => void) => void | null,
+	allClose: () => { },
+	timelineRefresh: () => { },
 	latestTimelineRefreshed: new Date().getTime(),
 })
-
+const stripForVoice = (html: string) => {
+	const div = document.createElement("div")
+	div.innerHTML = html
+	const text = div.textContent || div.innerText || ""
+	const protomatch = /(https?|ftp):\/\//g
+	const b = text.replace(protomatch, '').replace(/:[a-zA-Z0-9_]:/g, '')
+	return b
+}
 export const StreamingProviderWrapper: React.FC = (props) => {
 	let streamings: WebSocketInterface[] = []
 	const userStreamings: WebSocketInterface[] = []
-	const [latestTimelineRefreshed, setLatestTimelineRefreshed] = useState(new Date().getTime())
+	const [latestTimelineRefreshed, setLatestTimelineRefreshed] = useState(0)
 	const [streamingState, setStreamingState] = useState<WebSocketInterface[]>([])
 	const start = async () => {
 		const timelines = await listTimelines()
@@ -21,7 +29,7 @@ export const StreamingProviderWrapper: React.FC = (props) => {
 			const accountId = server.account_id
 			const [account] = await getAccount({ id: accountId })
 			const sns = await detector(server.base_url)
-			const client = generator(sns, server.base_url, account.access_token)
+			const client = generator(sns, server.base_url, account?.access_token)
 			let streaming: WebSocketInterface
 			if (timeline.kind === 'public') streaming = await client.publicStreaming()
 			if (timeline.kind === 'local') streaming = await client.localStreaming()
@@ -41,10 +49,9 @@ export const StreamingProviderWrapper: React.FC = (props) => {
 			userStreamings.push(streaming)
 		}
 	}
-	const listen = async (channel: string, callback: any) => {
+	const listen = async (channel: string, callback: any, tts?: boolean) => {
 		const useStreaming = streamings
 		while (useStreaming.length === 0) {
-			console.log('waiting')
 			await new Promise((resolve) => setTimeout(resolve, 1000))
 		}
 		if (channel === 'receive-timeline-status') {
@@ -52,6 +59,13 @@ export const StreamingProviderWrapper: React.FC = (props) => {
 				const streaming = useStreaming[i]
 				if (!streaming) continue
 				streaming.on('update', (status) => {
+					if (tts) {
+						const html = status.content
+						const b = stripForVoice(html)
+						const synthApi = window.speechSynthesis
+						const utter = new SpeechSynthesisUtterance(b)
+						synthApi.speak(utter)
+					}
 					callback({ payload: { status: status, timeline_id: i + 1 } })
 				})
 			}
@@ -91,6 +105,13 @@ export const StreamingProviderWrapper: React.FC = (props) => {
 				const streaming = userStreamings[i]
 				if (!streaming) continue
 				streaming.on('update', (status) => {
+					if (tts) {
+						const html = status.content
+						const b = stripForVoice(html)
+						const synthApi = window.speechSynthesis
+						const utter = new SpeechSynthesisUtterance(b)
+						synthApi.speak(utter)
+					}
 					callback({ payload: { status: status, server_id: i + 1 } })
 				})
 			}

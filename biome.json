@@ -13,7 +13,6 @@
 		"enabled": true,
 		"rules": {
 			"recommended": true,
-			"style": {},
 			"correctness": {
 				"useExhaustiveDependencies": "off"
 			},
@@ -26,6 +25,13 @@
 			},
 			"performance": {
 				"noDelete": "off"
+			},
+			"security": {
+				"noDangerouslySetInnerHtml": "off"
+			},
+			"a11y": {
+				"useKeyWithClickEvents": "off",
+				"useKeyWithMouseEvents": "off"
 			}
 		}
 	},
@@ -34,7 +40,6 @@
 			"enabled": true,
 			"quoteStyle": "single",
 			"jsxQuoteStyle": "double",
-			"trailingComma": "all",
 			"semicolons": "asNeeded",
 			"arrowParentheses": "always",
 			"indentStyle": "tab",

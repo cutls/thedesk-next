@@ -161,3 +161,12 @@ export async function updateAccountColor({ id, color }: { id: number; color: str
 	localStorage.setItem('accounts', JSON.stringify(accounts))
 	return
 }
+export async function updateColumnTts({ id, toggle }: { id: number; toggle: boolean }) {
+	const timelinesStr = localStorage.getItem('timelines')
+	const timelines: Array<Timeline> = JSON.parse(timelinesStr || '[]')
+	const timeline = timelines.find((timeline) => timeline.id === id)
+	if (!timeline) return
+	timeline.tts = toggle
+	localStorage.setItem('timelines', JSON.stringify(timelines))
+	return
+}

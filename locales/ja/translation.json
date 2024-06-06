@@ -176,7 +176,10 @@
 			"unpin": "ピン留め解除",
 			"column_width": "カラムの幅",
 			"color": "色変更",
-			"color_default": "デフォルト"
+			"color_default": "デフォルト",
+			"do": "する",
+			"not_do": "しない",
+			"tts": "タイムラインの読み上げ"
 		},
 		"mark_as_read": "全て既読にする",
 		"notification": {

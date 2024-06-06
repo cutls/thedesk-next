@@ -27,7 +27,7 @@ import FailoverImg from '@/utils/failoverImg'
 import timelineName from '@/utils/timelineName'
 import { useRouter } from 'next/router'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { getAccount, removeTimeline, updateColumnColor, updateColumnOrder, updateColumnWidth } from 'utils/storage'
+import { getAccount, removeTimeline, updateColumnColor, updateColumnOrder, updateColumnTts, updateColumnWidth } from 'utils/storage'
 import Status from './status/Status'
 
 type Props = {
@@ -105,7 +105,7 @@ export default function TimelineColumn(props: Props) {
 				}
 
 				setStatuses((last) => appendStatus(last, ev.payload.status))
-			})
+			}, props.timeline.tts)
 
 			listen<ReceiveHomeStatusUpdatePayload>('receive-home-status-update', (ev) => {
 				if (ev.payload.server_id !== props.server.id) {
@@ -135,7 +135,7 @@ export default function TimelineColumn(props: Props) {
 				}
 
 				setStatuses((last) => appendStatus(last, ev.payload.status))
-			})
+			}, props.timeline.tts)
 
 			listen<ReceiveTimelineStatusUpdatePayload>('receive-timeline-status-update', (ev) => {
 				if (ev.payload.timeline_id !== props.timeline.id) {
@@ -535,6 +535,12 @@ const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: ()
 		props.close()
 	}
 
+	const updateColumnTtsFn = async (timeline: Timeline, tts: boolean) => {
+		await updateColumnTts({ id: timeline.id, toggle: tts })
+		timelineRefresh()
+		props.close()
+	}
+
 	return (
 		<Popover ref={ref} style={{ opacity: 1 }}>
 			<div style={{ display: 'flex', flexDirection: 'column', width: '220px' }}>
@@ -548,9 +554,7 @@ const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: ()
 					<Radio value="lg">lg</Radio>
 				</RadioGroup>
 				<Divider style={{ margin: '8px 0' }} />
-				<span style={{ textAlign: 'center' }}>
-					<FormattedMessage id="timeline.settings.color" />
-				</span>
+				<FormattedMessage id="timeline.settings.color" />
 				<FlexboxGrid justify="center">
 					<Stack wrap spacing={6} style={{ maxWidth: '250px', padding: '5px' }}>
 						<Button style={{ textTransform: 'capitalize', width: '30px', height: '30px' }} onClick={() => updateColumnColorFn(props.timeline, 'unset')} />
@@ -559,6 +563,14 @@ const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: ()
 						))}
 					</Stack>
 				</FlexboxGrid>
+				<Divider style={{ margin: '8px 0' }} />
+				<label>
+					<FormattedMessage id="timeline.settings.tts" />
+				</label>
+				<RadioGroup inline value={props.timeline?.tts?.toString() || 'false'} onChange={(value) => updateColumnTtsFn(props.timeline, value === 'true')}>
+					<Radio value="false"><FormattedMessage id="timeline.settings.not_do" /></Radio>
+					<Radio value="true"><FormattedMessage id="timeline.settings.do" /></Radio>
+				</RadioGroup>
 				<Divider style={{ margin: '8px 0' }} />
 				<FlexboxGrid justify="space-between">
 					<FlexboxGrid.Item>

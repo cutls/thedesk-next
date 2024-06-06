@@ -224,7 +224,7 @@ const Profile: React.FC<Props> = (props) => {
 						</div>
 					)}
 					<div className="profile-header-image" style={{ width: '100%', backgroundColor: 'var(--rs-body)' }}>
-						<img src={user.header} alt="header image" style={{ objectFit: 'cover', width: '100%', height: '146px' }} />
+						<img src={user.header} alt={`header of ${user.display_name}`} style={{ objectFit: 'cover', width: '100%', height: '146px' }} />
 					</div>
 					<div className="profile-header-body" style={{ padding: '0 20px' }}>
 						<FlexboxGrid justify="space-between" align="bottom" style={{ marginTop: '-50px' }}>
@@ -268,7 +268,7 @@ const Profile: React.FC<Props> = (props) => {
 							</FlexboxGrid.Item>
 						</FlexboxGrid>
 						<div className="username" style={{ margin: '16px 0' }}>
-							<span style={{ fontSize: '1.2em', fontWeight: 'bold', display: 'block' }} dangerouslySetInnerHTML={{ __html: emojify(user.display_name, user.emojis) }}></span>
+							<span style={{ fontSize: '1.2em', fontWeight: 'bold', display: 'block' }} dangerouslySetInnerHTML={{ __html: emojify(user.display_name, user.emojis) }} />
 							<span style={{ display: 'block', color: 'var(--rs-text-secondary)' }}>@{user.acct}</span>
 						</div>
 						<div className="bio">
@@ -286,7 +286,7 @@ const Profile: React.FC<Props> = (props) => {
 							onClick={onClick}
 						>
 							{user.fields.map((data, index) => (
-								<dl key={index} style={{ padding: '8px 16px', margin: 0, borderBottom: '1px solid var(--rs-bg-card)' }}>
+								<dl key={data.name} style={{ padding: '8px 16px', margin: 0, borderBottom: '1px solid var(--rs-bg-card)' }}>
 									<dt>{data.name}</dt>
 									<dd dangerouslySetInnerHTML={{ __html: emojify(data.value, user.emojis) }} style={{ margin: 0 }} />
 								</dl>
@@ -416,11 +416,11 @@ const profileMenu = ({ className, left, top, onClose, client, myself, user, rela
 const precision = (num: number): string => {
 	if (num > 1000) {
 		return `${(num / 1000).toPrecision(3)}K`
-	} else if (num > 1000000) {
-		return `${(num / 1000000).toPrecision(3)}M`
-	} else {
-		return num.toString()
 	}
+	if (num > 1000000) {
+		return `${(num / 1000000).toPrecision(3)}M`
+	}
+	return num.toString()
 }
 
 type FollowButtonProps = {
@@ -436,7 +436,7 @@ const FollowButton: React.FC<FollowButtonProps> = (props) => {
 	const [followMessage, setFollowMessage] = useState(formatMessage({ id: 'detail.profile.not_following' }))
 	const [followColor, setFollowColor] = useState<'default' | 'primary'>('default')
 	const [unfollowMessage, setUnfollowMessage] = useState(formatMessage({ id: 'detail.profile.following' }))
-	const [unfollowColor, setUnfollowColor] = useState<'blue' | 'red'>('blue')
+	const [unfollowColor, setUnfollowColor] = useState<'green' | 'red'>('green')
 
 	if (!props.relationship) {
 		return null
@@ -456,33 +456,33 @@ const FollowButton: React.FC<FollowButtonProps> = (props) => {
 				}}
 				onMouseLeave={() => {
 					setUnfollowMessage(formatMessage({ id: 'detail.profile.following' }))
-					setUnfollowColor('blue')
+					setUnfollowColor('green')
 				}}
 				block
 			>
 				{unfollowMessage}
 			</Button>
 		)
-	} else if (props.relationship.requested) {
-		return <Button appearance="primary">{formatMessage({ id: 'detail.profile.follow_requested' })}</Button>
-	} else {
-		return (
-			<Button
-				appearance={followColor}
-				onClick={props.follow}
-				onMouseEnter={() => {
-					setFollowMessage(formatMessage({ id: 'detail.profile.follow' }))
-					setFollowColor('primary')
-				}}
-				onMouseLeave={() => {
-					setFollowMessage(formatMessage({ id: 'detail.profile.not_following' }))
-					setFollowColor('default')
-				}}
-			>
-				{followMessage}
-			</Button>
-		)
 	}
+	if (props.relationship.requested) {
+		return <Button appearance="primary">{formatMessage({ id: 'detail.profile.follow_requested' })}</Button>
+	}
+	return (
+		<Button
+			appearance={followColor}
+			onClick={props.follow}
+			onMouseEnter={() => {
+				setFollowMessage(formatMessage({ id: 'detail.profile.follow' }))
+				setFollowColor('primary')
+			}}
+			onMouseLeave={() => {
+				setFollowMessage(formatMessage({ id: 'detail.profile.not_following' }))
+				setFollowColor('default')
+			}}
+		>
+			{followMessage}
+		</Button>
+	)
 }
 
 export default Profile

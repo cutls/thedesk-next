@@ -139,7 +139,7 @@ const Navigator: React.FC<NavigatorProps> = (props): ReactElement => {
 						</div>
 					)}
 					{servers.map((server, i) => (
-						<div key={server.account.id} style={{ marginTop: '5px' }}>
+						<div key={server.account?.id || server.server.id} style={{ marginTop: '5px' }}>
 							<Whisper
 								placement="right"
 								controlId="control-id-context-menu"
@@ -165,7 +165,7 @@ const Navigator: React.FC<NavigatorProps> = (props): ReactElement => {
 								<Button
 									appearance="link"
 									size="xs"
-									style={{ padding: '4px', borderColor: server.account.color || 'transparent', borderWidth: '2px', borderStyle: 'solid' }}
+									style={{ padding: '4px', borderColor: server.account?.color || 'transparent', borderWidth: '2px', borderStyle: 'solid' }}
 									title={server.account ? `${server.account.username}@${server.server.domain}` : server.server.domain}
 								>
 									<Badge content={!!props.unreads.find((u) => u.server_id === server.server.id && u.count > 0)}>
