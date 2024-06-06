@@ -1,6 +1,6 @@
 {
 	"private": true,
-	"main": "main/index.js",
+	"main": "main-build/index.js",
 	"productName": "TheDesk-next",
 	"scripts": {
 		"clean": "rimraf dist main renderer/out renderer/.next",
