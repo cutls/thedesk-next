@@ -1,3 +1,5 @@
+import type { Color } from './timeline'
+
 export type Account = {
 	id: number
 	username: string
@@ -8,4 +10,5 @@ export type Account = {
 	access_token: string
 	refresh_token: string
 	usual: boolean
+	color?: Color
 }

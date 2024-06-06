@@ -1,9 +1,6 @@
 import generator, { type WebSocketInterface, detector } from 'megalodon'
-import { createContext, useEffect, useState } from 'react'
-import { Account } from './entities/account'
-import { Server } from './entities/server'
-import { Timeline } from './entities/timeline'
-import { getAccount, getServer, listAccounts, listServers, listTimelines } from './utils/storage'
+import { createContext, useState } from 'react'
+import { getAccount, listServers, listTimelines } from './utils/storage'
 
 export const StreamingContext = createContext({
 	start: async () => {},
@@ -14,9 +11,10 @@ export const StreamingContext = createContext({
 })
 
 export const StreamingProviderWrapper: React.FC = (props) => {
-	const streamings: WebSocketInterface[] = []
+	let streamings: WebSocketInterface[] = []
 	const userStreamings: WebSocketInterface[] = []
 	const [latestTimelineRefreshed, setLatestTimelineRefreshed] = useState(new Date().getTime())
+	const [streamingState, setStreamingState] = useState<WebSocketInterface[]>([])
 	const start = async () => {
 		const timelines = await listTimelines()
 		for (const [timeline, server] of timelines) {
@@ -32,6 +30,7 @@ export const StreamingProviderWrapper: React.FC = (props) => {
 			if (timeline.kind === 'tag') streaming = await client.tagStreaming(timeline.name)
 			streamings.push(streaming)
 		}
+		setStreamingState(streamings)
 
 		const servers = await listServers()
 		for (const [server, account] of servers) {
@@ -43,12 +42,14 @@ export const StreamingProviderWrapper: React.FC = (props) => {
 		}
 	}
 	const listen = async (channel: string, callback: any) => {
-		while (streamings.length === 0) {
+		const useStreaming = streamings
+		while (useStreaming.length === 0) {
+			console.log('waiting')
 			await new Promise((resolve) => setTimeout(resolve, 1000))
 		}
 		if (channel === 'receive-timeline-status') {
-			for (let i = 0; i < streamings.length; i++) {
-				const streaming = streamings[i]
+			for (let i = 0; i < useStreaming.length; i++) {
+				const streaming = useStreaming[i]
 				if (!streaming) continue
 				streaming.on('update', (status) => {
 					callback({ payload: { status: status, timeline_id: i + 1 } })
@@ -56,8 +57,8 @@ export const StreamingProviderWrapper: React.FC = (props) => {
 			}
 		}
 		if (channel === 'receive-timeline-conversation') {
-			for (let i = 0; i < streamings.length; i++) {
-				const streaming = streamings[i]
+			for (let i = 0; i < useStreaming.length; i++) {
+				const streaming = useStreaming[i]
 				if (!streaming) continue
 				streaming.on('conversation', (status) => {
 					callback({ payload: { conversation: status, timeline_id: i + 1 } })
@@ -65,8 +66,8 @@ export const StreamingProviderWrapper: React.FC = (props) => {
 			}
 		}
 		if (channel === 'receive-timeline-status-update') {
-			for (let i = 0; i < streamings.length; i++) {
-				const streaming = streamings[i]
+			for (let i = 0; i < useStreaming.length; i++) {
+				const streaming = useStreaming[i]
 				if (!streaming) continue
 				streaming.on('status.update', (status) => {
 					callback({ payload: { status: status, timeline_id: i + 1 } })
@@ -74,8 +75,8 @@ export const StreamingProviderWrapper: React.FC = (props) => {
 			}
 		}
 		if (channel === 'delete-timeline-status') {
-			for (let i = 0; i < streamings.length; i++) {
-				const streaming = streamings[i]
+			for (let i = 0; i < useStreaming.length; i++) {
+				const streaming = useStreaming[i]
 				if (!streaming) continue
 				streaming.on('delete', (id) => {
 					callback({ payload: { status_id: id, timeline_id: i + 1 } })
@@ -126,8 +127,14 @@ export const StreamingProviderWrapper: React.FC = (props) => {
 			for (const streaming of streamings) streaming.removeListener(channel, callback)
 		}
 	}
-	const allClose = () => {
-		for (const streaming of streamings) streaming.stop()
+
+	const allClose = async () => {
+		console.log('allClosed', streamingState)
+		if (streamingState.length === 0) return
+		for (const streaming of streamingState) streaming?.removeAllListeners()
+		for (const streaming of streamingState) streaming?.stop()
+		streamings = []
+		setStreamingState([])
 	}
 	const timelineRefresh = () => {
 		setLatestTimelineRefreshed(new Date().getTime())

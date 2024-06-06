@@ -67,7 +67,9 @@
 			"remove": "削除",
 			"announcements": "お知らせ",
 			"lists": "リスト",
-			"followed_hashtags": "フォロー中のハッシュタグ"
+			"followed_hashtags": "フォロー中のハッシュタグ",
+			"notifications": "通知を表示",
+			"color": "アカウントの色"
 		}
 	},
 	"servers": {
@@ -172,7 +174,9 @@
 		"settings": {
 			"title": "設定",
 			"unpin": "ピン留め解除",
-			"column_width": "カラムの幅"
+			"column_width": "カラムの幅",
+			"color": "色変更",
+			"color_default": "デフォルト"
 		},
 		"mark_as_read": "全て既読にする",
 		"notification": {

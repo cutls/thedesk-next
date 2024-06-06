@@ -1,5 +1,6 @@
 import type { ColumnWidth } from '@/entities/timeline'
 import failoverImg from '@/utils/failoverImg'
+import { open } from '@/utils/openBrowser'
 import { Icon } from '@rsuite/icons'
 import type { Entity } from 'megalodon'
 import Image from 'next/image'
@@ -113,6 +114,7 @@ const Attachment: React.FC<AttachmentProps> = (props) => {
 	const { media, changeSensitive } = props
 
 	const externalWindow = async (url: string) => {
+		open(url)
 		//[tauri]
 		//await invoke('open_media', { mediaUrl: url })
 	}

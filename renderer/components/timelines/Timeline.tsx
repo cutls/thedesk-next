@@ -1,10 +1,10 @@
 import { Icon } from '@rsuite/icons'
 import generator, { type Entity, type MegalodonInterface } from 'megalodon'
 import parse from 'parse-link-header'
-import { forwardRef, useCallback, useContext, useEffect, useRef, useState } from 'react'
+import { type CSSProperties, forwardRef, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { BsArrowClockwise, BsBookmark, BsChevronLeft, BsChevronRight, BsGlobe2, BsHash, BsHouseDoor, BsListUl, BsPeople, BsSliders, BsStar, BsX } from 'react-icons/bs'
 import { Virtuoso } from 'react-virtuoso'
-import { Avatar, Button, Container, Content, Divider, FlexboxGrid, Header, List, Loader, Popover, Radio, RadioGroup, Whisper, useToaster } from 'rsuite'
+import { Avatar, Button, Container, Content, Divider, Dropdown, FlexboxGrid, Header, List, Loader, Popover, Radio, RadioGroup, Stack, Whisper, useToaster } from 'rsuite'
 
 import alert from '@/components/utils/alert'
 import { TIMELINE_MAX_STATUSES, TIMELINE_STATUSES_COUNT } from '@/defaults'
@@ -12,7 +12,7 @@ import type { Account } from '@/entities/account'
 import type { CustomEmojiCategory } from '@/entities/emoji'
 import { Instruction } from '@/entities/instruction'
 import type { Server } from '@/entities/server'
-import { type Timeline, type TimelineKind, columnWidth } from '@/entities/timeline'
+import { Color, type Timeline, type TimelineKind, colorList, columnWidth } from '@/entities/timeline'
 import type {
 	DeleteHomeStatusPayload,
 	DeleteTimelineStatusPayload,
@@ -27,7 +27,7 @@ import FailoverImg from '@/utils/failoverImg'
 import timelineName from '@/utils/timelineName'
 import { useRouter } from 'next/router'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { getAccount, removeTimeline } from 'utils/storage'
+import { getAccount, removeTimeline, updateColumnColor, updateColumnOrder, updateColumnWidth } from 'utils/storage'
 import Status from './status/Status'
 
 type Props = {
@@ -154,7 +154,7 @@ export default function TimelineColumn(props: Props) {
 				setStatuses((last) => deleteStatus(last, ev.payload.status_id))
 			})
 		}
-	}, [])
+	}, [props.timeline])
 
 	useEffect(() => {
 		if (!replyOpened.current) {
@@ -273,15 +273,16 @@ export default function TimelineColumn(props: Props) {
 		const renew = current.map((s) => {
 			if (s.id === status.id) {
 				return status
-			} else if (s.reblog && s.reblog.id === status.id) {
+			} if (s.reblog && s.reblog.id === status.id) {
 				return Object.assign({}, s, { reblog: status })
-			} else if (status.reblog && s.id === status.reblog.id) {
-				return status.reblog
-			} else if (status.reblog && s.reblog && s.reblog.id === status.reblog.id) {
-				return Object.assign({}, s, { reblog: status.reblog })
-			} else {
-				return s
 			}
+			if (status.reblog && s.id === status.reblog.id) {
+				return status.reblog
+			}
+			if (status.reblog && s.reblog && s.reblog.id === status.reblog.id) {
+				return Object.assign({}, s, { reblog: status.reblog })
+			}
+			return s
 		})
 		return renew
 	}
@@ -357,11 +358,17 @@ export default function TimelineColumn(props: Props) {
 			behavior: 'smooth',
 		})
 	}
+	const headerStyle: CSSProperties = {
+		backgroundColor: props.timeline.color ? `var(--rs-color-${props.timeline.color})` : 'var(--rs-color-card)',
+		borderBottomWidth: '3px',
+		borderBottomStyle: 'solid',
+		borderBottomColor: account && account.color ? `var(--rs-color-${account.color})` : 'transparent',
+	}
 
 	return (
 		<div style={{ width: columnWidth(props.timeline.column_width), minWidth: columnWidth(props.timeline.column_width), margin: '0 4px' }}>
 			<Container style={{ height: '100%' }}>
-				<Header style={{ backgroundColor: 'var(--rs-bg-card)' }}>
+				<Header style={headerStyle}>
 					<FlexboxGrid align="middle" justify="space-between">
 						<FlexboxGrid.Item style={{ width: 'calc(100% - 80px)' }}>
 							<FlexboxGrid align="middle" onClick={backToTop} style={{ cursor: 'pointer' }}>
@@ -389,17 +396,17 @@ export default function TimelineColumn(props: Props) {
 										whiteSpace: 'nowrap',
 										width: 'calc(100% - 42px)',
 									}}
-									title={timelineName(props.timeline.kind, props.timeline.name, formatMessage) + '@' + props.server.domain}
+									title={`${timelineName(props.timeline.kind, props.timeline.name, formatMessage)}@${props.server.domain}`}
 								>
 									{timelineName(props.timeline.kind, props.timeline.name, formatMessage)}
-									<span style={{ fontSize: '14px', color: 'var(--rs-text-secondary)' }}>@{props.server.domain}</span>
+									<span style={{ fontSize: '14px' }}>@{props.server.domain}</span>
 								</FlexboxGrid.Item>
 							</FlexboxGrid>
 						</FlexboxGrid.Item>
 						<FlexboxGrid.Item style={{ width: '80px' }}>
 							<FlexboxGrid align="middle" justify="end">
 								<FlexboxGrid.Item>
-									<Button appearance="link" onClick={reload} style={{ padding: '4px' }} title={formatMessage({ id: 'timeline.reload' })}>
+									<Button appearance="link" onClick={reload} style={{ padding: '4px', color: 'white' }} title={formatMessage({ id: 'timeline.reload' })}>
 										<Icon as={BsArrowClockwise} />
 									</Button>
 								</FlexboxGrid.Item>
@@ -432,7 +439,7 @@ export default function TimelineColumn(props: Props) {
 										onOpen={closeWalkthrough}
 										speaker={<OptionPopover timeline={props.timeline} close={closeOptionPopover} />}
 									>
-										<Button appearance="link" style={{ padding: '4px 8px 4px 4px' }} title={formatMessage({ id: 'timeline.settings.title' })}>
+										<Button appearance="link" style={{ padding: '4px 8px 4px 4px', color: 'white' }} title={formatMessage({ id: 'timeline.settings.title' })}>
 											<Icon as={BsSliders} />
 										</Button>
 									</Whisper>
@@ -477,7 +484,7 @@ export default function TimelineColumn(props: Props) {
 											columnWidth={props.timeline.column_width}
 											updateStatus={(status) => setStatuses((current) => updateStatus(current, status))}
 											openMedia={props.openMedia}
-											setReplyOpened={(opened) => (replyOpened.current = opened)}
+											setReplyOpened={(opened) => { replyOpened.current = opened }}
 											setStatusDetail={setStatusDetail}
 											setAccountDetail={setAccountDetail}
 											setTagDetail={setTagDetail}
@@ -496,9 +503,9 @@ export default function TimelineColumn(props: Props) {
 		</div>
 	)
 }
-
 const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: () => void }>((props, ref) => {
 	const { timelineRefresh } = useContext(StreamingContext)
+	const newRef = useRef()
 	const removeTimelineFn = async (timeline: Timeline) => {
 		removeTimeline(timeline)
 		timelineRefresh()
@@ -506,17 +513,26 @@ const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: ()
 	}
 
 	const switchLeftTimeline = async (timeline: Timeline) => {
-		// await invoke('switch_left_timeline', { id: timeline.id })
+		await updateColumnOrder({ id: timeline.id, direction: 'left' })
+		timelineRefresh()
 		props.close()
 	}
 
 	const switchRightTimeline = async (timeline: Timeline) => {
-		//await invoke('switch_right_timeline', { id: timeline.id })
+		await updateColumnOrder({ id: timeline.id, direction: 'right' })
+		timelineRefresh()
 		props.close()
 	}
 
-	const updateColumnWidth = async (timeline: Timeline, columnWidth: string) => {
-		//await invoke('update_column_width', { id: timeline.id, columnWidth: columnWidth })
+	const updateColumnWidthFn = async (timeline: Timeline, columnWidth: string) => {
+		await updateColumnWidth({ id: timeline.id, columnWidth: columnWidth })
+		timelineRefresh()
+		props.close()
+	}
+
+	const updateColumnColorFn = async (timeline: Timeline, color: string) => {
+		await updateColumnColor({ id: timeline.id, color })
+		timelineRefresh()
 		props.close()
 	}
 
@@ -526,13 +542,25 @@ const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: ()
 				<label>
 					<FormattedMessage id="timeline.settings.column_width" />
 				</label>
-				<RadioGroup inline value={props.timeline.column_width} onChange={(value) => updateColumnWidth(props.timeline, value.toString())}>
+				<RadioGroup inline value={props.timeline.column_width} onChange={(value) => updateColumnWidthFn(props.timeline, value.toString())}>
 					<Radio value="xs">xs</Radio>
 					<Radio value="sm">sm</Radio>
 					<Radio value="md">md</Radio>
 					<Radio value="lg">lg</Radio>
 				</RadioGroup>
-				<Divider style={{ margin: '16px 0' }} />
+				<Divider style={{ margin: '8px 0' }} />
+				<span style={{ textAlign: 'center' }}>
+					<FormattedMessage id="timeline.settings.color" />
+				</span>
+				<FlexboxGrid justify="center">
+					<Stack wrap spacing={6} style={{ maxWidth: '250px', padding: '5px' }}>
+						<Button style={{ textTransform: 'capitalize', width: '30px', height: '30px' }} onClick={() => updateColumnColorFn(props.timeline, 'unset')} />
+						{colorList.map((c) => (
+							<Button appearance="primary" key={c} color={c} style={{ textTransform: 'capitalize', width: '30px', height: '30px' }} onClick={() => updateColumnColorFn(props.timeline, c)} />
+						))}
+					</Stack>
+				</FlexboxGrid>
+				<Divider style={{ margin: '8px 0' }} />
 				<FlexboxGrid justify="space-between">
 					<FlexboxGrid.Item>
 						<Button appearance="link" size="xs" onClick={() => removeTimelineFn(props.timeline)}>
@@ -574,8 +602,7 @@ const deleteStatus = (statuses: Array<Entity.Status>, deleted_id: string): Array
 	return statuses.filter((status) => {
 		if (status.reblog !== null && status.reblog.id === deleted_id) {
 			return false
-		} else {
-			return status.id !== deleted_id
 		}
+		return status.id !== deleted_id
 	})
 }

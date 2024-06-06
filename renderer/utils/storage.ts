@@ -1,7 +1,7 @@
 import type { Account } from '@/entities/account'
 import type { Server } from '@/entities/server'
 import { type Settings, defaultSetting } from '@/entities/settings'
-import type { AddTimeline, Timeline } from '@/entities/timeline'
+import { type AddTimeline, type Color, type ColumnWidth, type Timeline, colorList, columnWidthSet } from '@/entities/timeline'
 import { detector } from 'megalodon'
 
 export async function listTimelines(): Promise<Array<[Timeline, Server]>> {
@@ -40,7 +40,8 @@ export async function removeTimeline({ id }: { id: number }): Promise<void> {
 	const timelinesStr = localStorage.getItem('timelines')
 	const timelines: Array<Timeline> = JSON.parse(timelinesStr || '[]')
 	const newTimelines = timelines.filter((timeline) => timeline.id !== id)
-	localStorage.setItem('timelines', JSON.stringify(newTimelines))
+	const newOrderTimelines = newTimelines.map((timeline, index) => ({ ...timeline, id: index + 1 }))
+	localStorage.setItem('timelines', JSON.stringify(newOrderTimelines))
 	return
 }
 
@@ -108,4 +109,55 @@ export async function setUsualAccount({ id }: { id: number }): Promise<void> {
 export async function getUsualAccount(): Promise<number> {
 	localStorage.getItem('usualAccount')
 	return Number.parseInt(localStorage.getItem('usualAccount') || '0')
+}
+const isColumnWidthGuard = (value: string): value is ColumnWidth => columnWidthSet.includes(value as any)
+export async function updateColumnWidth({ id, columnWidth }: { id: number; columnWidth: string }) {
+	const timelinesStr = localStorage.getItem('timelines')
+	const timelines: Array<Timeline> = JSON.parse(timelinesStr || '[]')
+	const timeline = timelines.find((timeline) => timeline.id === id)
+	if (!timeline || !isColumnWidthGuard(columnWidth)) return
+	timeline.column_width = columnWidth
+	localStorage.setItem('timelines', JSON.stringify(timelines))
+	return
+}
+const isColorGuard = (value: string): value is Color => colorList.includes(value as any)
+export async function updateColumnColor({ id, color }: { id: number; color: string }) {
+	const timelinesStr = localStorage.getItem('timelines')
+	const timelines: Array<Timeline> = JSON.parse(timelinesStr || '[]')
+	const timeline = timelines.find((timeline) => timeline.id === id)
+	if (!timeline) return
+	if (!isColorGuard(color)) {
+		timeline.color = undefined
+	} else {
+		timeline.color = color
+	}
+	localStorage.setItem('timelines', JSON.stringify(timelines))
+	return
+}
+export async function updateColumnOrder({ id, direction }: { id: number; direction: 'left' | 'right' }) {
+	const timelinesStr = localStorage.getItem('timelines')
+	const timelines: Array<Timeline> = JSON.parse(timelinesStr || '[]')
+	const timelineIndex = timelines.findIndex((timeline) => timeline.id === id)
+	const nextIndex = direction === 'left' ? timelineIndex - 1 : timelineIndex + 1
+	if (nextIndex < 0 || nextIndex >= timelines.length) return
+	const tmp = structuredClone(timelines[nextIndex])
+	timelines[nextIndex] = timelines[timelineIndex]
+	timelines[timelineIndex] = tmp
+	const newTimelines = timelines.map((timeline, index) => ({ ...timeline, id: index + 1 }))
+	localStorage.setItem('timelines', JSON.stringify(newTimelines))
+	return
+}
+export async function updateAccountColor({ id, color }: { id: number; color: string }) {
+	const accountsStr = localStorage.getItem('accounts')
+	const accounts: Array<Account> = JSON.parse(accountsStr || '[]')
+	const account = accounts.find((account) => account.id === id)
+	if (!account) return
+	if (!isColorGuard(color)) {
+		account.color = undefined
+	} else {
+		account.color = color
+	}
+	console.log(accounts)
+	localStorage.setItem('accounts', JSON.stringify(accounts))
+	return
 }

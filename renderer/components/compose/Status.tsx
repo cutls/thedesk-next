@@ -282,10 +282,13 @@ const Status: React.FC<Props> = (props) => {
 	const handleKeyPress = useCallback(
 		(event: KeyboardEvent) => {
 			if (event.key === 'x' && !cwForcused && !statusForcused && !pollFocused) {
+				event.preventDefault()
 				props.setOpened(false)
 			}
 			if (event.key === 'n' && !cwForcused && !statusForcused && !pollFocused) {
 				props.setOpened(true)
+				statusRef.current?.getElementsByTagName('textarea')[0]?.focus()
+				event.preventDefault()
 			}
 			if (event.ctrlKey === true && event.key === 'Enter') {
 				if (document.activeElement === statusRef.current?.firstElementChild || document.activeElement === cwRef.current?.firstElementChild) {

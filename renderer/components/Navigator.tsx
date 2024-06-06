@@ -3,7 +3,7 @@ import type { Account } from '@/entities/account'
 import { Instruction } from '@/entities/instruction'
 import type { Marker } from '@/entities/marker'
 import type { Server, ServerSet } from '@/entities/server'
-import type { Timeline } from '@/entities/timeline'
+import { type Timeline, colorList } from '@/entities/timeline'
 import type { Unread } from '@/entities/unread'
 import { StreamingContext } from '@/streaming'
 import FailoverImg from '@/utils/failoverImg'
@@ -13,8 +13,8 @@ import { useRouter } from 'next/router'
 import { type Dispatch, type ReactElement, type SetStateAction, useContext, useEffect, useState } from 'react'
 import { BsGear, BsPencilSquare, BsPlus, BsSearch } from 'react-icons/bs'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { Avatar, Badge, Button, Dropdown, FlexboxGrid, Popover, Sidebar, Sidenav, Whisper, useToaster } from 'rsuite'
-import { addTimeline, listTimelines, removeServer } from 'utils/storage'
+import { Avatar, Badge, Button, Dropdown, FlexboxGrid, Popover, Sidebar, Sidenav, Stack, Text, Whisper, useToaster } from 'rsuite'
+import { addTimeline, listTimelines, removeServer, updateAccountColor } from 'utils/storage'
 
 type NavigatorProps = {
 	servers: Array<ServerSet>
@@ -76,7 +76,7 @@ const Navigator: React.FC<NavigatorProps> = (props): ReactElement => {
 	}
 
 	const openNotification = async (set: ServerSet) => {
-		if (!props.unreads.find((u) => u.server_id === set.server.id && u.count > 0)) return
+		//if (!props.unreads.find((u) => u.server_id === set.server.id && u.count > 0)) return
 		const timelines = await listTimelines()
 		let target = timelines.find((t) => t[1].id === set.server.id && t[0].kind === 'notifications')
 		if (target === undefined || target === null) {
@@ -143,7 +143,7 @@ const Navigator: React.FC<NavigatorProps> = (props): ReactElement => {
 							<Whisper
 								placement="right"
 								controlId="control-id-context-menu"
-								trigger="contextMenu"
+								trigger="click"
 								onOpen={closeWalkthrough}
 								preventOverflow={true}
 								speaker={({ className, left, top, onClose }, ref) =>
@@ -156,6 +156,7 @@ const Navigator: React.FC<NavigatorProps> = (props): ReactElement => {
 											server,
 											openAuthorize,
 											openAnnouncements,
+											openNotification,
 										},
 										ref,
 									)
@@ -164,27 +165,19 @@ const Navigator: React.FC<NavigatorProps> = (props): ReactElement => {
 								<Button
 									appearance="link"
 									size="xs"
-									style={{ padding: '8px' }}
-									title={server.account ? server.account.username + '@' + server.server.domain : server.server.domain}
-									onClick={() => openNotification(server)}
+									style={{ padding: '4px', borderColor: server.account.color || 'transparent', borderWidth: '2px', borderStyle: 'solid' }}
+									title={server.account ? `${server.account.username}@${server.server.domain}` : server.server.domain}
 								>
-									<Badge content={props.unreads.find((u) => u.server_id === server.server.id && u.count > 0) ? true : false}>
+									<Badge content={!!props.unreads.find((u) => u.server_id === server.server.id && u.count > 0)}>
 										<Avatar size="sm" src={FailoverImg(server.server.favicon)} className="server-icon" alt={server.server.domain} key={server.server.id} />
 									</Badge>
 								</Button>
 							</Whisper>
 						</div>
 					))}
-					<Whisper
-						placement="rightEnd"
-						controlId="control-id-settings-menu"
-						trigger="click"
-						speaker={({ className, left, top, onClose }, ref) => settingsMenu({ className, left, top, onClose, openThirdparty, openSettings }, ref)}
-					>
-						<Button appearance="link" size="lg" title={formatMessage({ id: 'navigator.settings.title' })}>
-							<Icon as={BsGear} style={{ fontSize: '1.4em' }} />
-						</Button>
-					</Whisper>
+					<Button appearance="link" size="lg" title={formatMessage({ id: 'navigator.settings.title' })} onClick={() => openSettings()}>
+						<Icon as={BsGear} style={{ fontSize: '1.4em' }} />
+					</Button>
 				</Sidenav.Body>
 			</Sidenav>
 		</Sidebar>
@@ -199,10 +192,12 @@ type ServerMenuProps = {
 	server: ServerSet
 	openAuthorize: (server: Server) => void
 	openAnnouncements: (server: Server, account: Account) => void
+	openNotification: (set: ServerSet) => Promise<void>
 }
 
-const serverMenu = ({ className, left, top, onClose, server, openAuthorize, openAnnouncements }: ServerMenuProps, ref: React.RefCallback<HTMLElement>): ReactElement => {
+const serverMenu = ({ className, left, top, onClose, server, openAuthorize, openAnnouncements, openNotification }: ServerMenuProps, ref: React.RefCallback<HTMLElement>): ReactElement => {
 	const router = useRouter()
+	const { timelineRefresh } = useContext(StreamingContext)
 
 	const handleSelect = (eventKey: string) => {
 		onClose()
@@ -225,7 +220,14 @@ const serverMenu = ({ className, left, top, onClose, server, openAuthorize, open
 			case 'followed_hashtags':
 				router.push({ query: { followed_hashtags: 'all', server_id: server.server.id, account_id: server.account.id } })
 				break
+			case 'notifications':
+				openNotification(server)
+				break
 		}
+	}
+	const updateAccountColorFn = (id: number, color: string) => {
+		updateAccountColor({ id, color })
+		timelineRefresh()
 	}
 	return (
 		<Popover ref={ref} className={className} style={{ left, top, padding: 0 }}>
@@ -242,6 +244,9 @@ const serverMenu = ({ className, left, top, onClose, server, openAuthorize, open
 				)}
 				{server.server.account_id !== null && (
 					<>
+						<Dropdown.Item eventKey="notifications">
+							<FormattedMessage id="navigator.servers.notifications" />
+						</Dropdown.Item>
 						<Dropdown.Item eventKey="announcements">
 							<FormattedMessage id="navigator.servers.announcements" />
 						</Dropdown.Item>
@@ -253,10 +258,21 @@ const serverMenu = ({ className, left, top, onClose, server, openAuthorize, open
 						</Dropdown.Item>
 					</>
 				)}
-				<Dropdown.Item eventKey="remove">
+				<Dropdown.Item eventKey="remove" style={{ backgroundColor: 'var(--rs-color-red)' }}>
 					<FormattedMessage id="navigator.servers.remove" />
 				</Dropdown.Item>
 			</Dropdown.Menu>
+			<Text style={{ fontSize: '1rem', textAlign: 'center' }}>
+				<FormattedMessage id="navigator.servers.color" />
+			</Text>
+			<FlexboxGrid justify="center">
+				<Stack wrap spacing={6} style={{ maxWidth: '150px', padding: '5px' }}>
+					<Button style={{ textTransform: 'capitalize', width: '30px', height: '30px' }} onClick={() => updateAccountColorFn(server.server.account_id, 'unset')} />
+					{colorList.map((c) => (
+						<Button appearance="primary" key={c} color={c} style={{ textTransform: 'capitalize', width: '30px', height: '30px' }} onClick={() => updateAccountColorFn(server.server.account_id, c)} />
+					))}
+				</Stack>
+			</FlexboxGrid>
 		</Popover>
 	)
 }

@@ -39,7 +39,7 @@ const { scrollLeft } = DOMHelper
 function App() {
 	const { formatMessage } = useIntl()
 	const [width, height] = useWindowSize()
-	const { start, latestTimelineRefreshed } = useContext(StreamingContext)
+	const { start, latestTimelineRefreshed, allClose } = useContext(StreamingContext)
 
 	const [servers, setServers] = useState<Array<ServerSet>>([])
 	const [timelines, setTimelines] = useState<Array<[Timeline, Server]>>([])
@@ -57,7 +57,7 @@ function App() {
 	const { switchLang } = useContext(i18nContext)
 
 	const loadTimelines = async () => {
-		stop()
+		allClose()
 		const timelines = await listTimelines()
 		setTimelines(timelines)
 		console.log('start')
@@ -86,8 +86,6 @@ function App() {
 			}
 		})
 
-		loadTimelines()
-
 		/*
     listen('updated-servers', async () => {
       const res = await invoke<Array<[Server, Account | null]>>('list_servers')
@@ -112,6 +110,20 @@ function App() {
 	}, [])
 	useEffect(() => {
 		loadTimelines()
+		listServers().then((res) => {
+			if (res.length === 0) {
+				console.debug('There is no server')
+				dispatch({ target: 'newServer', value: true })
+				toaster.push(alert('info', formatMessage({ id: 'alert.no_server' })), { placement: 'topCenter' })
+			} else {
+				setServers(
+					res.map((r) => ({
+						server: r[0],
+						account: r[1],
+					})),
+				)
+			}
+		})
 	}, [latestTimelineRefreshed])
 	useEffect(() => {
 		localStorage.setItem('composePosition', composePosition.join(','))

@@ -305,28 +305,26 @@ const detailMenu = (props: DetailMenuProps, ref: React.RefCallback<HTMLElement>)
 	return (
 		<Popover className={className} ref={ref} style={{ left, top, padding: 0 }}>
 			<Dropdown.Menu onSelect={handleSelect}>
-				<Dropdown.Item eventKey="browser">
+				<Dropdown.Item eventKey="browser" style={{ fontSize: '0.8rem', padding: '5px' }}>
 					<FormattedMessage id="timeline.actions.detail.browser" />
 				</Dropdown.Item>
-				<Dropdown.Item eventKey="copy">
+				<Dropdown.Item eventKey="copy" style={{ fontSize: '0.8rem', padding: '5px' }}>
 					<FormattedMessage id="timeline.actions.detail.copy" />
 				</Dropdown.Item>
 				{props.own && (
-					<Dropdown.Item disabled={props.disabled} eventKey="edit">
+					<Dropdown.Item disabled={props.disabled} eventKey="edit" style={{ fontSize: '0.8rem', padding: '5px' }}>
 						<FormattedMessage id="timeline.actions.detail.edit" />
 					</Dropdown.Item>
 				)}
 				{props.own && (
-					<Dropdown.Item disabled={props.disabled} eventKey="delete">
+					<Dropdown.Item disabled={props.disabled} eventKey="delete" style={{ fontSize: '0.8rem', padding: '5px' }}>
 						<FormattedMessage id="timeline.actions.detail.delete" />
 					</Dropdown.Item>
 				)}
-				<Dropdown.Separator />
-				<Dropdown.Item disabled={props.disabled} eventKey="report">
+				<Dropdown.Item disabled={props.disabled} eventKey="report" style={{ fontSize: '0.8rem', padding: '5px' }}>
 					<FormattedMessage id="timeline.actions.detail.report" values={{ user: `@${status.account.username}` }} />
 				</Dropdown.Item>
-				<Dropdown.Separator />
-				<Dropdown.Item eventKey="from_other_account">
+				<Dropdown.Item eventKey="from_other_account" style={{ fontSize: '0.8rem', padding: '5px' }}>
 					<FormattedMessage id="timeline.actions.detail.from_other_account" />
 				</Dropdown.Item>
 			</Dropdown.Menu>

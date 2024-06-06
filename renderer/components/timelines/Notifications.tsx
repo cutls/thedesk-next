@@ -3,7 +3,7 @@ import generator, { type MegalodonInterface, type Entity } from 'megalodon'
 import { type Dispatch, type SetStateAction, forwardRef, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { BsArrowClockwise, BsBell, BsCheck2, BsChevronLeft, BsChevronRight, BsSliders, BsX } from 'react-icons/bs'
 import { Virtuoso } from 'react-virtuoso'
-import { Avatar, Button, Container, Content, Divider, FlexboxGrid, Header, List, Loader, Popover, Radio, RadioGroup, Whisper, useToaster } from 'rsuite'
+import { Avatar, Button, Container, Content, Divider, Dropdown, FlexboxGrid, Header, List, Loader, Popover, Radio, RadioGroup, Stack, Whisper, useToaster } from 'rsuite'
 
 import alert from '@/components/utils/alert'
 import { TIMELINE_MAX_STATUSES, TIMELINE_STATUSES_COUNT } from '@/defaults'
@@ -11,7 +11,7 @@ import type { Account } from '@/entities/account'
 import type { CustomEmojiCategory } from '@/entities/emoji'
 import type { Marker } from '@/entities/marker'
 import type { Server } from '@/entities/server'
-import { type Timeline, columnWidth } from '@/entities/timeline'
+import { type Timeline, colorList, columnWidth } from '@/entities/timeline'
 import type { Unread } from '@/entities/unread'
 import type { ReceiveNotificationPayload } from '@/payload'
 import { StreamingContext } from '@/streaming'
@@ -21,7 +21,7 @@ import timelineName from '@/utils/timelineName'
 import { useRouter } from 'next/router'
 import { FormattedMessage, useIntl } from 'react-intl'
 import listen from 'utils/listener'
-import { getAccount, removeTimeline } from 'utils/storage'
+import { getAccount, removeTimeline, updateColumnColor, updateColumnOrder, updateColumnWidth } from 'utils/storage'
 import Notification from './notification/Notification'
 
 type Props = {
@@ -143,7 +143,8 @@ const Notifications: React.FC<Props> = (props) => {
 			}
 			if (n.status.id === status.id) {
 				return Object.assign({}, n, { status })
-			} else if (n.status.reblog && n.status.reblog.id === status.id) {
+			}
+			if (n.status.reblog && n.status.reblog.id === status.id) {
 				const s = Object.assign({}, n.status, { reblog: status })
 				return Object.assign({}, n, { status: s })
 			}
@@ -219,7 +220,7 @@ const Notifications: React.FC<Props> = (props) => {
 			setNotifications(res)
 		} catch (err) {
 			console.error(err)
-			toast.push(alert('error', formatMessage({ id: 'alert.failed_load' }, { timeline: `notifications` })), { placement: 'topStart' })
+			toast.push(alert('error', formatMessage({ id: 'alert.failed_load' }, { timeline: 'notifications' })), { placement: 'topStart' })
 		} finally {
 			setLoading(false)
 		}
@@ -287,10 +288,10 @@ const Notifications: React.FC<Props> = (props) => {
 										whiteSpace: 'nowrap',
 										width: 'calc(100% - 42px)',
 									}}
-									title={timelineName(props.timeline.kind, props.timeline.name, formatMessage) + '@' + props.server.domain}
+									title={`${timelineName(props.timeline.kind, props.timeline.name, formatMessage)}@${props.server.domain}`}
 								>
 									{timelineName(props.timeline.kind, props.timeline.name, formatMessage)}
-									<span style={{ fontSize: '14px', color: 'var(--rs-text-secondary)' }}>@{props.server.domain}</span>
+									<span style={{ fontSize: '14px' }}>@{props.server.domain}</span>
 								</FlexboxGrid.Item>
 							</FlexboxGrid>
 						</FlexboxGrid.Item>
@@ -300,21 +301,21 @@ const Notifications: React.FC<Props> = (props) => {
 									<Button
 										appearance="link"
 										title={formatMessage({ id: 'timeline.mark_as_read' })}
-										disabled={props.unreads.find((u) => u.server_id === props.server.id && u.count > 0) ? false : true}
+										disabled={!props.unreads.find((u) => u.server_id === props.server.id && u.count > 0)}
 										onClick={read}
-										style={{ padding: '4px' }}
+										style={{ padding: '4px', color: 'white' }}
 									>
 										<Icon as={BsCheck2} />
 									</Button>
 								</FlexboxGrid.Item>
 								<FlexboxGrid.Item>
-									<Button appearance="link" onClick={reload} style={{ padding: '4px' }} title={formatMessage({ id: 'timeline.reload' })}>
+									<Button appearance="link" onClick={reload} style={{ padding: '4px', color: 'white' }} title={formatMessage({ id: 'timeline.reload' })}>
 										<Icon as={BsArrowClockwise} />
 									</Button>
 								</FlexboxGrid.Item>
 								<FlexboxGrid.Item>
 									<Whisper trigger="click" placement="bottomEnd" controlId="option-popover" ref={triggerRef} speaker={<OptionPopover timeline={props.timeline} close={closeOptionPopover} />}>
-										<Button appearance="link" style={{ padding: '4px 8px 4px 4px' }} title={formatMessage({ id: 'timeline.settings.title' })}>
+										<Button appearance="link" style={{ padding: '4px 8px 4px 4px', color: 'white' }} title={formatMessage({ id: 'timeline.settings.title' })}>
 											<Icon as={BsSliders} />
 										</Button>
 									</Whisper>
@@ -372,7 +373,7 @@ const Notifications: React.FC<Props> = (props) => {
 												columnWidth={props.timeline.column_width}
 												updateStatus={updateStatus}
 												openMedia={props.openMedia}
-												setReplyOpened={(opened) => (replyOpened.current = opened)}
+												setReplyOpened={(opened) => {replyOpened.current = opened}}
 												setStatusDetail={setStatusDetail}
 												setAccountDetail={setAccountDetail}
 												setTagDetail={setTagDetail}
@@ -392,9 +393,9 @@ const Notifications: React.FC<Props> = (props) => {
 		</div>
 	)
 }
-
 const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: () => void }>((props, ref) => {
 	const { timelineRefresh } = useContext(StreamingContext)
+	const newRef = useRef()
 	const removeTimelineFn = async (timeline: Timeline) => {
 		removeTimeline(timeline)
 		timelineRefresh()
@@ -402,17 +403,26 @@ const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: ()
 	}
 
 	const switchLeftTimeline = async (timeline: Timeline) => {
-		//await invoke('switch_left_timeline', { id: timeline.id })
+		await updateColumnOrder({ id: timeline.id, direction: 'left' })
+		timelineRefresh()
 		props.close()
 	}
 
 	const switchRightTimeline = async (timeline: Timeline) => {
-		// await invoke('switch_right_timeline', { id: timeline.id })
+		await updateColumnOrder({ id: timeline.id, direction: 'left' })
+		timelineRefresh()
 		props.close()
 	}
 
-	const updateColumnWidth = async (timeline: Timeline, columnWidth: string) => {
-		//await invoke('update_column_width', { id: timeline.id, columnWidth: columnWidth })
+	const updateColumnWidthFn = async (timeline: Timeline, columnWidth: string) => {
+		await updateColumnWidth({ id: timeline.id, columnWidth: columnWidth })
+		timelineRefresh()
+		props.close()
+	}
+
+	const updateColumnColorFn = async (timeline: Timeline, color: string) => {
+		await updateColumnColor({ id: timeline.id, color })
+		timelineRefresh()
 		props.close()
 	}
 
@@ -422,13 +432,23 @@ const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: ()
 				<label>
 					<FormattedMessage id="timeline.settings.column_width" />
 				</label>
-				<RadioGroup inline value={props.timeline.column_width} onChange={(value) => updateColumnWidth(props.timeline, value.toString())}>
+				<RadioGroup inline value={props.timeline.column_width} onChange={(value) => updateColumnWidthFn(props.timeline, value.toString())}>
 					<Radio value="xs">xs</Radio>
 					<Radio value="sm">sm</Radio>
 					<Radio value="md">md</Radio>
 					<Radio value="lg">lg</Radio>
 				</RadioGroup>
-				<Divider style={{ margin: '16px 0' }} />
+
+				<Divider style={{ margin: '8px 0' }} />
+				<FlexboxGrid justify="center">
+					<Stack wrap spacing={6} style={{ maxWidth: '250px', padding: '5px' }}>
+						<Button style={{ textTransform: 'capitalize', width: '30px', height: '30px' }} onClick={() => updateColumnColorFn(props.timeline, 'unset')} />
+						{colorList.map((c) => (
+							<Button appearance="primary" key={c} color={c} style={{ textTransform: 'capitalize', width: '30px', height: '30px' }} onClick={() => updateColumnColorFn(props.timeline, c)} />
+						))}
+					</Stack>
+				</FlexboxGrid>
+				<Divider style={{ margin: '8px 0' }} />
 				<FlexboxGrid justify="space-between">
 					<FlexboxGrid.Item>
 						<Button appearance="link" size="xs" onClick={() => removeTimelineFn(props.timeline)}>

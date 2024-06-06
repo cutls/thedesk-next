@@ -6,6 +6,7 @@ export type Timeline = {
 	server_id: number
 	list_id: string | null
 	column_width: ColumnWidth
+	color?: Color
 }
 export type AddTimeline = {
 	kind: TimelineKind
@@ -13,9 +14,11 @@ export type AddTimeline = {
 	listId?: string
 	columnWidth: ColumnWidth
 }
-
+export const colorList = ['red', 'orange', 'yellow', 'green', 'cyan', 'blue', 'violet'] as const
+export type Color = (typeof colorList)[number]
 export type TimelineKind = 'home' | 'notifications' | 'local' | 'public' | 'favourites' | 'list' | 'bookmarks' | 'direct' | 'tag'
-export type ColumnWidth = 'xs' | 'sm' | 'md' | 'lg'
+export const columnWidthSet = ['xs', 'sm', 'md', 'lg'] as const
+export type ColumnWidth = (typeof columnWidthSet)[number]
 
 export function columnWidth(width: ColumnWidth) {
 	switch (width) {
