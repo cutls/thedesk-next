@@ -1,7 +1,9 @@
 import Time from '@/components/utils/Time'
+import { TheDeskContext } from '@/context'
 import emojify from '@/utils/emojify'
 import { Icon } from '@rsuite/icons'
 import type { Entity } from 'megalodon'
+import { useContext } from 'react'
 import { BsPersonPlus } from 'react-icons/bs'
 import { useIntl } from 'react-intl'
 import { Avatar, FlexboxGrid } from 'rsuite'
@@ -39,6 +41,9 @@ const actionText = (notification: Entity.Notification) => {
 }
 
 const Follow: React.FC<Props> = (props) => {
+	const { timelineConfig } = useContext(TheDeskContext)
+	const isAnimeIcon = timelineConfig.animation === 'yes'
+	const avatar = isAnimeIcon ? props.notification.account.avatar : props.notification.account.avatar_static
 	return (
 		<div onClick={() => props.setAccountDetail(props.notification.account)} style={{ cursor: 'pointer' }}>
 			{/** action **/}
@@ -59,7 +64,7 @@ const Follow: React.FC<Props> = (props) => {
 				<div style={{ width: '56px' }}>
 					<div style={{ margin: '6px' }}>
 						<Avatar
-							src={props.notification.account.avatar}
+							src={avatar}
 							onClick={() => props.setAccountDetail(props.notification.account)}
 							title={props.notification.account.acct}
 							alt={props.notification.account.acct}

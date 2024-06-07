@@ -20,7 +20,7 @@ const LinkPreview: React.FC<Props> = (props) => {
 				<FlexboxGrid.Item style={{ width: '60px' }}>
 					<Image width={60} height={60} src={FailoverImg(props.card.image)} alt={props.card.title} />
 				</FlexboxGrid.Item>
-				<FlexboxGrid.Item style={{ height: '60px', width: 'calc(100% - 60px)', overflow: 'hidden', paddingLeft: '4px' }}>
+				<FlexboxGrid.Item style={{ height: '60px', width: 'calc(100% - 60px)', overflow: 'hidden', paddingLeft: '10px', padding: '6px' }}>
 					<p style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }} title={props.card.title}>
 						<strong>{props.card.title}</strong>
 					</p>

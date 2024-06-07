@@ -9,7 +9,7 @@ import { open } from '@/utils/openBrowser'
 import { type ParsedAccount, accountMatch, findAccount, findLink, findTag, privacyIcon, privacyColor } from '@/utils/statusParser'
 import { Icon } from '@rsuite/icons'
 import type { Entity, MegalodonInterface } from 'megalodon'
-import { type HTMLAttributes, type MouseEventHandler, useEffect, useState } from 'react'
+import { type HTMLAttributes, type MouseEventHandler, useEffect, useState, useContext } from 'react'
 import { BsArrowRepeat, BsPin } from 'react-icons/bs'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Avatar, Button, FlexboxGrid, Notification, useToaster } from 'rsuite'
@@ -17,6 +17,7 @@ import Actions from './Actions'
 import Attachments from './Attachments'
 import Body from './Body'
 import Poll from './Poll'
+import { TheDeskContext } from '@/context'
 
 type Props = {
 	status: Entity.Status
@@ -36,15 +37,30 @@ type Props = {
 	customEmojis: Array<CustomEmojiCategory>
 	filters?: Array<Entity.Filter>
 } & HTMLAttributes<HTMLElement>
-
+const stripForSpoil = (html: string) => {
+	const div = document.createElement("div")
+	div.innerHTML = html
+	const text = div.textContent || div.innerText || ""
+	const protomatch = /(https?|ftp):\/\//g
+	const b = text.replace(protomatch, '').replace(/:[a-zA-Z0-9_]:/g, '')
+	return b
+}
 const Status: React.FC<Props> = (props) => {
 	const status = originalStatus(props.status)
+	const { timelineConfig } = useContext(TheDeskContext)
+	const b = stripForSpoil(status.content)
+	const maxLength = timelineConfig.max_length
+	const tooLong = maxLength && b && b.length > maxLength
+	const tooLongText = tooLong ? `${b.slice(0, 50)}...` : ''
+	const spoilerText = status.spoiler_text || tooLongText
+
+	const isAnimeIcon = timelineConfig.animation === 'yes'
 
 	const { formatMessage } = useIntl()
 	const { client } = props
 	const [showReply, setShowReply] = useState<boolean>(false)
 	const [showEdit, setShowEdit] = useState<boolean>(false)
-	const [spoilered, setSpoilered] = useState<boolean>(status.spoiler_text.length > 0)
+	const [spoilered, setSpoilered] = useState<boolean>(status.spoiler_text.length > 0 || tooLong)
 	const [ignoreFilter, setIgnoreFilter] = useState<boolean>(false)
 
 	const toaster = useToaster()
@@ -149,7 +165,7 @@ const Status: React.FC<Props> = (props) => {
 				{/** icon **/}
 				<div style={{ width: '56px', padding: '6px', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center' }}>
 					<Avatar
-						src={status.account.avatar}
+						src={isAnimeIcon ? status.account.avatar : status.account.avatar_static}
 						onClick={() => props.setAccountDetail(status.account.id, props.server.id, props.account?.id)}
 						style={{ cursor: 'pointer' }}
 						title={status.account.acct}
@@ -171,12 +187,12 @@ const Status: React.FC<Props> = (props) => {
 								<span style={{ color: 'var(--rs-text-tertiary)' }}>@{status.account.acct}</span>
 							</FlexboxGrid.Item>
 							{/** timestamp **/}
-							<FlexboxGrid.Item colspan={6} style={{ textAlign: 'right', color: 'var(--rs-text-tertiary)' }}>
+							<FlexboxGrid.Item colspan={6} style={{ textAlign: 'right', color: 'var(--rs-text-tertiary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
 								<Time time={status.created_at} onClick={() => props.setStatusDetail && props.setStatusDetail(props.status.id, props.server.id, props.account?.id)} />
 							</FlexboxGrid.Item>
 						</FlexboxGrid>
 					</div>
-					<Body status={status} onClick={statusClicked} spoilered={spoilered} setSpoilered={setSpoilered} />
+					<Body status={status} onClick={statusClicked} spoilered={spoilered || tooLong} spoilerText={spoilerText} setSpoilered={setSpoilered} />
 					{!spoilered && (
 						<>
 							{status.poll && <Poll poll={status.poll} client={props.client} pollUpdated={refresh} emojis={status.emojis} />}

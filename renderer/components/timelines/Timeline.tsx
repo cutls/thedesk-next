@@ -21,7 +21,7 @@ import type {
 	ReceiveTimelineStatusPayload,
 	ReceiveTimelineStatusUpdatePayload,
 } from '@/payload'
-import { StreamingContext } from '@/streaming'
+import { TheDeskContext } from '@/context'
 import { mapCustomEmojiCategory } from '@/utils/emojiData'
 import FailoverImg from '@/utils/failoverImg'
 import timelineName from '@/utils/timelineName'
@@ -40,7 +40,7 @@ type Props = {
 
 export default function TimelineColumn(props: Props) {
 	const { formatMessage } = useIntl()
-	const { listen } = useContext(StreamingContext)
+	const { listen } = useContext(TheDeskContext)
 
 	const [statuses, setStatuses] = useState<Array<Entity.Status>>([])
 	const [unreadStatuses, setUnreadStatuses] = useState<Array<Entity.Status>>([])
@@ -504,7 +504,7 @@ export default function TimelineColumn(props: Props) {
 	)
 }
 const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: () => void }>((props, ref) => {
-	const { timelineRefresh } = useContext(StreamingContext)
+	const { timelineRefresh } = useContext(TheDeskContext)
 	const removeTimelineFn = async (timeline: Timeline) => {
 		removeTimeline(timeline)
 		timelineRefresh()
@@ -557,9 +557,9 @@ const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: ()
 				<FormattedMessage id="timeline.settings.color" />
 				<FlexboxGrid justify="center">
 					<Stack wrap spacing={6} style={{ maxWidth: '250px', padding: '5px' }}>
-						<Button style={{ textTransform: 'capitalize', width: '30px', height: '30px' }} onClick={() => updateColumnColorFn(props.timeline, 'unset')} />
+						<Button style={{ textTransform: 'capitalize', width: '30px', height: '30px' }} className="colorChangeBtn" onClick={() => updateColumnColorFn(props.timeline, 'unset')} />
 						{colorList.map((c) => (
-							<Button appearance="primary" key={c} color={c} style={{ textTransform: 'capitalize', width: '30px', height: '30px' }} onClick={() => updateColumnColorFn(props.timeline, c)} />
+							<Button appearance="primary" className="colorChangeBtn" key={c} color={c} style={{ textTransform: 'capitalize', width: '30px', height: '30px' }} onClick={() => updateColumnColorFn(props.timeline, c)} />
 						))}
 					</Stack>
 				</FlexboxGrid>

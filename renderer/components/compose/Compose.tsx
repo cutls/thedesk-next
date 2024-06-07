@@ -105,8 +105,8 @@ const Compose: React.FC<Props> = (props) => {
 					<FlexboxGrid.Item>
 						<Dropdown renderToggle={(props, ref) => renderAccountIcon(props, ref, fromAccount)} onSelect={selectAccount}>
 							{accounts.map((account, index) => (
-								<Dropdown.Item eventKey={index} key={`@${account[0].username}@${account[1].domain}`}>
-									@{account[0].username}@{account[1].domain}
+								<Dropdown.Item eventKey={index} key={`@${account[0].username}@${account[1]?.domain || ''}`}>
+									@{account[0].username}@{account[1]?.domain || ''}
 								</Dropdown.Item>
 							))}
 						</Dropdown>
@@ -121,6 +121,7 @@ const Compose: React.FC<Props> = (props) => {
 						defaultNSFW={defaultNSFW}
 						defaultLanguage={defaultLanguage}
 						setOpened={props.setOpened}
+						onClose={() => props.setOpened(false)}
 					/>
 				)}
 			</Content>

@@ -14,13 +14,12 @@ import type { Server } from '@/entities/server'
 import { type Timeline, colorList, columnWidth } from '@/entities/timeline'
 import type { Unread } from '@/entities/unread'
 import type { ReceiveNotificationPayload } from '@/payload'
-import { StreamingContext } from '@/streaming'
+import { TheDeskContext } from '@/context'
 import { mapCustomEmojiCategory } from '@/utils/emojiData'
 import FailoverImg from '@/utils/failoverImg'
 import timelineName from '@/utils/timelineName'
 import { useRouter } from 'next/router'
 import { FormattedMessage, useIntl } from 'react-intl'
-import listen from 'utils/listener'
 import { getAccount, removeTimeline, updateColumnColor, updateColumnOrder, updateColumnWidth } from 'utils/storage'
 import Notification from './notification/Notification'
 
@@ -36,6 +35,7 @@ type Props = {
 
 const Notifications: React.FC<Props> = (props) => {
 	const { formatMessage } = useIntl()
+	const { listen } = useContext(TheDeskContext)
 	const [account, setAccount] = useState<Account>()
 	const [client, setClient] = useState<MegalodonInterface>()
 	const [notifications, setNotifications] = useState<Array<Entity.Notification>>([])
@@ -394,7 +394,7 @@ const Notifications: React.FC<Props> = (props) => {
 	)
 }
 const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: () => void }>((props, ref) => {
-	const { timelineRefresh } = useContext(StreamingContext)
+	const { timelineRefresh } = useContext(TheDeskContext)
 	const newRef = useRef()
 	const removeTimelineFn = async (timeline: Timeline) => {
 		removeTimeline(timeline)
@@ -440,11 +440,12 @@ const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: ()
 				</RadioGroup>
 
 				<Divider style={{ margin: '8px 0' }} />
+				<FormattedMessage id="timeline.settings.color" />
 				<FlexboxGrid justify="center">
 					<Stack wrap spacing={6} style={{ maxWidth: '250px', padding: '5px' }}>
-						<Button style={{ textTransform: 'capitalize', width: '30px', height: '30px' }} onClick={() => updateColumnColorFn(props.timeline, 'unset')} />
+						<Button style={{ textTransform: 'capitalize', width: '30px', height: '30px' }} className="colorChangeBtn" onClick={() => updateColumnColorFn(props.timeline, 'unset')} />
 						{colorList.map((c) => (
-							<Button appearance="primary" key={c} color={c} style={{ textTransform: 'capitalize', width: '30px', height: '30px' }} onClick={() => updateColumnColorFn(props.timeline, c)} />
+							<Button appearance="primary" key={c} color={c} className="colorChangeBtn" style={{ textTransform: 'capitalize', width: '30px', height: '30px' }} onClick={() => updateColumnColorFn(props.timeline, c)} />
 						))}
 					</Stack>
 				</FlexboxGrid>

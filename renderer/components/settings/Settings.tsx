@@ -1,9 +1,9 @@
-import type { Settings as SettingsType, ThemeType } from '@/entities/settings'
+import { defaultSetting, type Settings as SettingsType, type ThemeType } from '@/entities/settings'
 import type { localeType } from '@/i18n'
 import { readSettings, saveSetting } from '@/utils/storage'
 import { useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { Button, ButtonToolbar, Form, InputNumber, InputPicker, Modal, Panel, Schema } from 'rsuite'
+import { Button, ButtonToolbar, Form, InputNumber, InputPicker, RadioGroup, Radio, Modal, Panel, Schema } from 'rsuite'
 
 type Props = {
 	open: boolean
@@ -11,11 +11,6 @@ type Props = {
 	reloadAppearance: () => void
 }
 
-type FormValue = {
-	font_size: number
-	language: localeType
-	color_theme: ThemeType
-}
 
 const languages = [
 	{
@@ -62,27 +57,38 @@ const themes = [
 		value: 'high-contrast',
 	},
 ]
+const time = ['relative', 'absolute', '12h']
+const afterPost = ['close', 'stay']
+const vis = ['public', 'unlisted', 'private', 'direct']
 
 export default function Settings(props: Props) {
 	const { formatMessage } = useIntl()
-	const [formValue, setFormValue] = useState<FormValue>({
-		font_size: 14,
-		language: 'en',
-		color_theme: 'dark',
-	})
+	const [appearance, setAppearance] = useState<SettingsType['appearance']>(defaultSetting.appearance)
+	const [timelineConfig, setTimelineConfig] = useState<SettingsType['timeline']>(defaultSetting.timeline)
+	const [compose, setCompose] = useState<SettingsType['compose']>(defaultSetting.compose)
 
-	const model = Schema.Model<FormValue>({
-		font_size: Schema.Types.NumberType(formatMessage({ id: 'settings.settings.validation.font_size.type' }))
-			.range(1, 30, formatMessage({ id: 'settings.settings.validation.font_size.range' }, { from: 1, to: 30 }))
-			.isRequired(formatMessage({ id: 'settings.settings.validation.font_size.required' })),
-		language: Schema.Types.StringType().isRequired(formatMessage({ id: 'settings.settings.validation.language.required' })),
+	const appearanceModel = Schema.Model<SettingsType['appearance']>({
+		font_size: Schema.Types.NumberType(formatMessage({ id: 'settings.settings.validation.general_number.type' }))
+			.range(1, 30, formatMessage({ id: 'settings.settings.validation.general_number.range' }, { from: 1, to: 30 }))
+			.isRequired(formatMessage({ id: 'settings.settings.validation.general_number.required' })),
+		language: Schema.Types.StringType().isRequired(formatMessage({ id: 'settings.settings.validation.general_required' })),
 		color_theme: Schema.Types.StringType(),
+	})
+	const timelineModel = Schema.Model<SettingsType['timeline']>({
+		time: Schema.Types.StringType().isRequired(formatMessage({ id: 'settings.settings.validation.general_required' })),
+		animation: Schema.Types.StringType().isRequired(formatMessage({ id: 'settings.settings.validation.general_required' })),
+		max_length: Schema.Types.NumberType(formatMessage({ id: 'settings.settings.validation.general_number.type' }))
+			.range(0, 3000, formatMessage({ id: 'settings.settings.validation.general_number.range' }, { from: 0, to: 3000 }))
+			.isRequired(formatMessage({ id: 'settings.settings.validation.general_number.required' })),
 	})
 
 	useEffect(() => {
 		const f = async () => {
 			const settings = await readSettings()
-			setFormValue((current) => Object.assign({}, current, settings.appearance))
+			setAppearance((current) => Object.assign({}, current, settings.appearance))
+			setTimelineConfig((current) => Object.assign({}, current, settings.timeline))
+			setCompose((current) => Object.assign({}, current, settings.compose))
+
 		}
 		f()
 	}, [])
@@ -90,10 +96,19 @@ export default function Settings(props: Props) {
 	const handleSubmit = async () => {
 		const settings: SettingsType = {
 			appearance: {
-				font_size: Number(formValue.font_size),
-				language: formValue.language,
-				color_theme: formValue.color_theme,
+				font_size: Number(appearance.font_size),
+				language: appearance.language,
+				color_theme: appearance.color_theme,
 			},
+			timeline: {
+				time: timelineConfig.time,
+				animation: timelineConfig.animation,
+				max_length: Number(timelineConfig.max_length),
+			},
+			compose: {
+				afterPost: compose.afterPost,
+				secondaryToot: compose.secondaryToot
+			}
 		}
 		await saveSetting({ obj: settings })
 		props.reloadAppearance()
@@ -107,7 +122,7 @@ export default function Settings(props: Props) {
 				</Modal.Title>
 			</Modal.Header>
 			<Modal.Body>
-				<Form layout="horizontal" formValue={formValue} onChange={setFormValue} model={model}>
+				<Form layout="horizontal" formValue={appearance} onChange={setAppearance} model={appearanceModel}>
 					<Panel header={<FormattedMessage id="settings.settings.appearance.title" />}>
 						<Form.Group controlId="language">
 							<Form.ControlLabel>
@@ -128,17 +143,60 @@ export default function Settings(props: Props) {
 							<Form.Control name="color_theme" accepter={InputPicker} cleanable={false} data={themes} />
 						</Form.Group>
 					</Panel>
-					<Form.Group>
-						<ButtonToolbar style={{ justifyContent: 'flex-end' }}>
-							<Button appearance="primary" color="green" type="submit" onClick={handleSubmit}>
-								<FormattedMessage id="settings.settings.save" />
-							</Button>
-							<Button onClick={props.onClose}>
-								<FormattedMessage id="settings.settings.close" />
-							</Button>
-						</ButtonToolbar>
-					</Form.Group>
 				</Form>
+				<Form layout="horizontal" formValue={timelineConfig} onChange={setTimelineConfig} model={timelineModel}>
+					<Panel header={<FormattedMessage id="settings.settings.timeline.title" />}>
+						<Form.Group controlId="time">
+							<Form.ControlLabel>
+								<FormattedMessage id="settings.settings.timeline.time.title" />
+							</Form.ControlLabel>
+							<Form.Control name="time" accepter={InputPicker} cleanable={false} data={time.map((t) => { return { label: formatMessage({ id: `settings.settings.timeline.time.${t}` }), value: t } })} />
+						</Form.Group>
+						<Form.Group controlId="animation">
+							<Form.ControlLabel>
+								<FormattedMessage id="settings.settings.timeline.animation" />
+							</Form.ControlLabel>
+							<Form.Control accepter={RadioGroup} name="animation">
+								<Radio value="no"><FormattedMessage id="timeline.settings.not_do" /></Radio>
+								<Radio value="yes" ><FormattedMessage id="timeline.settings.do" /></Radio>
+							</Form.Control>
+						</Form.Group>
+						<Form.Group style={{ marginBottom: 0}} controlId="max_length">
+							<Form.ControlLabel>
+								<FormattedMessage id="settings.settings.timeline.max_length" />
+							</Form.ControlLabel>
+							<Form.Control name="max_length" accepter={InputNumber} postfix={formatMessage({ id: 'settings.settings.timeline.max_length_unit' })} />
+						</Form.Group>
+						<p style={{ fontSize: '0.8rem', textAlign: 'right', paddingRight: '20px'}}><FormattedMessage id="settings.settings.timeline.max_length_hint" /></p>
+					</Panel>
+				</Form>
+				<Form layout="horizontal" formValue={compose} onChange={setCompose}>
+					<Panel header={<FormattedMessage id="settings.settings.compose.title" />}>
+						<Form.Group controlId="afterPost">
+							<Form.ControlLabel>
+								<FormattedMessage id="settings.settings.compose.afterPost.title" />
+							</Form.ControlLabel>
+							<Form.Control name="afterPost" accepter={InputPicker} cleanable={false} data={afterPost.map((t) => { return { label: formatMessage({ id: `settings.settings.compose.afterPost.${t}` }), value: t } })} />
+						</Form.Group>
+						<Form.Group controlId="secondaryToot" style={{ marginBottom: 0}}>
+							<Form.ControlLabel>
+								<FormattedMessage id="settings.settings.compose.secondaryToot" />
+							</Form.ControlLabel>
+							<Form.Control name="secondaryToot" accepter={InputPicker} cleanable={false} data={[{ label: formatMessage({ id: 'timeline.settings.not_do' }), value: 'no'},...vis.map((t) => { return { label: formatMessage({ id: `compose.visibility.${t}` }), value: t } })]} />
+						</Form.Group>
+						<p style={{ fontSize: '0.8rem', textAlign: 'right', paddingRight: '20px'}}><FormattedMessage id="settings.settings.compose.secondaryToot_hint" /></p>
+					</Panel>
+				</Form>
+				<Form.Group>
+					<ButtonToolbar style={{ justifyContent: 'flex-end' }}>
+						<Button appearance="primary" color="green" type="submit" onClick={handleSubmit}>
+							<FormattedMessage id="settings.settings.save" />
+						</Button>
+						<Button onClick={props.onClose}>
+							<FormattedMessage id="settings.settings.close" />
+						</Button>
+					</ButtonToolbar>
+				</Form.Group>
 			</Modal.Body>
 		</Modal>
 	)

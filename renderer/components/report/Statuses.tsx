@@ -1,7 +1,8 @@
 import Time from '@/components/utils/Time'
+import { TheDeskContext } from '@/context'
 import emojify from '@/utils/emojify'
 import type { Entity, MegalodonInterface } from 'megalodon'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { Avatar, Button, Checkbox, CheckboxGroup, FlexboxGrid, Loader, Modal, Placeholder } from 'rsuite'
 
@@ -75,6 +76,8 @@ type StatusProps = {
 
 const Status: React.FC<StatusProps> = (props) => {
 	const { status } = props
+	const { timelineConfig } = useContext(TheDeskContext)
+	const isAnimeIcon = timelineConfig.animation === 'yes'
 
 	return (
 		<>
@@ -83,7 +86,7 @@ const Status: React.FC<StatusProps> = (props) => {
 				{/** icon **/}
 				<FlexboxGrid.Item colspan={3}>
 					<div style={{ margin: '6px' }}>
-						<Avatar src={status.account.avatar} title={status.account.acct} alt={status.account.acct} />
+						<Avatar src={isAnimeIcon ? status.account.avatar : status.account.avatar_static} title={status.account.acct} alt={status.account.acct} />
 					</div>
 				</FlexboxGrid.Item>
 				{/** account name **/}

@@ -72,8 +72,8 @@ export default function Search(props: Props) {
 					<FlexboxGrid.Item>
 						<Dropdown renderToggle={(props, ref) => renderAccountIcon(props, ref, fromAccount)} onSelect={selectAccount}>
 							{accounts.map((account, index) => (
-								<Dropdown.Item eventKey={index} key={`@${account[0].username}@${account[1].domain}`}>
-									@{account[0].username}@{account[1].domain}
+								<Dropdown.Item eventKey={index} key={`@${account[0].username}@${account[1]?.domain || ''}`}>
+									@{account[0].username}@{account[1]?.domain || ''}
 								</Dropdown.Item>
 							))}
 						</Dropdown>

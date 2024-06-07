@@ -1,6 +1,6 @@
 import dayjs from 'dayjs'
 import { type CSSProperties, useCallback, useContext, useEffect, useReducer, useRef, useState } from 'react'
-import { Animation, Container, Content, DOMHelper, useToaster } from 'rsuite'
+import { Animation, Container, Content, useToaster, DOMHelper } from 'rsuite'
 
 import Media from '@/components/Media'
 import Navigator from '@/components/Navigator'
@@ -25,7 +25,7 @@ import type { Timeline } from '@/entities/timeline'
 import type { Unread } from '@/entities/unread'
 import { Context as i18nContext } from '@/i18n'
 import { ReceiveNotificationPayload } from '@/payload'
-import { StreamingContext } from '@/streaming'
+import { TheDeskContext } from '@/context'
 import generateNotification from '@/utils/notification'
 import { useWindowSize } from '@/utils/useWindowSize'
 import type { Entity, MegalodonInterface } from 'megalodon'
@@ -40,7 +40,7 @@ const { scrollLeft } = DOMHelper
 function App() {
 	const { formatMessage } = useIntl()
 	const [width, height] = useWindowSize()
-	const { start, latestTimelineRefreshed, allClose } = useContext(StreamingContext)
+	const { start, latestTimelineRefreshed, allClose, saveTimelineConfig } = useContext(TheDeskContext)
 	const { loadTheme } = useContext(ContextLoadTheme)
 
 	const [servers, setServers] = useState<Array<ServerSet>>([])
@@ -61,9 +61,9 @@ function App() {
 	const loadTimelines = async () => {
 		if (latestTimelineRefreshed > 0) allClose()
 		const timelines = await listTimelines()
-		setTimelines(timelines)
 		console.log('start')
-		start()
+		const streamings = await start(timelines)
+		setTimelines(timelines)
 	}
 
 	useEffect(() => {
@@ -153,11 +153,12 @@ function App() {
 	const loadAppearance = () => {
 		readSettings().then((res) => {
 			setStyle({
-				fontSize: res.appearance.font_size,
+				fontSize: res.appearance.font_size
 			})
 			switchLang(res.appearance.language)
 			dayjs.locale(res.appearance.language)
 			loadTheme()
+			saveTimelineConfig(res.timeline)
 			document.documentElement.setAttribute('lang', res.appearance.language)
 		})
 	}

@@ -49,13 +49,11 @@ const actionIcon = (notification: Entity.Notification) => {
 		case 'reaction':
 			if (notification.reaction) {
 				if (notification.reaction.url) {
-					return <img src={notification.reaction.url} style={{ height: '16px' }} />
-				} else {
-					return <span dangerouslySetInnerHTML={{ __html: notification.reaction.name }} />
+					return <img src={notification.reaction.url} alt={notification.reaction.name} style={{ height: '16px' }} />
 				}
-			} else {
-				return null
+				return <span dangerouslySetInnerHTML={{ __html: notification.reaction.name }} />
 			}
+			return null
 
 		default:
 			return null
@@ -175,6 +173,7 @@ const Reaction: React.FC<Props> = (props) => {
 			if (account) {
 				props.setAccountDetail(account)
 			} else {
+				// biome-ignore lint/style/useConst: <explanation>
 				let confirmToaster: any
 				confirmToaster = toaster.push(
 					notification(
@@ -252,12 +251,12 @@ const Reaction: React.FC<Props> = (props) => {
 							</FlexboxGrid.Item>
 						</FlexboxGrid>
 					</div>
-					<Body status={status} onClick={statusClicked} spoilered={spoilered} setSpoilered={setSpoilered} />
+					<Body status={status} onClick={statusClicked} spoilered={spoilered} spoilerText={status.spoiler_text} setSpoilered={setSpoilered} />
 					{!spoilered && (
 						<>
 							{status.poll && <Poll poll={status.poll} client={props.client} pollUpdated={refresh} emojis={status.emojis} />}
 							{status.media_attachments.map((media, index) => (
-								<div key={index}>
+								<div key={media.id}>
 									<Button appearance="subtle" size="sm" onClick={() => props.openMedia(status.media_attachments, index)}>
 										<Icon as={BsPaperclip} />
 										{media.id}

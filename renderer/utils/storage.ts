@@ -79,6 +79,14 @@ export async function getServer({ id }: { id: number }): Promise<Server> {
 export async function removeServer({ id }: { id: number }): Promise<void> {
 	const serverStr = localStorage.getItem('servers')
 	const servers: Array<Server> = JSON.parse(serverStr || '[]')
+	const targetServer = servers.find((server) => server.id === id)
+	const deleteAccount = targetServer ? targetServer.account_id : null
+	if (deleteAccount) {
+		const accountsStr = localStorage.getItem('accounts')
+		const accounts: Array<Account> = JSON.parse(accountsStr || '[]')
+		const newAccounts = accounts.filter((account) => account.id !== deleteAccount)
+		localStorage.setItem('accounts', JSON.stringify(newAccounts))
+	}
 	const newServers = servers.filter((server) => server.id !== id)
 	localStorage.setItem('servers', JSON.stringify(newServers))
 	return

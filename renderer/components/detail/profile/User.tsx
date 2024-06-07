@@ -1,6 +1,8 @@
+import { TheDeskContext } from '@/context'
 import emojify from '@/utils/emojify'
 import { Icon } from '@rsuite/icons'
 import type { Entity } from 'megalodon'
+import { useContext } from 'react'
 import { BsPersonPlus, BsPersonX } from 'react-icons/bs'
 import { Avatar, Button, FlexboxGrid } from 'rsuite'
 
@@ -12,13 +14,16 @@ type Props = {
 }
 
 const User: React.FC<Props> = (props) => {
+	const { timelineConfig } = useContext(TheDeskContext)
 	const { user, relationship } = props
+	const isAnimeIcon = timelineConfig.animation === 'yes'
+
 	return (
 		<FlexboxGrid align="middle">
 			{/** icon **/}
 			<FlexboxGrid.Item colspan={4}>
 				<div style={{ margin: '6px' }}>
-					<Avatar src={user.avatar} />
+					<Avatar src={isAnimeIcon ? user.avatar : user.avatar_static} />
 				</div>
 			</FlexboxGrid.Item>
 			{/** name **/}

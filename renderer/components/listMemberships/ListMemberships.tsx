@@ -1,7 +1,8 @@
+import { TheDeskContext } from '@/context'
 import emojify from '@/utils/emojify'
 import { Icon } from '@rsuite/icons'
 import type { Entity, MegalodonInterface } from 'megalodon'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { BsCheck2, BsX } from 'react-icons/bs'
 import { FormattedMessage } from 'react-intl'
 import { Avatar, Button, FlexboxGrid, Input, InputPicker, List, Modal } from 'rsuite'
@@ -17,6 +18,8 @@ export default function ListMemberships(props: Props) {
 	const [accounts, setAccounts] = useState<Array<Entity.Account>>([])
 	const [title, setTitle] = useState('')
 	const [users, setUsers] = useState<Array<Entity.Account>>([])
+	const { timelineConfig } = useContext(TheDeskContext)
+	const isAnimeIcon = timelineConfig.animation === 'yes'
 
 	useEffect(() => {
 		if (props.list && props.client) {
@@ -82,12 +85,12 @@ export default function ListMemberships(props: Props) {
 				<div>
 					<List>
 						{accounts.map((account, index) => (
-							<List.Item key={index} style={{ padding: 0 }}>
+							<List.Item key={account.id} style={{ padding: 0 }}>
 								<FlexboxGrid align="middle">
 									{/** icon **/}
 									<FlexboxGrid.Item colspan={4}>
 										<div style={{ margin: '6px' }}>
-											<Avatar src={account.avatar} />
+											<Avatar src={isAnimeIcon ? account.avatar : account.avatar_static} />
 										</div>
 									</FlexboxGrid.Item>
 									{/** name **/}

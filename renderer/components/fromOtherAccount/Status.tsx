@@ -7,12 +7,13 @@ import { mapCustomEmojiCategory } from '@/utils/emojiData'
 import emojify from '@/utils/emojify'
 import { Icon } from '@rsuite/icons'
 import type { Entity, MegalodonInterface } from 'megalodon'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { BsPaperclip } from 'react-icons/bs'
 import { FormattedMessage } from 'react-intl'
 import { Avatar, Button, FlexboxGrid, Loader, Modal, Placeholder } from 'rsuite'
 import Actions from '../timelines/status/Actions'
 import Body from '../timelines/status/Body'
+import { TheDeskContext } from '@/context'
 
 type Props = {
 	target: Entity.Status
@@ -50,17 +51,11 @@ export default function Status(props: Props) {
 	const replaceStatus = (status: Entity.Status) => {
 		setStatuses((current) =>
 			current.map((s) => {
-				if (s.id === status.id) {
-					return status
-				} else if (s.reblog && s.reblog.id === status.id) {
-					return Object.assign({}, s, { reblog: status })
-				} else if (status.reblog && s.id === status.reblog.id) {
-					return status.reblog
-				} else if (status.reblog && s.reblog && s.reblog.id === status.reblog.id) {
-					return Object.assign({}, s, { reblog: status.reblog })
-				} else {
-					return s
-				}
+				if (s.id === status.id) return status
+				if (s.reblog && s.reblog.id === status.id) return Object.assign({}, s, { reblog: status })
+				if (status.reblog && s.id === status.reblog.id)  return status.reblog
+				if (status.reblog && s.reblog && s.reblog.id === status.reblog.id) return Object.assign({}, s, { reblog: status.reblog })
+				return s
 			}),
 		)
 	}
@@ -79,7 +74,7 @@ export default function Status(props: Props) {
 						</>
 					) : statuses.length > 0 ? (
 						statuses.map((status, index) => (
-							<Post client={props.client} status={status} key={index} updateStatus={replaceStatus} server={props.server} account={props.account} customEmojis={customEmojis} />
+							<Post client={props.client} status={status} key={status.id} updateStatus={replaceStatus} server={props.server} account={props.account} customEmojis={customEmojis} />
 						))
 					) : (
 						<p style={{ color: 'var(--rs-state-error)' }}>
@@ -108,6 +103,8 @@ type PostProps = {
 
 function Post(props: PostProps) {
 	const { status, client } = props
+	const { timelineConfig } = useContext(TheDeskContext)
+	const isAnimeIcon = timelineConfig.animation === 'yes'
 	const [showReply, setShowReply] = useState(false)
 	const [spoilered, setSpoilered] = useState(status.spoiler_text.length > 0)
 
@@ -117,7 +114,7 @@ function Post(props: PostProps) {
 				{/** icon **/}
 				<FlexboxGrid.Item colspan={3}>
 					<div style={{ margin: '6px' }}>
-						<Avatar src={status.account.avatar} style={{ cursor: 'pointer' }} title={status.account.acct} alt={status.account.acct} />
+						<Avatar src={isAnimeIcon ? status.account.avatar : status.account.avatar_static} style={{ cursor: 'pointer' }} title={status.account.acct} alt={status.account.acct} />
 					</div>
 				</FlexboxGrid.Item>
 				{/** status **/}
@@ -130,15 +127,15 @@ function Post(props: PostProps) {
 								<span>@{status.account.acct}</span>
 							</FlexboxGrid.Item>
 							{/** timestamp **/}
-							<FlexboxGrid.Item colspan={6} style={{ textAlign: 'right' }}>
+							<FlexboxGrid.Item colspan={6} style={{ textAlign: 'right', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
 								<Time time={status.created_at} />
 							</FlexboxGrid.Item>
 						</FlexboxGrid>
 					</div>
-					<Body status={status} spoilered={spoilered} setSpoilered={setSpoilered} />
+					<Body status={status} spoilered={spoilered} spoilerText={status.spoiler_text} setSpoilered={setSpoilered} />
 					{!spoilered &&
 						status.media_attachments.map((media, index) => (
-							<div key={index}>
+							<div key={media.id}>
 								<Button appearance="subtle" size="sm">
 									<Icon as={BsPaperclip} />
 									{media.id}

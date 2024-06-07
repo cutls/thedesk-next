@@ -91,26 +91,18 @@ const StatusDetail: React.FC<Props> = (props) => {
 			}
 			setAncestors((last) =>
 				last.map((status) => {
-					if (status.id === updated.id) {
-						return updated
-					} else if (status.reblog && status.reblog.id === updated.id) {
-						return Object.assign({}, status, { reblog: updated })
-					} else if (status.reblog && updated.reblog && status.reblog.id === updated.reblog.id) {
-						return Object.assign({}, status, { reblog: updated.reblog })
-					}
+					if (status.id === updated.id) return updated
+					if (status.reblog && status.reblog.id === updated.id) return Object.assign({}, status, { reblog: updated })
+					if (status.reblog && updated.reblog && status.reblog.id === updated.reblog.id) return Object.assign({}, status, { reblog: updated.reblog })
 					return status
 				}),
 			)
 
 			setDescendants((last) =>
 				last.map((status) => {
-					if (status.id === updated.id) {
-						return updated
-					} else if (status.reblog && status.reblog.id === updated.id) {
-						return Object.assign({}, status, { reblog: updated })
-					} else if (status.reblog && updated.reblog && status.reblog.id === updated.reblog.id) {
-						return Object.assign({}, status, { reblog: updated.reblog })
-					}
+					if (status.id === updated.id) return updated
+					if (status.reblog && status.reblog.id === updated.id) return Object.assign({}, status, { reblog: updated })
+					if (status.reblog && updated.reblog && status.reblog.id === updated.reblog.id) return Object.assign({}, status, { reblog: updated.reblog })
 					return status
 				}),
 			)
@@ -152,7 +144,7 @@ const StatusDetail: React.FC<Props> = (props) => {
 				</FlexboxGrid>
 			</Header>
 			<Content style={{ height: '100%', backgroundColor: 'var(--rs-bg-card)', overflowY: 'auto' }} className="timeline-scrollable">
-				<List hover style={{ width: 'calc(340px - 6px)' }}>
+				<List hover style={{ width: 'max(340px, 30vw)' }}>
 					{[...ancestors, status, ...descendants]
 						.filter((s) => s !== null)
 						.map((status) => (

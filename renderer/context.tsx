@@ -2,13 +2,18 @@ import generator, { type WebSocketInterface, detector } from 'megalodon'
 import { createContext, useEffect, useState } from 'react'
 import { getAccount, listServers, listTimelines } from './utils/storage'
 import { set } from 'rsuite/esm/utils/dateUtils'
+import { defaultSetting, type Settings } from './entities/settings'
+import type { Timeline } from './entities/timeline'
+import type { Server } from './entities/server'
 
-export const StreamingContext = createContext({
-	start: async () => { },
+export const TheDeskContext = createContext({
+	start: async (timelines: Array<[Timeline, Server]>) => [] as WebSocketInterface[],
 	listen: ((channel: string, callback: any, tts?: boolean) => null) as <T>(channel: string, callback: (a: { payload: T }) => void, tts?: boolean) => void | null,
 	allClose: () => { },
 	timelineRefresh: () => { },
 	latestTimelineRefreshed: new Date().getTime(),
+	timelineConfig: defaultSetting.timeline,
+	saveTimelineConfig: (config: Settings['timeline']) => { }
 })
 const stripForVoice = (html: string) => {
 	const div = document.createElement("div")
@@ -18,39 +23,47 @@ const stripForVoice = (html: string) => {
 	const b = text.replace(protomatch, '').replace(/:[a-zA-Z0-9_]:/g, '')
 	return b
 }
-export const StreamingProviderWrapper: React.FC = (props) => {
-	let streamings: WebSocketInterface[] = []
-	const userStreamings: WebSocketInterface[] = []
+export const TheDeskProviderWrapper: React.FC = (props) => {
 	const [latestTimelineRefreshed, setLatestTimelineRefreshed] = useState(0)
-	const [streamingState, setStreamingState] = useState<WebSocketInterface[]>([])
-	const start = async () => {
-		const timelines = await listTimelines()
-		for (const [timeline, server] of timelines) {
-			const accountId = server.account_id
-			const [account] = await getAccount({ id: accountId })
-			const sns = await detector(server.base_url)
-			const client = generator(sns, server.base_url, account?.access_token)
-			let streaming: WebSocketInterface
-			if (timeline.kind === 'public') streaming = await client.publicStreaming()
-			if (timeline.kind === 'local') streaming = await client.localStreaming()
-			if (timeline.kind === 'direct') streaming = await client.directStreaming()
-			if (timeline.kind === 'list') streaming = await client.listStreaming(timeline.list_id)
-			if (timeline.kind === 'tag') streaming = await client.tagStreaming(timeline.name)
-			streamings.push(streaming)
-		}
-		setStreamingState(streamings)
+	const [timelineConfig, setTimelineConfig] = useState<Settings['timeline']>(defaultSetting.timeline)
+	const saveTimelineConfig = (config: Settings['timeline']) => setTimelineConfig(config)
+	const start = async (timelines: Array<[Timeline, Server]>) => new Promise<WebSocketInterface[] | null>((resolve, reject) => {
+		const fn = async () => {
+			const streamings: WebSocketInterface[] = []
+			let i = 0
+			for (const [timeline, server] of timelines) {
+				const accountId = server.account_id
+				const [account] = await getAccount({ id: accountId })
+				const sns = await detector(server.base_url)
+				const client = generator(sns, server.base_url, account?.access_token)
+				let streaming: WebSocketInterface
+				if (timeline.kind === 'public') streaming = await client.publicStreaming()
+				if (timeline.kind === 'local') streaming = await client.localStreaming()
+				if (timeline.kind === 'direct') streaming = await client.directStreaming()
+				if (timeline.kind === 'list') streaming = await client.listStreaming(timeline.list_id)
+				if (timeline.kind === 'tag') streaming = await client.tagStreaming(timeline.name)
+				streamings.push(streaming)
+				i++
+			}
+			const userStreamings: WebSocketInterface[] = []
 
-		const servers = await listServers()
-		for (const [server, account] of servers) {
-			const sns = await detector(server.base_url)
-			if (!account || !account.access_token) continue
-			const client = generator(sns, server.base_url, account.access_token)
-			const streaming: WebSocketInterface = await client.userStreaming()
-			userStreamings.push(streaming)
+			const servers = await listServers()
+			for (const [server, account] of servers) {
+				const sns = await detector(server.base_url)
+				if (!account || !account.access_token) continue
+				const client = generator(sns, server.base_url, account.access_token)
+				const streaming: WebSocketInterface = await client.userStreaming()
+				userStreamings.push(streaming)
+			}
+			window.streamings = streamings
+			window.userStreamings = userStreamings
+			console.log('resolver')
+			resolve(streamings)
 		}
-	}
+		fn()
+	})
 	const listen = async (channel: string, callback: any, tts?: boolean) => {
-		const useStreaming = streamings
+		const useStreaming = window.streamings
 		while (useStreaming.length === 0) {
 			await new Promise((resolve) => setTimeout(resolve, 1000))
 		}
@@ -97,6 +110,7 @@ export const StreamingProviderWrapper: React.FC = (props) => {
 				})
 			}
 		}
+		const userStreamings = window.userStreamings
 		while (userStreamings.length === 0) {
 			await new Promise((resolve) => setTimeout(resolve, 1000))
 		}
@@ -145,21 +159,27 @@ export const StreamingProviderWrapper: React.FC = (props) => {
 		}
 
 		return () => {
-			for (const streaming of streamings) streaming.removeListener(channel, callback)
+			for (const streaming of window.streamings) streaming.removeListener(channel, callback)
+			for (const streaming of window.userStreamings) streaming.removeListener(channel, callback)
 		}
 	}
 
 	const allClose = async () => {
+		const streamingState = window.streamings
 		console.log('allClosed', streamingState)
 		if (streamingState.length === 0) return
 		for (const streaming of streamingState) streaming?.removeAllListeners()
 		for (const streaming of streamingState) streaming?.stop()
-		streamings = []
-		setStreamingState([])
+		window.streamings = []
+		const userStreamingState = window.userStreamings
+		if (userStreamingState.length === 0) return
+		for (const streaming of userStreamingState) streaming?.removeAllListeners()
+		for (const streaming of userStreamingState) streaming?.stop()
+		window.userStreamings = []
 	}
 	const timelineRefresh = () => {
 		setLatestTimelineRefreshed(new Date().getTime())
 	}
 
-	return <StreamingContext.Provider value={{ listen, start, allClose, timelineRefresh, latestTimelineRefreshed }}>{props.children}</StreamingContext.Provider>
+	return <TheDeskContext.Provider value={{ listen, start, allClose, timelineRefresh, latestTimelineRefreshed, timelineConfig, saveTimelineConfig }}>{props.children}</TheDeskContext.Provider>
 }

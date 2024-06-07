@@ -121,28 +121,18 @@
     width: 0;
   }
 
-  50% {
-    width: 200px;
-    min-width: 200px;
-  }
-
   to {
-    width: 340px;
-    min-width: 340px;
-    max-width: 340px;
+    width: max(340px, 30vw);
+    min-width: max(340px, 30vw);
+    max-width: max(340px, 30vw);
   }
 }
 
 @keyframes slideOutDetail {
   from {
-    width: 340px;
-    min-width: 340px;
-    max-width: 340px;
-  }
-
-  50% {
-    width: 100px;
-    min-width: 100px;
+    width: max(340px, 30vw);
+    min-width: max(340px, 30vw);
+    max-width: max(340px, 30vw);
   }
 
   to {
@@ -170,9 +160,9 @@
 }
 
 .detail-entered {
-  width: 341x;
-  min-width: 341px;
-  max-width: 341px;
+  width:  max(340px, 30vw);
+  min-width:  max(340px, 30vw);
+  max-width:  max(340px, 30vw);
   height: 100vh;
   right: 0;
   position: fixed;
@@ -264,9 +254,11 @@
 .status-body {
   img {
     max-width: 240px;
-    &.emojione:hover {
+    &.emojione {
+      &:hover {
+        transform: scale(2);
+      }
       transition-duration: 0.3s;
-      transform: scale(2);
     }
   }
 
@@ -386,4 +378,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.colorChangeBtn {
+  transition-duration: 0.3s;
+  &:hover {
+    transform: scale(1.05);
+  }
 }

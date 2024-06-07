@@ -1,7 +1,8 @@
+import { TheDeskContext } from '@/context'
 import emojify from '@/utils/emojify'
 import { Icon } from '@rsuite/icons'
 import type { Entity, MegalodonInterface } from 'megalodon'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { BsListUl, BsPlusLg, BsXLg } from 'react-icons/bs'
 import { Avatar, Button, FlexboxGrid, List, Modal } from 'rsuite'
 
@@ -13,6 +14,7 @@ type Props = {
 }
 
 export default function AddListMember(props: Props) {
+	const { timelineConfig } = useContext(TheDeskContext)
 	const { user, close, client } = props
 
 	const [lists, setLists] = useState<Array<Entity.List>>([])
@@ -55,6 +57,7 @@ export default function AddListMember(props: Props) {
 		},
 		[user, client],
 	)
+	const isAnimeIcon = timelineConfig.animation === 'yes'
 
 	return (
 		<>
@@ -65,7 +68,7 @@ export default function AddListMember(props: Props) {
 							{/** icon **/}
 							<FlexboxGrid.Item colspan={4}>
 								<div style={{ margin: '6px' }}>
-									<Avatar src={user.avatar} />
+									<Avatar src={isAnimeIcon ? user.avatar : user.avatar_static} />
 								</div>
 							</FlexboxGrid.Item>
 							{/** name **/}
@@ -82,7 +85,7 @@ export default function AddListMember(props: Props) {
 					<Modal.Body>
 						<List>
 							{lists.map((list, index) => (
-								<List.Item key={index}>
+								<List.Item key={list.id}>
 									<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 0.6em' }}>
 										<div style={{ display: 'flex', alignItems: 'center' }}>
 											<Icon as={BsListUl} />

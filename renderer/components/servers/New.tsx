@@ -1,5 +1,5 @@
 import type { Server } from '@/entities/server'
-import { StreamingContext } from '@/streaming'
+import { TheDeskContext } from '@/context'
 import { parseDomain } from '@/utils/domainParser'
 import { addApplication, authorizeCode } from '@/utils/oauth'
 import { addServer } from '@/utils/storage'
@@ -25,7 +25,7 @@ const New: React.FC<Props> = (props) => {
 	const [loading, setLoading] = useState<boolean>(false)
 	const [domain, setDomain] = useState('')
 	const [code, setCode] = useState('')
-	const { timelineRefresh } = useContext(StreamingContext)
+	const { timelineRefresh } = useContext(TheDeskContext)
 
 	const toast = useToaster()
 

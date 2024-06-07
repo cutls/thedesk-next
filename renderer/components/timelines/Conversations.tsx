@@ -10,7 +10,7 @@ import type { Account } from '@/entities/account'
 import type { Server } from '@/entities/server'
 import { type Timeline, colorList, columnWidth } from '@/entities/timeline'
 import type { ReceiveTimelineConversationPayload } from '@/payload'
-import { StreamingContext } from '@/streaming'
+import { TheDeskContext } from '@/context'
 import FailoverImg from '@/utils/failoverImg'
 import timelineName from '@/utils/timelineName'
 import { useRouter } from 'next/router'
@@ -28,7 +28,7 @@ type Props = {
 
 const Conversations: React.FC<Props> = (props) => {
 	const { formatMessage } = useIntl()
-	const { listen } = useContext(StreamingContext)
+	const { listen } = useContext(TheDeskContext)
 	const [account, setAccount] = useState<Account | null>(null)
 	const [client, setClient] = useState<MegalodonInterface>()
 	const [conversations, setConversations] = useState<Array<Entity.Conversation>>([])
@@ -216,7 +216,7 @@ const Conversations: React.FC<Props> = (props) => {
 	)
 }
 const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: () => void }>((props, ref) => {
-	const { timelineRefresh } = useContext(StreamingContext)
+	const { timelineRefresh } = useContext(TheDeskContext)
 	const newRef = useRef()
 	const removeTimelineFn = async (timeline: Timeline) => {
 		await removeTimeline({ id: timeline.id })
@@ -260,11 +260,12 @@ const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: ()
 					<Radio value="lg">lg</Radio>
 				</RadioGroup>
 				<Divider style={{ margin: '8px 0' }} />
+				<FormattedMessage id="timeline.settings.color" />
 				<FlexboxGrid justify="center">
 					<Stack wrap spacing={6} style={{ maxWidth: '250px', padding: '5px' }}>
-						<Button style={{ textTransform: 'capitalize', width: '30px', height: '30px' }} onClick={() => updateColumnColorFn(props.timeline, 'unset')} />
+						<Button style={{ textTransform: 'capitalize', width: '30px', height: '30px' }} className="colorChangeBtn" onClick={() => updateColumnColorFn(props.timeline, 'unset')} />
 						{colorList.map((c) => (
-							<Button appearance="primary" key={c} color={c} style={{ textTransform: 'capitalize', width: '30px', height: '30px' }} onClick={() => updateColumnColorFn(props.timeline, c)} />
+							<Button appearance="primary" key={c} color={c} className="colorChangeBtn" style={{ textTransform: 'capitalize', width: '30px', height: '30px' }} onClick={() => updateColumnColorFn(props.timeline, c)} />
 						))}
 					</Stack>
 				</FlexboxGrid>

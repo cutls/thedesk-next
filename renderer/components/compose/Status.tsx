@@ -36,6 +36,8 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import AutoCompleteTextarea, { type ArgProps as AutoCompleteTextareaProps } from './AutoCompleteTextarea'
 import EditMedia from './EditMedia'
 import { privacyColor, privacyIcon } from '@/utils/statusParser'
+import { readSettings } from '@/utils/storage'
+import { type Settings, defaultSetting } from '@/entities/settings'
 
 type Props = {
 	server: Server
@@ -96,9 +98,7 @@ const Status: React.FC<Props> = (props) => {
 	const [loading, setLoading] = useState<boolean>(false)
 	const [visibility, setVisibility] = useState<'public' | 'unlisted' | 'private' | 'direct'>('public')
 	const [cw, setCW] = useState<boolean>(false)
-	const [statusForcused, setStatusFocused] = useState(false)
-	const [cwForcused, setCwFocused] = useState(false)
-	const [pollFocused, setPollFocused] = useState(false)
+	const [config, setConfig] = useState<Settings['compose']>(defaultSetting.compose)
 	const [language, setLanguage] = useState<string>('en')
 	const [editMediaModal, setEditMediaModal] = useState(false)
 	const [editMedia, setEditMedia] = useState<Entity.Attachment | null>(null)
@@ -120,6 +120,9 @@ const Status: React.FC<Props> = (props) => {
 		}
 
 		const f = async () => {
+			const config = await readSettings()
+			setConfig(config.compose || defaultSetting.compose)
+			console.log(config.compose)
 			const instance = await props.client.getInstance()
 			if (instance.data.configuration.statuses.max_characters) {
 				setMaxCharacters(instance.data.configuration.statuses.max_characters)
@@ -212,7 +215,7 @@ const Status: React.FC<Props> = (props) => {
 		}
 	}, [maxCharacters, formValue])
 
-	const handleSubmit = async () => {
+	const handleSubmit = async (useVis?: "public" | "unlisted" | "private" | "direct") => {
 		if (loading) {
 			return
 		}
@@ -223,7 +226,7 @@ const Status: React.FC<Props> = (props) => {
 		}
 		setLoading(true)
 		try {
-			let options = { visibility: visibility }
+			let options = { visibility: useVis || visibility }
 			if (props.in_reply_to) {
 				options = Object.assign({}, options, {
 					in_reply_to_id: props.in_reply_to.id,
@@ -269,7 +272,6 @@ const Status: React.FC<Props> = (props) => {
 			} else {
 				await props.client.postStatus(formValue.status, options)
 			}
-			clear()
 		} catch (err) {
 			console.error(err)
 			toast.push(alert('error', formatMessage({ id: 'alert.failed_post' })), { placement: 'topStart' })
@@ -280,16 +282,17 @@ const Status: React.FC<Props> = (props) => {
 
 	const handleKeyPress = useCallback(
 		(event: KeyboardEvent) => {
-			if (event.key === 'x' && !cwForcused && !statusForcused && !pollFocused) {
+			const ctrl = event.ctrlKey || event.metaKey
+			if (ctrl === true && event.key === 'm') {
 				event.preventDefault()
 				props.setOpened(false)
 			}
-			if (event.key === 'n' && !cwForcused && !statusForcused && !pollFocused) {
+			if (ctrl === true && event.key === 'n') {
 				props.setOpened(true)
 				statusRef.current?.getElementsByTagName('textarea')[0]?.focus()
 				event.preventDefault()
 			}
-			if (event.ctrlKey === true && event.key === 'Enter') {
+			if (ctrl === true && event.key === 'Enter') {
 				if (document.activeElement === statusRef.current?.firstElementChild || document.activeElement === cwRef.current?.firstElementChild) {
 					handleSubmit()
 				}
@@ -312,7 +315,7 @@ const Status: React.FC<Props> = (props) => {
 			status: '',
 		})
 		setCW(false)
-		if (props.onClose) {
+		if (props.onClose && config.afterPost === 'close') {
 			props.onClose()
 		}
 	}
@@ -517,13 +520,14 @@ const Status: React.FC<Props> = (props) => {
 		}
 		return 'emoji-picker-compose'
 	}
+	const secondaryToot = config.secondaryToot
 
 	return (
 		<>
 			<Form fluid model={model} ref={formRef} onChange={setFormValue} onCheck={setFormError} formValue={formValue}>
 				{cw && (
 					<Form.Group controlId="spoiler">
-						<Form.Control name="spoiler" ref={cwRef} onFocus={() => setCwFocused(true)} onBlur={() => setCwFocused(false)} placeholder={formatMessage({ id: 'compose.spoiler.placeholder' })} />
+						<Form.Control name="spoiler" ref={cwRef} placeholder={formatMessage({ id: 'compose.spoiler.placeholder' })} />
 					</Form.Group>
 				)}
 
@@ -538,8 +542,6 @@ const Status: React.FC<Props> = (props) => {
 						emojis={customEmojis}
 						client={props.client}
 						style={{ fontSize: '1em' }}
-						onFocus={() => setStatusFocused(true)}
-						onBlur={() => setStatusFocused(false)}
 					/>
 					{/** delay is required to fix popover position **/}
 					<Whisper trigger="click" placement="bottomEnd" controlId={targetId()} delay={100} preventOverflow={false} ref={emojiPickerRef} speaker={<EmojiPicker />}>
@@ -553,7 +555,7 @@ const Status: React.FC<Props> = (props) => {
 						</div>
 					)}
 				</Form.Group>
-				{formValue.poll && <Form.Control name="poll" accepter={PollInputControl} setPollFocused={setPollFocused} fieldError={formError.poll} />}
+				{formValue.poll && <Form.Control name="poll" accepter={PollInputControl} fieldError={formError.poll} />}
 				{formValue.scheduled_at && <Form.Control name="scheduled_at" accepter={DatePicker} format="yyyy-MM-dd HH:mm" />}
 
 				<Form.Group controlId="actions" style={{ marginBottom: '4px' }}>
@@ -636,9 +638,10 @@ const Status: React.FC<Props> = (props) => {
 								<FormattedMessage id="compose.cancel" />
 							</Button>
 						)}
-						<Button appearance="primary" color={props.account.color || 'green'} onClick={handleSubmit} loading={loading} style={{ flexGrow: 1 }}>
+						<Button appearance="primary" color={props.account.color || 'green'} onClick={() => handleSubmit()} loading={loading} style={{ flexGrow: 1 }}>
 							<FormattedMessage id="compose.post" />
 						</Button>
+						{secondaryToot !== 'no' && <IconButton appearance="primary" color={privacyColor(secondaryToot) || undefined} onClick={() => handleSubmit(secondaryToot)} icon={<Icon as={privacyIcon(secondaryToot)} />} />}
 					</ButtonToolbar>
 				</Form.Group>
 			</Form>

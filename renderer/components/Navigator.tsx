@@ -5,13 +5,13 @@ import type { Marker } from '@/entities/marker'
 import type { Server, ServerSet } from '@/entities/server'
 import { type Timeline, colorList } from '@/entities/timeline'
 import type { Unread } from '@/entities/unread'
-import { StreamingContext } from '@/streaming'
+import { TheDeskContext } from '@/context'
 import FailoverImg from '@/utils/failoverImg'
 import { Icon } from '@rsuite/icons'
 import generator, { type Entity } from 'megalodon'
 import { useRouter } from 'next/router'
 import { type Dispatch, type ReactElement, type SetStateAction, useContext, useEffect, useState } from 'react'
-import { BsGear, BsPencilSquare, BsPlus, BsSearch } from 'react-icons/bs'
+import { BsDice1, BsDice2, BsDice3, BsDice4, BsDice5, BsDice6, BsGear, BsPencilSquare, BsPlus, BsSearch } from 'react-icons/bs'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Avatar, Badge, Button, Dropdown, FlexboxGrid, Popover, Sidebar, Sidenav, Stack, Text, Whisper, useToaster } from 'rsuite'
 import { addTimeline, listTimelines, removeServer, updateAccountColor } from 'utils/storage'
@@ -29,13 +29,22 @@ type NavigatorProps = {
 	setHighlighted: Dispatch<SetStateAction<Timeline>>
 	setUnreads: Dispatch<SetStateAction<Array<Unread>>>
 }
+const diceCt = (dice: number) => {
+	if (!dice || dice <= 1) return BsDice1
+	if (dice <= 2) return BsDice2
+	if (dice <= 3) return BsDice3
+	if (dice <= 4) return BsDice4
+	if (dice <= 5) return BsDice5
+	return BsDice6
 
+}
 const Navigator: React.FC<NavigatorProps> = (props): ReactElement => {
 	const { formatMessage } = useIntl()
 	const { servers, openAuthorize, openAnnouncements, openThirdparty, openSettings } = props
+	const [awake, setAwake] = useState(0)
 	const [walkthrough, setWalkthrough] = useState(false)
 	const toaster = useToaster()
-	const { timelineRefresh } = useContext(StreamingContext)
+	const { timelineRefresh } = useContext(TheDeskContext)
 
 	// Walkthrough instruction
 
@@ -70,6 +79,11 @@ const Navigator: React.FC<NavigatorProps> = (props): ReactElement => {
 			return set
 		})
 	}, [props.servers])
+	useEffect(() => {
+		setInterval(() => {
+			setAwake((current) => current + 1)
+		}, 600000)
+	}, [])
 
 	const closeWalkthrough = async () => {
 		setWalkthrough(false)
@@ -131,7 +145,7 @@ const Navigator: React.FC<NavigatorProps> = (props): ReactElement => {
 					{servers.map((server, i) => (
 						<div key={server.account?.id || server.server.id} style={{ marginTop: '5px' }}>
 							<Whisper
-								placement="right"
+								placement="top"
 								controlId="control-id-context-menu"
 								trigger="click"
 								onOpen={closeWalkthrough}
@@ -159,7 +173,7 @@ const Navigator: React.FC<NavigatorProps> = (props): ReactElement => {
 									title={server.account ? `${server.account.username}@${server.server.domain}` : server.server.domain}
 								>
 									<Badge content={!!props.unreads.find((u) => u.server_id === server.server.id && u.count > 0)}>
-										<Avatar size="sm" src={FailoverImg(server.server.favicon)} className="server-icon" alt={server.server.domain} key={server.server.id} />
+										<Avatar size="sm" src={server.account?.avatar || FailoverImg(server.server.favicon)} className="server-icon colorChangeBtn" alt={server.server.domain} key={server.server.id} />
 									</Badge>
 								</Button>
 							</Whisper>
@@ -171,14 +185,42 @@ const Navigator: React.FC<NavigatorProps> = (props): ReactElement => {
 				</div>
 			</div>
 			<div style={{ display: 'flex', alignItems: 'center', paddingRight: '10px' }}>
-				<div style={{ display: 'flex', alignItems: 'center' }}>
+				<div style={{ display: 'flex', alignItems: 'center', border: '1px solid', borderRadius: '5px', marginRight: '10px' }}>
+					<Whisper
+						placement="top"
+						controlId="control-id-setting-menu"
+						trigger="click"
+						onOpen={closeWalkthrough}
+						preventOverflow={true}
+						speaker={({ className, left, top, onClose }, ref) =>
+							settingsMenu(
+								{
+									className,
+									left,
+									top,
+									onClose,
+									openThirdparty,
+									openSettings
+								},
+								ref,
+							)
+						}
+					>
+						<Button
+							appearance="link"
+							size="lg"
+							style={{ paddingRight: 0 }}
+						>
+							<Icon as={diceCt(awake)} style={{ fontSize: '1.4em' }} />
+						</Button>
+					</Whisper>
 					<Button appearance="link" size="lg" title={formatMessage({ id: 'navigator.settings.title' })} onClick={() => openSettings()}>
 						<Icon as={BsGear} style={{ fontSize: '1.4em' }} />
 					</Button>
-					<Button appearance="primary" color="green" size="lg" onClick={props.toggleCompose} startIcon={<Icon as={BsPencilSquare} />}>
-						<FormattedMessage id="compose.post" />
-					</Button>
 				</div>
+				<Button appearance="primary" color="green" size="lg" onClick={props.toggleCompose} startIcon={<Icon as={BsPencilSquare} />}>
+					<FormattedMessage id="compose.post" />
+				</Button>
 			</div>
 		</div>
 	)
@@ -197,7 +239,7 @@ type ServerMenuProps = {
 
 const serverMenu = ({ className, left, top, onClose, server, openAuthorize, openAnnouncements, openNotification }: ServerMenuProps, ref: React.RefCallback<HTMLElement>): ReactElement => {
 	const router = useRouter()
-	const { timelineRefresh } = useContext(StreamingContext)
+	const { timelineRefresh } = useContext(TheDeskContext)
 
 	const handleSelect = (eventKey: string) => {
 		onClose()
@@ -210,6 +252,7 @@ const serverMenu = ({ className, left, top, onClose, server, openAuthorize, open
 				break
 			case 'remove':
 				removeServer({ id: server.server.id })
+				timelineRefresh()
 				break
 			case 'announcements':
 				openAnnouncements(server.server, server.account)
@@ -267,9 +310,9 @@ const serverMenu = ({ className, left, top, onClose, server, openAuthorize, open
 			</Text>
 			<FlexboxGrid justify="center">
 				<Stack wrap spacing={6} style={{ maxWidth: '150px', padding: '5px' }}>
-					<Button style={{ textTransform: 'capitalize', width: '30px', height: '30px' }} onClick={() => updateAccountColorFn(server.server.account_id, 'unset')} />
+					<Button style={{ textTransform: 'capitalize', width: '30px', height: '30px' }} className="colorChangeBtn" onClick={() => updateAccountColorFn(server.server.account_id, 'unset')} />
 					{colorList.map((c) => (
-						<Button appearance="primary" key={c} color={c} style={{ textTransform: 'capitalize', width: '30px', height: '30px' }} onClick={() => updateAccountColorFn(server.server.account_id, c)} />
+						<Button appearance="primary" className="colorChangeBtn" key={c} color={c} style={{ textTransform: 'capitalize', width: '30px', height: '30px' }} onClick={() => updateAccountColorFn(server.server.account_id, c)} />
 					))}
 				</Stack>
 			</FlexboxGrid>

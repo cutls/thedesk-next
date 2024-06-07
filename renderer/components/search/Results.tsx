@@ -2,12 +2,13 @@ import Status from '@/components/timelines/status/Status'
 import type { Account } from '@/entities/account'
 import type { CustomEmojiCategory } from '@/entities/emoji'
 import type { Server } from '@/entities/server'
+import { TheDeskContext } from '@/context'
 import { mapCustomEmojiCategory } from '@/utils/emojiData'
 import emojify from '@/utils/emojify'
 import { Icon } from '@rsuite/icons'
 import type { Entity, MegalodonInterface } from 'megalodon'
 import { useRouter } from 'next/router'
-import { useCallback, useState } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { BsChatQuote, BsHash, BsPeople, BsSearch } from 'react-icons/bs'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Avatar, Form, Input, InputGroup, List } from 'rsuite'
@@ -86,15 +87,17 @@ export default function Results(props: Props) {
 		const renew = statuses.map((s) => {
 			if (s.id === status.id) {
 				return status
-			} else if (s.reblog && s.reblog.id === status.id) {
-				return Object.assign({}, s, { reblog: status })
-			} else if (status.reblog && s.id === status.reblog.id) {
-				return status.reblog
-			} else if (status.reblog && s.reblog && s.reblog.id === status.reblog.id) {
-				return Object.assign({}, s, { reblog: status.reblog })
-			} else {
-				return s
 			}
+			if (s.reblog && s.reblog.id === status.id) {
+				return Object.assign({}, s, { reblog: status })
+			}
+			if (status.reblog && s.id === status.reblog.id) {
+				return status.reblog
+			}
+			if (status.reblog && s.reblog && s.reblog.id === status.reblog.id) {
+				return Object.assign({}, s, { reblog: status.reblog })
+			}
+			return s
 		})
 		setStatuses(renew)
 	}
@@ -120,7 +123,7 @@ export default function Results(props: Props) {
 					</div>
 					<List>
 						{accounts.map((account, index) => (
-							<List.Item key={index} style={{ backgroundColor: 'var(--rs-border-primary)', padding: '4px 0' }}>
+							<List.Item key={account.id} style={{ backgroundColor: 'var(--rs-border-primary)', padding: '4px 0' }}>
 								<User user={account} open={openUser} />
 							</List.Item>
 						))}
@@ -139,7 +142,7 @@ export default function Results(props: Props) {
 					</div>
 					<List>
 						{hashtags.map((tag, index) => (
-							<List.Item key={index} style={{ backgroundColor: 'var(--rs-border-primary)', padding: '4px 0' }}>
+							<List.Item key={tag.name} style={{ backgroundColor: 'var(--rs-border-primary)', padding: '4px 0' }}>
 								<div style={{ padding: '12px 8px', cursor: 'pointer' }} onClick={() => openTag(tag)}>
 									#{tag.name}
 								</div>
@@ -160,7 +163,7 @@ export default function Results(props: Props) {
 					</div>
 					<List>
 						{statuses.map((status, index) => (
-							<List.Item key={index} style={{ backgroundColor: 'var(--rs-border-primary)', padding: '4px 0' }}>
+							<List.Item key={status.id} style={{ backgroundColor: 'var(--rs-border-primary)', padding: '4px 0' }}>
 								<div style={{ padding: '12px 8px', cursor: 'pointer' }}>
 									<Status
 										status={status}
@@ -194,13 +197,15 @@ type UserProps = {
 
 const User: React.FC<UserProps> = (props) => {
 	const { user, open } = props
+	const { timelineConfig } = useContext(TheDeskContext)
+	const isAnimeIcon = timelineConfig.animation === 'yes'
 
 	return (
 		<div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => open(user)}>
 			{/** icon **/}
 			<div style={{ width: '56px' }}>
 				<div style={{ margin: '6px' }}>
-					<Avatar src={user.avatar} />
+					<Avatar src={isAnimeIcon ? user.avatar : user.avatar_static} />
 				</div>
 			</div>
 			{/** name **/}

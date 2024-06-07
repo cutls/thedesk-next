@@ -59,7 +59,7 @@
 			"title": "設定",
 			"app_menu": "メニューを表示 / 非表示",
 			"settings": "設定",
-			"thirdparty": "サードパーティのライセンス"
+			"thirdparty": "このアプリについて / ライセンス"
 		},
 		"servers": {
 			"authorize": "認証",
@@ -98,21 +98,42 @@
 				"language": "言語",
 				"color_theme": "カラーテーマ"
 			},
+			"timeline": {
+				"title": "タイムライン",
+				"time": {
+					"title": "時間表示",
+					"relative": "相対時間",
+					"absolute": "絶対時間(24時間制)",
+					"12h": "絶対時間(12時間制)"
+				},
+				"animation": "アイコンのアニメーション",
+				"max_length": "表示する最大文字数",
+				"max_length_hint": "0 で制限なし。設定した以上の長さの投稿は自動的に隠されます。",
+				"max_length_unit": "字"
+			},
+			"compose": {
+				"title": "投稿",
+				"afterPost": {
+					"title": "投稿後投稿ボックスの挙動",
+					"close": "しまう",
+					"stay": "しまわない"
+				},
+				"secondaryToot": "サブ投稿ボタンを表示",
+				"secondaryToot_hint": "設定した公開範囲ですぐ投稿できるボタンを表示します。"
+			},
 			"save": "保存",
 			"close": "閉じる",
 			"validation": {
-				"font_size": {
+				"general_required": "必須項目です",
+				"general_number": {
 					"type": "有効な数値を入力してください",
 					"range": "{from} から {to} までの数字を入力してください",
-					"required": "フォントサイズは必須です"
-				},
-				"language": {
-					"required": "言語は必須項目です"
+					"required": "必須項目です"
 				}
 			}
 		},
 		"thirdparty": {
-			"title": "サードパーティのライセンス"
+			"title": "このアプリについて / ライセンス"
 		}
 	},
 	"compose": {
@@ -246,6 +267,7 @@
 		},
 		"status": {
 			"show_more": "もっと見る",
+			"show_more_auto": "もっと見る(長い)",
 			"show_less": "隠す",
 			"media_hidden": "非表示のメディア",
 			"pinned_post": "ピン留めされた投稿",

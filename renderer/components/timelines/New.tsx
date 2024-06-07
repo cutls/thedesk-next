@@ -1,5 +1,5 @@
 import { time } from 'console'
-import { StreamingContext } from '@/streaming'
+import { TheDeskContext } from '@/context'
 import { Icon } from '@rsuite/icons'
 import generator, { type Entity } from 'megalodon'
 import { useContext, useEffect, useState } from 'react'
@@ -126,7 +126,7 @@ type Props = {
 
 const New: React.FC<Props> = (props) => {
 	const { formatMessage } = useIntl()
-	const { timelineRefresh } = useContext(StreamingContext)
+	const { timelineRefresh } = useContext(TheDeskContext)
 
 	const [server, setServer] = useState<Server | null>(null)
 	const [walkthrough, setWalkthrough] = useState<boolean>(false)

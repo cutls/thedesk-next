@@ -8,7 +8,7 @@ import { Button, Content, FlexboxGrid, Header, List, Loader } from 'rsuite'
 import type { Account } from '@/entities/account'
 import type { CustomEmojiCategory } from '@/entities/emoji'
 import type { Server } from '@/entities/server'
-import { StreamingContext } from '@/streaming'
+import { TheDeskContext } from '@/context'
 import { mapCustomEmojiCategory } from '@/utils/emojiData'
 import { addTimeline, getAccount, getServer } from '@/utils/storage'
 import { FormattedMessage, useIntl } from 'react-intl'
@@ -30,7 +30,7 @@ export default function TagDetail(props: Props) {
 	const [tag, setTag] = useState('')
 	const [hashtag, setHashtag] = useState<Entity.Tag | null>(null)
 	const [customEmojis, setCustomEmojis] = useState<Array<CustomEmojiCategory>>([])
-	const { timelineRefresh } = useContext(StreamingContext)
+	const { timelineRefresh } = useContext(TheDeskContext)
 
 	const router = useRouter()
 

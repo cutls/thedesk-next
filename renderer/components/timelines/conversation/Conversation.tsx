@@ -46,6 +46,7 @@ const Conversation: React.FC<Props> = (props) => {
 					{conversation.last_status && (
 						<Body
 							status={conversation.last_status}
+							spoilerText={conversation.last_status.spoiler_text}
 							style={{ color: 'var(--rs-text-tertiary)' }}
 							onClick={() => props.selectStatus(conversation.id, conversation.last_status)}
 							spoilered={spoilered}
@@ -54,7 +55,7 @@ const Conversation: React.FC<Props> = (props) => {
 					)}
 					{conversation.last_status &&
 						conversation.last_status.media_attachments.map((media, index) => (
-							<div key={index}>
+							<div key={media.id}>
 								<Button appearance="subtle" size="sm" onClick={() => props.openMedia(conversation.last_status.media_attachments, index)}>
 									<Icon as={BsPaperclip} />
 									{media.id}
