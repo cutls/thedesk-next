@@ -264,6 +264,10 @@
 .status-body {
   img {
     max-width: 240px;
+    &.emojione:hover {
+      transition-duration: 0.3s;
+      transform: scale(2);
+    }
   }
 
   blockquote {

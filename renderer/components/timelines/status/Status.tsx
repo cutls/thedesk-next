@@ -6,7 +6,7 @@ import type { Server } from '@/entities/server'
 import type { ColumnWidth } from '@/entities/timeline'
 import emojify from '@/utils/emojify'
 import { open } from '@/utils/openBrowser'
-import { type ParsedAccount, accountMatch, findAccount, findLink, findTag } from '@/utils/statusParser'
+import { type ParsedAccount, accountMatch, findAccount, findLink, findTag, privacyIcon, privacyColor } from '@/utils/statusParser'
 import { Icon } from '@rsuite/icons'
 import type { Entity, MegalodonInterface } from 'megalodon'
 import { type HTMLAttributes, type MouseEventHandler, useEffect, useState } from 'react'
@@ -147,7 +147,7 @@ const Status: React.FC<Props> = (props) => {
 			{rebloggedHeader(props.status)}
 			<div style={{ display: 'flex' }}>
 				{/** icon **/}
-				<div style={{ width: '56px', padding: '6px', boxSizing: 'border-box' }}>
+				<div style={{ width: '56px', padding: '6px', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center' }}>
 					<Avatar
 						src={status.account.avatar}
 						onClick={() => props.setAccountDetail(status.account.id, props.server.id, props.account?.id)}
@@ -155,6 +155,7 @@ const Status: React.FC<Props> = (props) => {
 						title={status.account.acct}
 						alt={status.account.acct}
 					/>
+					<Icon as={privacyIcon(status.visibility)} style={{ fontSize: '0.8em', marginBottom: '5px', color: privacyColor(status.visibility) }} />
 				</div>
 				{/** status **/}
 				<div style={{ paddingRight: '8px', width: 'calc(100% - 56px)', boxSizing: 'border-box' }}>

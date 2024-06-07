@@ -221,7 +221,7 @@ function App() {
 				<Animation.Transition in={composeOpened} exitedClassName="compose-exited" exitingClassName="compose-exiting" enteredClassName="compose-entered" enteringClassName="compose-entering">
 					{(props, ref) => (
 						<Draggable handle=".draggable" position={draggalePosition} onStop={(_e, data) => setComposePosition([data.x, data.y])}>
-							<div {...props} ref={ref} style={{ position: 'fixed', zIndex: 2 }}>
+							<div {...props} ref={ref} style={{ position: 'fixed', zIndex: 4 }}>
 								<Compose setOpened={setComposeOpened} servers={servers} />
 							</div>
 						</Draggable>

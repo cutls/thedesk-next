@@ -35,6 +35,7 @@ import { open } from '@/utils/openBrowser'
 import { FormattedMessage, useIntl } from 'react-intl'
 import AutoCompleteTextarea, { type ArgProps as AutoCompleteTextareaProps } from './AutoCompleteTextarea'
 import EditMedia from './EditMedia'
+import { privacyColor, privacyIcon } from '@/utils/statusParser'
 
 type Props = {
 	server: Server
@@ -566,7 +567,7 @@ const Status: React.FC<Props> = (props) => {
 						</Button>
 						<Whisper placement="bottomStart" trigger="click" speaker={VisibilityDropdown}>
 							<Button appearance="subtle">
-								<Icon as={privacyIcon(visibility)} style={{ fontSize: '1.1em' }} />
+								<Icon as={privacyIcon(visibility)} style={{ fontSize: '1.1em', color: privacyColor(visibility) }} />
 							</Button>
 						</Whisper>
 						<Button appearance="subtle" onClick={() => toggleCW()}>
@@ -654,20 +655,7 @@ const Status: React.FC<Props> = (props) => {
 	)
 }
 
-const privacyIcon = (visibility: 'public' | 'unlisted' | 'private' | 'direct') => {
-	switch (visibility) {
-		case 'public':
-			return BsGlobe
-		case 'unlisted':
-			return BsUnlock
-		case 'private':
-			return BsLock
-		case 'direct':
-			return BsEnvelope
-		default:
-			return BsGlobe
-	}
-}
+
 
 const Textarea = forwardRef<HTMLTextAreaElement, AutoCompleteTextareaProps>(AutoCompleteTextarea)
 

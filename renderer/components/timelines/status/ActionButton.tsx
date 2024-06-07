@@ -12,13 +12,9 @@ type Props = {
 
 const ActionButton: React.FC<Props> = (props) => {
 	const className = () => {
-		if (props.activating) {
-			return 'activating'
-		} else if (props.deactivating) {
-			return 'deactivating'
-		} else {
-			return ''
-		}
+		if (props.activating) return 'activating'
+		if (props.deactivating) return 'deactivating'
+		return ''
 	}
 	return <IconButton appearance="link" className={`${props.className} ${className()}`} icon={props.icon} onClick={props.onClick} disabled={props.disabled} title={props.title} />
 }

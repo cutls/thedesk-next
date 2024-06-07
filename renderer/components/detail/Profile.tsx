@@ -272,9 +272,6 @@ const Profile: React.FC<Props> = (props) => {
 								<span style={{ fontSize: '1.2em', fontWeight: 'bold', display: 'block' }} dangerouslySetInnerHTML={{ __html: emojify(user.display_name, user.emojis) }} />
 								<span style={{ display: 'block', color: 'var(--rs-text-secondary)' }}>@{user.acct}</span>
 							</FlexboxGrid.Item>
-							<FlexboxGrid.Item style={{ margin: '5px 0' }}>
-								{!relationship?.following && <FormattedMessage id="detail.profile.not_following" />}
-							</FlexboxGrid.Item>
 						</FlexboxGrid>
 						<div className="bio">
 							<div dangerouslySetInnerHTML={{ __html: user.note }} style={{ overflow: 'hidden', wordBreak: 'break-word' }} onClick={onClick} />

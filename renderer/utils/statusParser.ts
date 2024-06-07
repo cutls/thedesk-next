@@ -1,4 +1,6 @@
+import { Color } from '@/entities/timeline'
 import type { Entity } from 'megalodon'
+import { BsEnvelope, BsGlobe, BsLock, BsUnlock } from 'react-icons/bs'
 
 export type ParsedAccount = {
 	username: string
@@ -63,11 +65,8 @@ export function findAccount(target: HTMLElement | null, parentClassName: string)
 	const targetClass = target.getAttribute('class')
 	const link = target as HTMLLinkElement
 	if (targetClass && targetClass.includes('u-url')) {
-		if (link.href && link.href.match(/^https:\/\/[a-zA-Z0-9-.]+\/users\/[a-zA-Z0-9-_.]+$/)) {
-			return parsePleromaAccount(link.href)
-		} else {
-			return parseMastodonAccount(link.href)
-		}
+		if (link.href && link.href.match(/^https:\/\/[a-zA-Z0-9-.]+\/users\/[a-zA-Z0-9-_.]+$/)) return parsePleromaAccount(link.href)
+		return parseMastodonAccount(link.href)
 	}
 	// In Pleroma, link does not have class.
 	// So we have to check URL.
@@ -126,4 +125,33 @@ export function accountMatch(findAccounts: Array<Entity.Account>, parsedAccount:
 	const user = findAccounts.find((a) => a.url === parsedAccount.url)
 	if (!user) return false
 	return user
+}
+
+export const privacyIcon = (visibility: 'public' | 'unlisted' | 'private' | 'direct') => {
+	switch (visibility) {
+		case 'public':
+			return BsGlobe
+		case 'unlisted':
+			return BsUnlock
+		case 'private':
+			return BsLock
+		case 'direct':
+			return BsEnvelope
+		default:
+			return BsGlobe
+	}
+}
+export const privacyColor = (visibility: 'public' | 'unlisted' | 'private' | 'direct') => {
+	switch (visibility) {
+		case 'public':
+			return ''
+		case 'unlisted':
+			return 'cyan'
+		case 'private':
+			return 'orange'
+		case 'direct':
+			return 'red'
+		default:
+			return ''
+	}
 }
