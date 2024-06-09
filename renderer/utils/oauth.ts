@@ -13,7 +13,7 @@ export async function addApplication({ url, redirectUrl }: { url: string, redire
 }
 export async function authorizeCode({ server, app, code }: { server: Server; app: OAuth.AppData; code: string }): Promise<void> {
 	const client = generator(server.sns, server.base_url)
-	const token = await client.fetchAccessToken(app.client_id, app.client_secret, code)
+	const token = await client.fetchAccessToken(app.client_id, app.client_secret, code, app.redirect_uri)
 	const authrizedClient = generator(server.sns, server.base_url, token.access_token)
 	const { data: accountData } = await authrizedClient.verifyAccountCredentials()
 	const accountsStr = localStorage.getItem('accounts')
