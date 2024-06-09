@@ -1,10 +1,6 @@
 import dayjs from 'dayjs'
 // https://github.com/iamkun/dayjs/tree/dev/src/locale
 import 'dayjs/locale/ja'
-import 'dayjs/locale/it'
-import 'dayjs/locale/pt-br'
-import 'dayjs/locale/fr'
-import 'dayjs/locale/de'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import updateLocale from 'dayjs/plugin/updateLocale'
 import { useContext, type HTMLAttributes } from 'react'

@@ -20,27 +20,7 @@ const languages = [
 	{
 		label: '日本語',
 		value: 'ja',
-	},
-	{
-		label: 'Italian',
-		value: 'it',
-	},
-	{
-		label: 'Brazilian Portuguese',
-		value: 'pt-BR',
-	},
-	{
-		label: 'French',
-		value: 'fr',
-	},
-	{
-		label: 'German',
-		value: 'de',
-	},
-	{
-		label: 'Chinese Simplified',
-		value: 'zh-CN',
-	},
+	}
 ]
 
 const themes = [

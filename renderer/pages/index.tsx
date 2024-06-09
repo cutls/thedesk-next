@@ -35,6 +35,7 @@ import { set } from 'rsuite/esm/utils/dateUtils'
 import { listServers, listTimelines, readSettings } from 'utils/storage'
 import { ContextLoadTheme } from '@/theme'
 import Head from 'next/head'
+import Update from '@/components/Update'
 
 const { scrollLeft } = DOMHelper
 
@@ -52,6 +53,7 @@ function App() {
 	const [style, setStyle] = useState<CSSProperties>({})
 	const [highlighted, setHighlighted] = useState<Timeline | null>(null)
 	const [composePosition, setComposePosition] = useState<[number, number]>([0, 0])
+	const [version, setVersion] = useState<string | null>(null)
 
 	const [modalState, dispatch] = useReducer(modalReducer, initialModalState)
 	const spaceRef = useRef<HTMLDivElement>()
@@ -106,6 +108,8 @@ function App() {
 		window.electronAPI.onInitialInfo((_event, data) => {
 			localStorage.setItem('os', data.os)
 			localStorage.setItem('lang', data.lang)
+			localStorage.setItem('version', data.version)
+			setVersion(data.version)
 			loadAppearance()
 		})
 
@@ -193,6 +197,7 @@ function App() {
 				<title>TheDesk</title>
 			</Head>
 			{/** Modals **/}
+			<Update version={version} />
 			<NewServer open={modalState.newServer.opened} onClose={() => dispatch({ target: 'newServer', value: false, object: null })} initialServer={modalState.newServer.object} />
 			<Media index={modalState.media.index} media={modalState.media.object} opened={modalState.media.opened} close={() => dispatch({ target: 'media', value: false, object: [], index: -1 })} />
 			<Thirdparty open={modalState.thirdparty.opened} onClose={() => dispatch({ target: 'thirdparty', value: false })} />

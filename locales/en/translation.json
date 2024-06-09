@@ -72,6 +72,10 @@
 			"color": "Account color"
 		}
 	},
+	"update": {
+		"available": "New Update Available",
+		"update": "Open browser to update. Check new version: {version} out!"
+	},
 	"servers": {
 		"new": {
 			"title": "Add Server",

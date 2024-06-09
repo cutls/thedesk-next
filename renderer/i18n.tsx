@@ -1,15 +1,10 @@
 import { createContext, useState } from 'react'
 import { IntlProvider } from 'react-intl'
-import de from '../locales/de/translation.json'
 import en from '../locales/en/translation.json'
-import fr from '../locales/fr/translation.json'
-import it from '../locales/it/translation.json'
 import ja from '../locales/ja/translation.json'
-import pt_BR from '../locales/pt-BR/translation.json'
-import zh_CN from '../locales/zh-CN/translation.json'
 import { flattenMessages } from './utils/flattenMessage'
 
-export const localTypeList = ['en', 'ja', 'it', 'pt-BR', 'fr', 'de', 'zh-CN'] as const
+export const localTypeList = ['en', 'ja'] as const
 export type localeType = typeof localTypeList[number]
 
 type Props = {
@@ -25,12 +20,7 @@ export const Context = createContext<Lang>({} as Lang)
 export const IntlProviderWrapper: React.FC<Props> = (props) => {
 	const langs = [
 		{ locale: 'en', messages: flattenMessages(en) },
-		{ locale: 'ja', messages: flattenMessages(ja) },
-		{ locale: 'it', messages: flattenMessages(it) },
-		{ locale: 'pt-BR', messages: flattenMessages(pt_BR) },
-		{ locale: 'fr', messages: flattenMessages(fr) },
-		{ locale: 'de', messages: flattenMessages(de) },
-		{ locale: 'zh-CN', messages: flattenMessages(zh_CN) },
+		{ locale: 'ja', messages: flattenMessages(ja) }
 	]
 	const [lang, setLang] = useState(langs[0])
 

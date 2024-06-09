@@ -44,7 +44,11 @@ app.on('ready', async () => {
 	mainWindow.loadURL(url)
 	windowState.manage(mainWindow)
 	ipcMain.on('requestInitialInfo', (_event: IpcMainEvent, _message: any) => {
-		mainWindow?.webContents.send('initialInfo', { os: process.platform, lang: app.getPreferredSystemLanguages() })
+		mainWindow?.webContents.send('initialInfo', { 
+			os: process.platform,
+			lang: app.getPreferredSystemLanguages(),
+			version: app.getVersion(),
+		})
 	})
 	ipcMain.on('requestAppleMusic', async (_event: IpcMainEvent, _message: any) => {
 		console.log(join(__dirname, '..', 'native', 'nowplaying-info.js'))
