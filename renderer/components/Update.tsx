@@ -12,7 +12,7 @@ export default ({ version }: { version: string }) => {
         console.log(version)
         const fn = async () => {
             if (!version) return
-            const url = 'http://localhost:4000/ver.next.json'
+            const url = 'https://thedesk.top/ver.next.json'
             const api = await fetch(url)
             const json = await api.json()
             console.log(json.semanticVersion, version)
