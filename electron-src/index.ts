@@ -63,13 +63,18 @@ app.on('ready', async () => {
 		}
 	})
 })
-app.on('second-instance', (_event, commandLine) => {
-	if (!mainWindow) return
-	const m = commandLine[2].match(/([a-zA-Z0-9]+)\/?\?[a-zA-Z-0-9]+=([^&]+)/)
-	if (m) {
-		mainWindow.webContents.send('customUrl', [m[1], m[2]])
-	}
-})
+const gotTheLock = app.requestSingleInstanceLock()
+if (!gotTheLock) {
+	app.quit()
+} else {
+	app.on('second-instance', (event, commandLine) => {
+		if (!mainWindow) return
+		const m = commandLine[2].match(/([a-zA-Z0-9]+)\/?\?[a-zA-Z-0-9]+=([^&]+)/)
+		if (m) {
+			mainWindow.webContents.send('customUrl', [m[1], m[2]])
+		}
+	})
+}
 app.on('open-url', (event, url) => {
 	if (!mainWindow) return
 	event.preventDefault()

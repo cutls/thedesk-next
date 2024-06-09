@@ -73,7 +73,8 @@
 		"afterSign": "build-tool/notarize.js",
 		"files": [
 			"main-build",
-			"renderer/out"
+			"renderer/out",
+			"native"
 		],
 		"win": {
 			"target": "msi",
