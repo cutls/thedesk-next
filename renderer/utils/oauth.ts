@@ -3,11 +3,11 @@ import type { Server } from '@/entities/server'
 import generator, { type OAuth, detector } from 'megalodon'
 import { open } from './openBrowser'
 
-export async function addApplication({ url }: { url: string }): Promise<OAuth.AppData> {
+export async function addApplication({ url, redirectUrl }: { url: string, redirectUrl: string }): Promise<OAuth.AppData> {
 	const sns = await detector(url)
 	if (sns === 'gotosocial') return
 	const client = generator(sns, url)
-	const app = await client.registerApp('TheDesk(Desktop)', { scopes: ['read', 'write', 'follow'], redirect_uris: 'urn:ietf:wg:oauth:2.0:oob', website: 'https://thedesk.top' })
+	const app = await client.registerApp('TheDesk(Desktop)', { scopes: ['read', 'write', 'follow'], redirect_uris: redirectUrl, website: 'https://thedesk.top' })
 	open(app.url)
 	return app
 }

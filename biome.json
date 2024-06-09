@@ -32,6 +32,9 @@
 			"a11y": {
 				"useKeyWithClickEvents": "off",
 				"useKeyWithMouseEvents": "off"
+			},
+			"style": {
+				"useNodejsImportProtocol": "off"
 			}
 		}
 	},

@@ -122,7 +122,6 @@ const Status: React.FC<Props> = (props) => {
 		const f = async () => {
 			const config = await readSettings()
 			setConfig(config.compose || defaultSetting.compose)
-			console.log(config.compose)
 			const instance = await props.client.getInstance()
 			if (instance.data.configuration.statuses.max_characters) {
 				setMaxCharacters(instance.data.configuration.statuses.max_characters)
@@ -174,7 +173,7 @@ const Status: React.FC<Props> = (props) => {
 			}
 			f()
 		} else {
-			clear()
+			clear(false)
 		}
 	}, [props.in_reply_to, props.edit_target, props.account, props.client])
 
@@ -211,7 +210,7 @@ const Status: React.FC<Props> = (props) => {
 	// Set Remaining
 	useEffect(() => {
 		if (maxCharacters) {
-			setRemaining(maxCharacters - formValue.status.length - formValue.spoiler.length)
+			setRemaining(maxCharacters - (formValue?.status || '').length - (formValue?.spoiler || '').length)
 		}
 	}, [maxCharacters, formValue])
 
@@ -271,6 +270,7 @@ const Status: React.FC<Props> = (props) => {
 				)
 			} else {
 				await props.client.postStatus(formValue.status, options)
+				clear(true)
 			}
 		} catch (err) {
 			console.error(err)
@@ -309,13 +309,13 @@ const Status: React.FC<Props> = (props) => {
 		}
 	}, [handleKeyPress])
 
-	const clear = () => {
+	const clear = (finished: boolean) => {
 		setFormValue({
 			spoiler: '',
 			status: '',
 		})
 		setCW(false)
-		if (props.onClose && config.afterPost === 'close') {
+		if (finished && props.onClose && config.afterPost === 'close') {
 			props.onClose()
 		}
 	}
@@ -634,7 +634,7 @@ const Status: React.FC<Props> = (props) => {
 				<Form.Group>
 					<ButtonToolbar style={{ justifyContent: 'flex-end' }}>
 						{(props.in_reply_to || props.edit_target) && (
-							<Button onClick={clear}>
+							<Button onClick={() => clear(false)}>
 								<FormattedMessage id="compose.cancel" />
 							</Button>
 						)}

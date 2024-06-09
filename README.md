@@ -1,48 +1,31 @@
-# Electron with Typescript application example
+# TheDesk next(v25~)
 
-This example shows how to use Next.js inside an Electron application. To avoid a lot of configuration, we use Next.js as a router for pages, and use server rendering to speed up the initial render of the application. Both Next.js and Electron layers are written in TypeScript and compiled to JavaScript during the build process.
+Mastodon client for PC, based on [Fedistar](https://github.com/h3poteto/fedistar)
 
-| Part       | Source code (Typescript) | Builds (JavaScript) |
-| ---------- | ------------------------ | ------------------- |
-| Next.js    | `/renderer`              | `/renderer`         |
-| Electron   | `/electron-src`          | `/main`             |
-| Production |                          | `/dist`             |
+## What difference from Fedistar?
 
-For development it's going to run a HTTP server and let Next.js handle routing. In production it will use `output: 'export'` to pre-generate HTML static files and use them in your app (instead of running a HTTP server).
+* TheDesk UI(like [TheDesk ~v24](https://github.com/cutls/TheDesk))
+  * Floating post box
+* TheDesk config
+  * The format of the time displayed on the timeline can be changed(absolute/relative)
+  * Allow icons to animate or not
+  * Automatic folding and abbreviated display of long posts
+  * Setting whether to leave the post box open after posting
+  * Secondary post button to change visibility of post easily
+* TheDesk feature
+  * Spotify NowPlaying
+  * Apple Music/iTunes NowPlaying(macOS only)
 
-## How to use
 
-Execute [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) with [npm](https://docs.npmjs.com/cli/init), [Yarn](https://yarnpkg.com/lang/en/docs/cli/create/), or [pnpm](https://pnpm.io) to bootstrap the example:
+## Get TheDesk
 
-```bash
-npx create-next-app --example with-electron-typescript with-electron-typescript-app
+[Website](https://thedesk.top) or [GitHub Release page](https://github.com/cutls/thedesk-next/releases)
+
+## Development
+
+```
+pnpm install --shamefully-hoist
+pnpm run dev
 ```
 
-```bash
-yarn create next-app --example with-electron-typescript with-electron-typescript-app
-```
-
-```bash
-pnpm create next-app --example with-electron-typescript with-electron-typescript-app
-```
-
-Available commands:
-
-```bash
-"build-renderer": build and transpile Next.js layer
-"build-electron": transpile electron layer
-"build": build both layers
-"dev": start dev version
-"dist": create production electron build
-"type-check": check TypeScript in project
-```
-
-## Notes
-
-You can create the production app using `npm run dist`.
-
-_note regarding types:_
-
-- Electron provides its own type definitions, so you don't need @types/electron installed!
-  source: https://www.npmjs.com/package/@types/electron
-- There were no types available for `electron-next` at the time of creating this example, so until they are available there is a file `electron-next.d.ts` in `electron-src` directory.
+Because of `electron-builder`, use `shamefully-hoist` option to launch production build.

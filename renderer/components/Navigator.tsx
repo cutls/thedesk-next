@@ -143,7 +143,7 @@ const Navigator: React.FC<NavigatorProps> = (props): ReactElement => {
 						</div>
 					)}
 					{servers.map((server, i) => (
-						<div key={server.account?.id || server.server.id} style={{ marginTop: '5px' }}>
+						<div key={server.server.id} style={{ marginTop: '5px' }}>
 							<Whisper
 								placement="top"
 								controlId="control-id-context-menu"
@@ -174,6 +174,7 @@ const Navigator: React.FC<NavigatorProps> = (props): ReactElement => {
 								>
 									<Badge content={!!props.unreads.find((u) => u.server_id === server.server.id && u.count > 0)}>
 										<Avatar size="sm" src={server.account?.avatar || FailoverImg(server.server.favicon)} className="server-icon colorChangeBtn" alt={server.server.domain} key={server.server.id} />
+										
 									</Badge>
 								</Button>
 							</Whisper>
@@ -333,10 +334,6 @@ const settingsMenu = ({ className, left, top, onClose, openThirdparty, openSetti
 	const handleSelect = async (eventKey: string) => {
 		onClose()
 		switch (eventKey) {
-			case 'menu': {
-				//await invoke('toggle_menu')
-				break
-			}
 			case 'settings': {
 				openSettings()
 				break
@@ -351,9 +348,6 @@ const settingsMenu = ({ className, left, top, onClose, openThirdparty, openSetti
 	return (
 		<Popover ref={ref} className={className} style={{ left, top, padding: 0 }}>
 			<Dropdown.Menu onSelect={handleSelect}>
-				<Dropdown.Item eventKey="menu">
-					<FormattedMessage id="navigator.settings.app_menu" />
-				</Dropdown.Item>
 				<Dropdown.Item eventKey="settings">
 					<FormattedMessage id="navigator.settings.settings" />
 				</Dropdown.Item>

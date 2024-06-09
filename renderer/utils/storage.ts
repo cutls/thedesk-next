@@ -2,6 +2,7 @@ import type { Account } from '@/entities/account'
 import type { Server } from '@/entities/server'
 import { type Settings, defaultSetting } from '@/entities/settings'
 import { type AddTimeline, type Color, type ColumnWidth, type Timeline, colorList, columnWidthSet } from '@/entities/timeline'
+import { type localeType, localTypeList } from '@/i18n'
 import { detector } from 'megalodon'
 
 export async function listTimelines(): Promise<Array<[Timeline, Server]>> {
@@ -17,7 +18,9 @@ export async function listAccounts(): Promise<Array<[Account, Server]>> {
 	const accounts: Array<Account> = JSON.parse(accountsStr || '[]')
 	const serversStr = localStorage.getItem('servers')
 	const servers: Array<Server> = JSON.parse(serversStr || '[]')
-	return accounts.map((account) => [account, servers.find((server) => server.account_id === account.id)])
+	const accountFiltered = accounts.filter((account) => servers.findIndex((server) => server.account_id === account.id) >= 0)
+	localStorage.setItem('accounts', JSON.stringify(accountFiltered))
+	return accountFiltered.map((account) => [account, servers.find((server) => server.account_id === account.id)])
 }
 
 export async function addTimeline(server: Server, timeline: AddTimeline): Promise<void> {
@@ -89,11 +92,34 @@ export async function removeServer({ id }: { id: number }): Promise<void> {
 	}
 	const newServers = servers.filter((server) => server.id !== id)
 	localStorage.setItem('servers', JSON.stringify(newServers))
+	const timelinesStr = localStorage.getItem('timelines')
+	const timelines: Array<Timeline> = JSON.parse(timelinesStr || '[]')
+	const newTimeline = timelines.filter((timeline) => timeline.server_id !== id)
+	localStorage.setItem('timelines', JSON.stringify(newTimeline))
 	return
 }
-export async function readSettings(): Promise<Settings> {
+
+const getLang = (value: string) => {
+	if (!value) return 'en'
+	const values = value.split('-')
+	for (const lang of localTypeList) {
+		const langs = lang.split('-')
+		if (langs.length === 1) {
+			if (values[0] === lang) return lang
+		} else {
+			if (value === lang) return lang
+		}
+	}
+}
+export async function readSettings(lang?: string): Promise<Settings> {
+	if (lang) localStorage.setItem('lang', lang)
 	const settingsStr = localStorage.getItem('settings')
-	if (!settingsStr) return defaultSetting
+	const langUse = lang || localStorage.getItem('lang')
+	const langTyped = getLang(langUse)
+	if (!settingsStr) {
+		defaultSetting.appearance.language = langTyped
+		return defaultSetting
+	}
 	const settings: Settings = JSON.parse(settingsStr)
 	return settings
 }

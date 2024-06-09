@@ -8,7 +8,7 @@ import type { OAuth } from 'megalodon'
 import { useContext, useEffect, useState } from 'react'
 import { BsClipboard } from 'react-icons/bs'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { Button, ButtonToolbar, Form, Input, Loader, Modal, useToaster } from 'rsuite'
+import { Button, ButtonToolbar, Checkbox, Form, Input, Loader, Modal, Toggle, useToaster } from 'rsuite'
 import alert from '../utils/alert'
 
 type Props = {
@@ -23,6 +23,7 @@ const New: React.FC<Props> = (props) => {
 	const [server, setServer] = useState<Server>()
 	const [app, setApp] = useState<OAuth.AppData>()
 	const [loading, setLoading] = useState<boolean>(false)
+	const [useAuto, setUseAuto] = useState<boolean>(true)
 	const [domain, setDomain] = useState('')
 	const [code, setCode] = useState('')
 	const { timelineRefresh } = useContext(TheDeskContext)
@@ -53,8 +54,23 @@ const New: React.FC<Props> = (props) => {
 	async function addApplicationFn() {
 		setLoading(true)
 		try {
-			const res = await addApplication({ url: server.base_url })
+			const redirectUrl = useAuto ? 'thedesk://login' : 'urn:ietf:wg:oauth:2.0:oob'
+			const res = await addApplication({ url: server.base_url, redirectUrl })
 			setApp(res)
+			window.electronAPI.customUrl(async (_, data) => {
+				if (data[0] === 'login') {
+					const useCode = data[1]
+					try {
+						await authorizeCode({ server: server, app: app, code: useCode })
+						finish()
+					} catch (err) {
+						console.error(err)
+						toast.push(alert('error', formatMessage({ id: 'alert.failed_authorize' })), { placement: 'topCenter' })
+					} finally {
+						setLoading(false)
+					}
+				}
+			})
 		} catch (err) {
 			console.error(err)
 			toast.push(alert('error', formatMessage({ id: 'alert.failed_add_application' })), { placement: 'topCenter' })
@@ -136,6 +152,8 @@ const New: React.FC<Props> = (props) => {
 						<Form.Group>
 							<Input value={domain} readOnly />
 						</Form.Group>
+						<Checkbox style={{ marginBottom: '5px' }} checked={useAuto} value="useAuto" onChange={() => setUseAuto(!useAuto)}><FormattedMessage id="servers.new.auto_login" /></Checkbox>
+
 						<Form.Group>
 							<ButtonToolbar>
 								<Button appearance="primary" onClick={() => addApplicationFn()}>

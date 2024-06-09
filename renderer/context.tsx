@@ -32,16 +32,22 @@ export const TheDeskProviderWrapper: React.FC = (props) => {
 			const streamings: WebSocketInterface[] = []
 			let i = 0
 			for (const [timeline, server] of timelines) {
+				if (!server || !server.account_id) continue
 				const accountId = server.account_id
 				const [account] = await getAccount({ id: accountId })
 				const sns = await detector(server.base_url)
-				const client = generator(sns, server.base_url, account?.access_token)
+				const client = generator(sns, server.base_url, account?.access_token, 'TheDesk(Desktop)')
+
 				let streaming: WebSocketInterface
-				if (timeline.kind === 'public') streaming = await client.publicStreaming()
-				if (timeline.kind === 'local') streaming = await client.localStreaming()
-				if (timeline.kind === 'direct') streaming = await client.directStreaming()
-				if (timeline.kind === 'list') streaming = await client.listStreaming(timeline.list_id)
-				if (timeline.kind === 'tag') streaming = await client.tagStreaming(timeline.name)
+				try {
+					if (timeline.kind === 'public') streaming = await client.publicStreaming()
+					if (timeline.kind === 'local') streaming = await client.localStreaming()
+					if (timeline.kind === 'direct') streaming = await client.directStreaming()
+					if (timeline.kind === 'list') streaming = await client.listStreaming(timeline.list_id)
+					if (timeline.kind === 'tag') streaming = await client.tagStreaming(timeline.name)
+				} catch {
+					console.error('skipped')
+				}
 				streamings.push(streaming)
 				i++
 			}

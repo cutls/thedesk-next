@@ -17,7 +17,7 @@ export const renderAccountIcon = (props: any, ref: any, account: [Account, Serve
 		return (
 			<FlexboxGrid {...props} ref={ref} align="middle">
 				<FlexboxGrid.Item style={{ marginLeft: '12px' }}>
-					<Avatar src={failoverImg(account[0].avatar)} alt={account[0].username} size="sm" circle />
+					<Avatar src={failoverImg(account[0].avatar)} size="sm" circle />
 				</FlexboxGrid.Item>
 				<FlexboxGrid.Item style={{ paddingLeft: '12px' }}>
 					@{account[0].username}@{account[1].domain}

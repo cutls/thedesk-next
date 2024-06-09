@@ -9,7 +9,8 @@ import pt_BR from '../locales/pt-BR/translation.json'
 import zh_CN from '../locales/zh-CN/translation.json'
 import { flattenMessages } from './utils/flattenMessage'
 
-export type localeType = 'en' | 'ja' | 'it' | 'pt-BR' | 'fr' | 'de' | 'zh-CN'
+export const localTypeList = ['en', 'ja', 'it', 'pt-BR', 'fr', 'de', 'zh-CN'] as const
+export type localeType = typeof localTypeList[number]
 
 type Props = {
 	children: React.ReactNode

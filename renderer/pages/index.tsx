@@ -34,6 +34,7 @@ import { useIntl } from 'react-intl'
 import { set } from 'rsuite/esm/utils/dateUtils'
 import { listServers, listTimelines, readSettings } from 'utils/storage'
 import { ContextLoadTheme } from '@/theme'
+import Head from 'next/head'
 
 const { scrollLeft } = DOMHelper
 
@@ -104,6 +105,8 @@ function App() {
 		window.electronAPI.requestInitialInfo()
 		window.electronAPI.onInitialInfo((_event, data) => {
 			localStorage.setItem('os', data.os)
+			localStorage.setItem('lang', data.lang)
+			loadAppearance()
 		})
 
 		return () => {
@@ -151,7 +154,8 @@ function App() {
 	const handleKeyPress = useCallback(async (event: KeyboardEvent) => { }, [])
 
 	const loadAppearance = () => {
-		readSettings().then((res) => {
+		const lang = localStorage.getItem('lang') || window.navigator.language
+		readSettings(lang).then((res) => {
 			setStyle({
 				fontSize: res.appearance.font_size
 			})
@@ -185,6 +189,9 @@ function App() {
 
 	return (
 		<div className="container index" style={Object.assign({ backgroundColor: 'var(--rs-bg-well)', width: '100%', overflow: 'hidden' }, style)}>
+			<Head>
+				<title>TheDesk</title>
+			</Head>
 			{/** Modals **/}
 			<NewServer open={modalState.newServer.opened} onClose={() => dispatch({ target: 'newServer', value: false, object: null })} initialServer={modalState.newServer.object} />
 			<Media index={modalState.media.index} media={modalState.media.object} opened={modalState.media.opened} close={() => dispatch({ target: 'media', value: false, object: [], index: -1 })} />

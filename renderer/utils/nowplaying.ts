@@ -4,7 +4,7 @@ export async function nowplaying(key: 'spotify' | 'appleMusic', showToaster: (me
 	if (key === 'spotify') {
 		const token = localStorage.getItem('spotifyV2Token')
 		if (!token) {
-			open(`${apiGateway}?state=connectDev`)
+			open(`${apiGateway}?state=connect`)
 
 			window.electronAPI.customUrl(async (_, data) => {
 				if (data[0] === 'spotifyv2') {
@@ -27,7 +27,7 @@ export async function nowplaying(key: 'spotify' | 'appleMusic', showToaster: (me
 		if (new Date().getTime() / 1000 > Number.parseInt(expires, 10)) await refreshSpotifyToken()
 		const at = localStorage.getItem('spotifyV2Token')
 		if (!at) return showToaster('compose.nowplaying.error')
-		const start = `https://api.spotify.com/v1/me/player/currently-playing`
+		const start = 'https://api.spotify.com/v1/me/player/currently-playing'
 		if (at) {
 			try {
 				const jsonRaw = await fetch(start, {

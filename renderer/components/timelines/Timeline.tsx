@@ -68,12 +68,12 @@ export default function TimelineColumn(props: Props) {
 			if (props.server.account_id) {
 				const [account, _] = await getAccount({ id: props.server.account_id })
 				setAccount(account)
-				client = generator(props.server.sns, props.server.base_url, account.access_token, 'Fedistar')
+				client = generator(props.server.sns, props.server.base_url, account.access_token, 'TheDesk(Desktop)')
 				setClient(client)
 				const f = await loadFilter(props.timeline, client)
 				setFilters(f)
 			} else {
-				client = generator(props.server.sns, props.server.base_url, undefined, 'Fedistar')
+				client = generator(props.server.sns, props.server.base_url, undefined, 'TheDesk(Desktop)')
 				setClient(client)
 			}
 			try {
