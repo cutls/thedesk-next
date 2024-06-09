@@ -16,6 +16,7 @@
 * TheDeskの機能
   * Spotify NowPlaying
   * Apple Music/iTunes NowPlaying(macOS)
+  * タイムライン読み上げ
 
 
 ## TheDesk を入手する

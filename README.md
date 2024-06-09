@@ -16,6 +16,7 @@ Mastodon client for PC, based on [Fedistar](https://github.com/h3poteto/fedistar
 * TheDesk features
   * Spotify NowPlaying
   * Apple Music/iTunes NowPlaying(macOS only)
+  * Text-to-speech of timeline posts
 
 
 ## Get TheDesk
