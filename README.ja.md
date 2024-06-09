@@ -4,15 +4,16 @@
 
 ## Fedistarとの違いは？
 
-* TheDesk UI（[TheDesk ~v24](https://github.com/cutls/TheDesk)ライクなUI）
+* TheDeskのUI（[TheDesk ~v24](https://github.com/cutls/TheDesk)ライクなUI）
   * フローティング投稿ボックス
-* TheDesk コンフィグ
+  * カラムやアカウントごとに色分けできます
+* TheDeskの設定
   * タイムラインに表示する時間の形式を変更可能(絶対/相対時間)
   * アイコンのアニメーション有無の設定
   * 長い投稿の自動折りたたみと省略表示
   * 投稿後に投稿ボックスを開いたままにするかどうかの設定
   * セカンダリー投稿ボタンで投稿の表示を簡単に変更可能
-* TheDesk 機能
+* TheDeskの機能
   * Spotify NowPlaying
   * Apple Music/iTunes NowPlaying(macOS)
 

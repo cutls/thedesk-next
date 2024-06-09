@@ -6,13 +6,14 @@ Mastodon client for PC, based on [Fedistar](https://github.com/h3poteto/fedistar
 
 * TheDesk UI(like [TheDesk ~v24](https://github.com/cutls/TheDesk))
   * Floating post box
+  * It can be color-coded by column or account
 * TheDesk config
   * The format of the time displayed on the timeline can be changed(absolute/relative)
   * Allow icons to animate or not
   * Automatic folding and abbreviated display of long posts
   * Setting whether to leave the post box open after posting
   * Secondary post button to change visibility of post easily
-* TheDesk feature
+* TheDesk features
   * Spotify NowPlaying
   * Apple Music/iTunes NowPlaying(macOS only)
 
