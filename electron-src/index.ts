@@ -67,7 +67,7 @@ const gotTheLock = app.requestSingleInstanceLock()
 if (!gotTheLock) {
 	app.quit()
 } else {
-	app.on('second-instance', (event, commandLine) => {
+	app.on('second-instance', (_event, commandLine) => {
 		if (!mainWindow) return
 		const m = commandLine[2].match(/([a-zA-Z0-9]+)\/?\?[a-zA-Z-0-9]+=([^&]+)/)
 		if (m) {
