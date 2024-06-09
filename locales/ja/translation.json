@@ -74,7 +74,14 @@
 	},
 	"update": {
 		"available": "新しいアップデートがあります。",
-		"update": "ブラウザを開いて、新バージョン{version}をダウンロードしてください。"
+		"update": "ブラウザを開いて、新バージョン{version}をダウンロードしてください。",
+		"ok": "ブラウザを開く",
+		"cancel": "後で",
+		"or_more_option": "または...",
+		"do_not_show": "アップデートを",
+		"date": "日付",
+		"next_update": "次回のアップデート",
+		"hide": "通知しない"
 	},
 	"servers": {
 		"new": {

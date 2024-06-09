@@ -74,7 +74,14 @@
 	},
 	"update": {
 		"available": "New Update Available",
-		"update": "Open browser to update. Check new version: {version} out!"
+		"update": "Open browser to update. Check new version: {version} out!",
+		"ok": "Yes!",
+		"cancel": "Just close",
+		"or_more_option": "Or more option...",
+		"do_not_show": "Do not remind until",
+		"date": "the date:",
+		"next_update": "next update",
+		"hide": "Remind me"
 	},
 	"servers": {
 		"new": {
