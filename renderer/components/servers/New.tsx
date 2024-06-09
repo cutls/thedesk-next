@@ -61,7 +61,7 @@ const New: React.FC<Props> = (props) => {
 				if (data[0] === 'login') {
 					const useCode = data[1]
 					try {
-						await authorizeCode({ server: server, app: app, code: useCode })
+						await authorizeCode({ server: server, app: res, code: useCode })
 						finish()
 					} catch (err) {
 						console.error(err)

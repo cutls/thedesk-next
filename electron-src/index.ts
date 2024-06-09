@@ -4,6 +4,7 @@ import { format } from 'url'
 
 import { execFile } from 'child_process'
 import { promisify } from 'util'
+import stateKeeper from 'electron-window-state'
 const promisifyExecFile = promisify(execFile)
 
 // Packages
@@ -15,10 +16,16 @@ let mainWindow: BrowserWindow | null = null
 app.on('ready', async () => {
 	console.log('start')
 	await prepareNext('./renderer')
+	const windowState = stateKeeper({
+		defaultWidth: 800,
+		defaultHeight: 600,
+	});
 
 	mainWindow = new BrowserWindow({
-		width: 800,
-		height: 600,
+		x: windowState.x,
+		y: windowState.y,
+		width: windowState.width,
+		height: windowState.height,
 		webPreferences: {
 			nodeIntegration: false,
 			contextIsolation: true,
@@ -29,12 +36,13 @@ app.on('ready', async () => {
 	const url = isDev
 		? 'http://localhost:8000/'
 		: format({
-				pathname: join(__dirname, '../renderer/out/index.html'),
-				protocol: 'file:',
-				slashes: true,
-			})
+			pathname: join(__dirname, '../renderer/out/index.html'),
+			protocol: 'file:',
+			slashes: true,
+		})
 
 	mainWindow.loadURL(url)
+	windowState.manage(mainWindow)
 	ipcMain.on('requestInitialInfo', (_event: IpcMainEvent, _message: any) => {
 		mainWindow?.webContents.send('initialInfo', { os: process.platform, lang: app.getPreferredSystemLanguages() })
 	})

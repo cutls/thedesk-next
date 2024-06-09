@@ -59,7 +59,7 @@
 			"title": "Settings",
 			"app_menu": "Toggle app menu",
 			"settings": "Settings",
-			"thirdparty": "Third-party licenses"
+			"thirdparty": "About TheDesk, 3rd party licenses"
 		},
 		"servers": {
 			"authorize": "Authorize",
@@ -67,7 +67,9 @@
 			"remove": "Remove",
 			"announcements": "Announcements",
 			"lists": "Lists",
-			"followed_hashtags": "Followed Hashtags"
+			"followed_hashtags": "Followed Hashtags",
+			"notifications": "Notifications",
+			"color": "Account color"
 		}
 	},
 	"servers": {
@@ -76,8 +78,9 @@
 			"domain": "Domain",
 			"add": "Add",
 			"cancel": "Cancel",
-			"server_description": "You can also quit without signing in. If that case, you can see only Federated and Local timelines.",
+			"server_description": "You can also quit without signing in. If that case, you can see only Federated and Local timelines without streaming.",
 			"sign_in": "Sign In",
+			"auto_login": "Auto login(If failed to login, switch it off)",
 			"finish": "Finish",
 			"authorization_code": "Authorization Code",
 			"authorization_help": "Please paste the authorization code from your browser",
@@ -96,21 +99,42 @@
 				"language": "Language",
 				"color_theme": "Color theme"
 			},
+			"timeline": {
+				"title": "Timelines",
+				"time": {
+					"title": "Time format",
+					"relative": "Relative",
+					"absolute": "Absolute(24h)",
+					"12h": "Absolute(12h)"
+				},
+				"animation": "Animate icon",
+				"max_length": "Max length of post to show",
+				"max_length_hint": "Unlimit: 0 Posts longer than the set length will be automatically hidden.",
+				"max_length_unit": "Letters"
+			},
+			"compose": {
+				"title": "Compose",
+				"afterPost": {
+					"title": "After posting, compose box will be...",
+					"close": "Close",
+					"stay": "Stay opened"
+				},
+				"secondaryToot": "Secondary Post Button",
+				"secondaryToot_hint": "Displays a button that allows you to post immediately in the public area you set."
+			},
 			"save": "Save",
 			"close": "Close",
 			"validation": {
-				"font_size": {
+				"general_required": "Please enter a valid value",
+				"general_number": {
 					"type": "Please enter a valid number",
 					"range": "Please enter a number from {from} to {to}",
-					"required": "Font size is required"
-				},
-				"language": {
-					"required": "Language is required"
+					"required": "Required."
 				}
 			}
 		},
 		"thirdparty": {
-			"title": "Third-party licenses"
+			"title": "About TheDesk and 3rd party licenses"
 		}
 	},
 	"compose": {
@@ -151,6 +175,10 @@
 			"title": "Edit media",
 			"label": "Describe for people who are blind or have low vision",
 			"submit": "Apply"
+		},
+		"nowplaying": {
+			"again": "The integration with Spotify has been completed. Please run NowPlaying again.",
+			"error": "Error has occurred. Please run NowPlaying again."
 		}
 	},
 	"search": {
@@ -168,7 +196,12 @@
 		"settings": {
 			"title": "Settings",
 			"unpin": "Unpin",
-			"column_width": "Column width"
+			"column_width": "Column width",
+			"color": "Column Color",
+			"color_default": "Default",
+			"do": "Yes",
+			"not_do": "No",
+			"tts": "Text-to-speech"
 		},
 		"mark_as_read": "Mark as read",
 		"notification": {
@@ -235,6 +268,7 @@
 		},
 		"status": {
 			"show_more": "Show more",
+			"show_more_auto": "Show more(long)",
 			"show_less": "Show less",
 			"media_hidden": "Media hidden",
 			"pinned_post": "Pnned post",
