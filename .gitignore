@@ -11,12 +11,14 @@
 
 # next.js
 renderer/.next
-/out/
+renderer/out/
+output
 
 # production
 /main-build
 /build
 /main
+/dist
 
 # misc
 .DS_Store
@@ -37,3 +39,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+thirdparty.json
+
+.env

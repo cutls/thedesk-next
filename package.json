@@ -1,17 +1,21 @@
 {
 	"private": true,
 	"main": "main-build/index.js",
-	"productName": "TheDesk-next",
+	"name": "thedesk-next",
+	"author": "cutls",
+	"version": "25.0.0",
+	"codename": "Aiko",
 	"scripts": {
 		"clean": "rimraf dist main renderer/out renderer/.next",
 		"dev": "npm run build-electron && electron .",
 		"build-renderer": "next build renderer",
 		"build-electron": "tsc -p electron-src",
 		"build": "npm run build-renderer && npm run build-electron",
-		"pack-app": "npm run build && electron-builder --dir",
+		"pack:mac": "electron-builder --universal",
 		"dist": "npm run build && electron-builder",
 		"type-check": "tsc -p ./renderer/tsconfig.json && tsc -p ./electron-src/tsconfig.json",
-		"lint:fix": "npx @biomejs/biome check --apply ./"
+		"lint:fix": "npx @biomejs/biome check --apply ./",
+		"thirdparty": "license-checker --production --json > thirdparty.json && node scripts/thirdparty.js"
 	},
 	"dependencies": {
 		"@emoji-mart/react": "^1.1.1",
@@ -23,9 +27,9 @@
 		"emoji-mart": "^5.6.0",
 		"megalodon": "10.0.1",
 		"parse-link-header": "^2.0.0",
-		"react": "^18.2.0",
+		"react": "18.2.0",
 		"react-blurhash": "^0.3.0",
-		"react-dom": "^18.2.0",
+		"react-dom": "18.2.0",
 		"react-draggable": "^4.4.6",
 		"react-icons": "^5.2.1",
 		"react-intl": "^6.6.8",
@@ -38,6 +42,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^1.8.0",
+		"@electron/notarize": "^2.3.2",
 		"@types/node": "^14.18.63",
 		"@types/react": "^16.14.52",
 		"@types/react-dom": "^16.9.24",
@@ -45,15 +50,34 @@
 		"@types/superagent": "^8.1.7",
 		"electron": "^27.1.2",
 		"electron-builder": "^24.9.1",
-		"next": "latest",
+		"license-checker": "^25.0.1",
+		"next": "^14.2.3",
 		"rimraf": "^3.0.2",
 		"typescript": "^4.9.5"
 	},
+	"resolutions": {
+		"react": "18.2.0",
+		"react-dom": "18.2.0"
+	},
 	"build": {
 		"asar": true,
+		"productName": "TheDesk",
+		"appId": "next.top.thedesk",
+		"afterSign": "build-tool/notarize.js",
 		"files": [
-			"main",
+			"main-build",
 			"renderer/out"
-		]
+		],
+		"mac": {
+			"mergeASARs": false,
+			"icon": "assets/icon.icns",
+			"hardenedRuntime": true,
+			"gatekeeperAssess": false,
+			"entitlements": "build-tool/entitlements.mac.plist",
+			"entitlementsInherit": "build-tool/entitlements.mac.plist"
+		},
+		"dmg": {
+			"sign": false
+		}
 	}
 }
