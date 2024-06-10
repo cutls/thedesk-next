@@ -14,7 +14,7 @@
 		"dev": "npm run build-electron && electron .",
 		"build-renderer": "next build renderer",
 		"build-electron": "tsc -p electron-src",
-		"build": "npm run build-renderer && npm run build-electron",
+		"build": "npm run thirdparty && npm run build-renderer && npm run build-electron",
 		"pack:mac": "electron-builder --mac --universal",
 		"pack:linux": "electron-builder --linux --x64",
 		"pack:win": "electron-builder --windows --x64",

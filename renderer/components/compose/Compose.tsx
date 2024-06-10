@@ -8,7 +8,7 @@ import { USER_AGENT } from '@/defaults'
 import type { Account } from '@/entities/account'
 import type { Server, ServerSet } from '@/entities/server'
 import failoverImg from '@/utils/failoverImg'
-import { listAccounts, setUsualAccount } from '@/utils/storage'
+import { getUsualAccount, listAccounts, setUsualAccount } from '@/utils/storage'
 import { FormattedMessage } from 'react-intl'
 import Status from './Status'
 
@@ -53,9 +53,10 @@ const Compose: React.FC<Props> = (props) => {
 			const accounts = await listAccounts()
 			setAccounts(accounts)
 
-			const usual = accounts.find(([a, _]) => a.usual)
-			if (usual) {
-				setFromAccount(usual)
+			const usualNum = await getUsualAccount()
+			const account = accounts.find(([a, _]) => a.id === usualNum)
+			if (account) {
+				setFromAccount(account)
 			} else {
 				setFromAccount(accounts[0])
 			}
