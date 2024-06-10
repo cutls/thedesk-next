@@ -1,4 +1,3 @@
-import type { NoteVisibility } from 'megalodon/lib/src/firefish/entities/note'
 import type { localeType } from '../i18n'
 type FormBoolean = 'yes' | 'no'
 export type Settings = {

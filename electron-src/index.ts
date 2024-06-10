@@ -1,7 +1,6 @@
 // Native
 import { join } from 'path'
 import { format } from 'url'
-import fs from 'fs'
 
 import { execFile } from 'child_process'
 import { promisify } from 'util'
