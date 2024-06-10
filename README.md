@@ -1,6 +1,6 @@
 # TheDesk next(v25~)
 
-Mastodon client for PC, based on [Fedistar](https://github.com/h3poteto/fedistar)
+Mastodon(and Misskey) client for PC, based on [Fedistar](https://github.com/h3poteto/fedistar)
 
 ## What difference from Fedistar?
 
@@ -17,6 +17,8 @@ Mastodon client for PC, based on [Fedistar](https://github.com/h3poteto/fedistar
   * Spotify NowPlaying
   * Apple Music/iTunes NowPlaying(macOS only)
   * Text-to-speech of timeline posts
+* Others
+  * Partial support for Misskey
 
 
 ## Get TheDesk
@@ -31,3 +33,18 @@ pnpm run dev
 ```
 
 Because of `electron-builder`, use `shamefully-hoist` option to launch production build.
+
+## Build
+
+```
+pnpm run build
+pnpm run pack:win # Windows(able to run on Windows)
+pnpm run pack:linux # Linux(able to run on any OS)
+pnpm run pack:mac # macOS(able to run on macOS)
+
+```
+
+### Notarize(macOS)
+
+It is currently set to be notarized with the developer's signature. Edit `build-tool/noratize.js`.
+To remove notarization, set `const useNotarize` to `false` in the third line of `build-tool/noratize.js`.
