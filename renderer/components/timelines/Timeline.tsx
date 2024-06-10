@@ -1,5 +1,5 @@
 import { Icon } from '@rsuite/icons'
-import generator, { type Entity, type MegalodonInterface } from 'megalodon'
+import generator, { type Entity, type MegalodonInterface } from '@cutls/megalodon'
 import parse from 'parse-link-header'
 import { type CSSProperties, forwardRef, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { BsArrowClockwise, BsBookmark, BsChevronLeft, BsChevronRight, BsGlobe2, BsHash, BsHouseDoor, BsListUl, BsPeople, BsSliders, BsStar, BsX } from 'react-icons/bs'
@@ -78,6 +78,7 @@ export default function TimelineColumn(props: Props) {
 			}
 			try {
 				const res = await loadTimeline(props.timeline, client)
+				console.log(res)
 				setStatuses(res)
 			} catch (err) {
 				console.error(err)

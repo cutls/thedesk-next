@@ -1,5 +1,5 @@
 import type { CustomEmojiCategory } from '@/entities/emoji'
-import type { Entity } from 'megalodon'
+import type { Entity } from '@cutls/megalodon'
 
 export const data = async () => {
 	const response = await fetch('https://cdn.jsdelivr.net/npm/@emoji-mart/data')

@@ -3,7 +3,7 @@ import type { Server } from '@/entities/server'
 import { type Settings, defaultSetting } from '@/entities/settings'
 import { type AddTimeline, type Color, type ColumnWidth, type Timeline, colorList, columnWidthSet } from '@/entities/timeline'
 import { type localeType, localTypeList } from '@/i18n'
-import { detector } from 'megalodon'
+import { detector } from '@cutls/megalodon'
 
 export async function listTimelines(): Promise<Array<[Timeline, Server]>> {
 	const timelinesStr = localStorage.getItem('timelines')

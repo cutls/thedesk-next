@@ -1,7 +1,7 @@
 export type IPCEvent = (ev: { payload: T }) => void
 export interface IElectronAPI {
 	writeText: (text: string) => void
-	requestInitialInfo: () => void
+	requestInitialInfo: (init: boolean) => void
 	requestAppleMusic: () => void
 	openBrowser: (url: string) => void
 	onInitialInfo: (callback: (event: Electron.IpcRendererEvent, data: any) => void) => void

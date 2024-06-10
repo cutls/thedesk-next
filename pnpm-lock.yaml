@@ -9,6 +9,9 @@ overrides:
   react-dom: 18.2.0
 
 dependencies:
+  '@cutls/megalodon':
+    specifier: 6.0.12
+    version: 6.0.12
   '@emoji-mart/react':
     specifier: ^1.1.1
     version: 1.1.1(emoji-mart@5.6.0)(react@18.2.0)
@@ -33,9 +36,6 @@ dependencies:
   emoji-mart:
     specifier: ^5.6.0
     version: 5.6.0
-  megalodon:
-    specifier: 10.0.1
-    version: 10.0.1
   parse-link-header:
     specifier: ^2.0.0
     version: 2.0.0
@@ -222,6 +222,27 @@ packages:
     requiresBuild: true
     dev: true
     optional: true
+
+  /@cutls/megalodon@6.0.12:
+    resolution: {integrity: sha512-JY4qiqjZD+oynEwDBXqrfRmYpGqKiEyn0SKxO20e9RTroITd2riCRUP/VWYkOqM8BND1D3JYh5xHY/KMdPmsAw==}
+    engines: {node: '>=20.12.2'}
+    dependencies:
+      '@badgateway/oauth2-client': 2.3.0
+      '@types/ws': 8.5.10
+      autolinker: 4.0.0
+      axios: 1.6.8
+      dayjs: 1.11.11
+      events: 3.3.0
+      form-data: 4.0.0
+      isomorphic-ws: 5.0.0(ws@8.17.0)
+      object-assign-deep: 0.4.0
+      uuid: 9.0.1
+      ws: 8.17.0
+    transitivePeerDependencies:
+      - bufferutil
+      - debug
+      - utf-8-validate
+    dev: false
 
   /@develar/schema-utils@2.6.5:
     resolution: {integrity: sha512-0cp4PsWQ/9avqTVMCtZ+GirikIA36ikvjtHweU4/j8yLtgObI0+JUPhYFScgwlteveGB1rt3Cm8UhN04XayDig==}
@@ -862,6 +883,12 @@ packages:
     resolution: {integrity: sha512-+q/t7Ekv1EDY2l6Gda6LLiX14rU9TV20Wa3ofeQmwPFZbOMo9DXrLbOjFaaclkXKWidIaopwAObQDqwWtGUjqg==}
     engines: {node: '>= 4.0.0'}
     dev: true
+
+  /autolinker@4.0.0:
+    resolution: {integrity: sha512-fl5Kh6BmEEZx+IWBfEirnRUU5+cOiV0OK7PEt0RBKvJMJ8GaRseIOeDU3FKf4j3CE5HVefcjHmhYPOcaVt0bZw==}
+    dependencies:
+      tslib: 2.6.2
+    dev: false
 
   /axios@1.6.8:
     resolution: {integrity: sha512-v/ZHtJDU39mDpyBoFVkETcd/uNdxrWRrg3bKpOKzXFA6Bvqopts6ALSMU3y6ijYxbw2B+wPrIv46egTzJXCLGQ==}
@@ -2151,26 +2178,6 @@ packages:
       escape-string-regexp: 4.0.0
     dev: true
     optional: true
-
-  /megalodon@10.0.1:
-    resolution: {integrity: sha512-LcICkX3zNFAKAAaqf6DfuL1WNZejtYML/gPPntFOQK/gHaiiiOk4jIZNL9IeF7plWDWzyBvu3UCSUx5UnTbVZQ==}
-    engines: {node: '>=20.12.2'}
-    dependencies:
-      '@badgateway/oauth2-client': 2.3.0
-      '@types/ws': 8.5.10
-      axios: 1.6.8
-      dayjs: 1.11.11
-      events: 3.3.0
-      form-data: 4.0.0
-      isomorphic-ws: 5.0.0(ws@8.17.0)
-      object-assign-deep: 0.4.0
-      uuid: 9.0.1
-      ws: 8.17.0
-    transitivePeerDependencies:
-      - bufferutil
-      - debug
-      - utf-8-validate
-    dev: false
 
   /memoize-one@5.2.1:
     resolution: {integrity: sha512-zYiwtZUcYyXKo/np96AGZAckk+FWWsUdJ3cHGGmld7+AhvcWmQyGCYUh1hc4Q/pkOhb65dQR/pqCyK0cOaHz4Q==}

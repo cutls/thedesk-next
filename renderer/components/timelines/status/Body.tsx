@@ -1,5 +1,5 @@
 import emojify from '@/utils/emojify'
-import type { Entity } from 'megalodon'
+import type { Entity } from '@cutls/megalodon'
 import { useState, type Dispatch, type HTMLAttributes, type SetStateAction } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { Button } from 'rsuite'

@@ -1,12 +1,12 @@
 // Native
 import { join } from 'path'
 import { format } from 'url'
+import fs from 'fs'
 
 import { execFile } from 'child_process'
 import { promisify } from 'util'
 import stateKeeper from 'electron-window-state'
 const promisifyExecFile = promisify(execFile)
-
 // Packages
 import { BrowserWindow, type IpcMainEvent, app, clipboard, ipcMain, shell } from 'electron'
 import isDev from 'electron-is-dev'
@@ -43,7 +43,7 @@ app.on('ready', async () => {
 
 	mainWindow.loadURL(url)
 	windowState.manage(mainWindow)
-	ipcMain.on('requestInitialInfo', (_event: IpcMainEvent, _message: any) => {
+	ipcMain.on('requestInitialInfo', (_event) => {
 		mainWindow?.webContents.send('initialInfo', { 
 			os: process.platform,
 			lang: app.getPreferredSystemLanguages(),
@@ -51,7 +51,6 @@ app.on('ready', async () => {
 		})
 	})
 	ipcMain.on('requestAppleMusic', async (_event: IpcMainEvent, _message: any) => {
-		console.log(join(__dirname, '..', 'native', 'nowplaying-info.js'))
 		const { stdout } = await promisifyExecFile(join(__dirname, '..', 'native', 'nowplaying-info.js'))
 		const song = JSON.parse(stdout)
 		if (!song.databaseID) return mainWindow?.webContents.send('appleMusic', song)

@@ -1,4 +1,4 @@
-import type { Entity, MegalodonInterface } from 'megalodon'
+import type { Entity, MegalodonInterface } from '@cutls/megalodon'
 import Image from 'next/image'
 import { forwardRef, useEffect, useRef, useState } from 'react'
 import { FormattedMessage } from 'react-intl'

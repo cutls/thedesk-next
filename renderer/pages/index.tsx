@@ -28,7 +28,7 @@ import { ReceiveNotificationPayload } from '@/payload'
 import { TheDeskContext } from '@/context'
 import generateNotification from '@/utils/notification'
 import { useWindowSize } from '@/utils/useWindowSize'
-import type { Entity, MegalodonInterface } from 'megalodon'
+import type { Entity, MegalodonInterface } from '@cutls/megalodon'
 import Draggable from 'react-draggable'
 import { useIntl } from 'react-intl'
 import { set } from 'rsuite/esm/utils/dateUtils'
@@ -104,7 +104,8 @@ function App() {
 	*/
 
 		// Push Notification
-		window.electronAPI.requestInitialInfo()
+		const isInit = !localStorage.getItem('servers')
+		window.electronAPI.requestInitialInfo(isInit)
 		window.electronAPI.onInitialInfo((_event, data) => {
 			localStorage.setItem('os', data.os)
 			localStorage.setItem('lang', data.lang)

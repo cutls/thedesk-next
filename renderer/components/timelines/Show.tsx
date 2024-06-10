@@ -4,7 +4,7 @@ import ShowTimeline from '@/components/timelines/Timeline'
 import type { Server } from '@/entities/server'
 import type { Timeline } from '@/entities/timeline'
 import type { Unread } from '@/entities/unread'
-import type { Entity, MegalodonInterface } from 'megalodon'
+import type { Entity, MegalodonInterface } from '@cutls/megalodon'
 
 type Props = {
 	timeline: Timeline
@@ -29,11 +29,11 @@ const Show: React.FC<Props> = (props) => {
 				openFromOtherAccount={props.openFromOtherAccount}
 			/>
 		)
-	} else if (props.timeline.kind === 'direct') {
-		return <ShowConversations server={props.server} timeline={props.timeline} openMedia={props.openMedia} />
-	} else {
-		return <ShowTimeline timeline={props.timeline} server={props.server} openMedia={props.openMedia} openReport={props.openReport} openFromOtherAccount={props.openFromOtherAccount} />
 	}
+	if (props.timeline.kind === 'direct') {
+		return <ShowConversations server={props.server} timeline={props.timeline} openMedia={props.openMedia} />
+	}
+	return <ShowTimeline timeline={props.timeline} server={props.server} openMedia={props.openMedia} openReport={props.openReport} openFromOtherAccount={props.openFromOtherAccount} />
 }
 
 export default Show

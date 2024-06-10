@@ -1,5 +1,5 @@
 import { Icon } from '@rsuite/icons'
-import generator, { type Entity, type MegalodonInterface } from 'megalodon'
+import generator, { type Entity, type MegalodonInterface } from '@cutls/megalodon'
 import { useRouter } from 'next/router'
 import { useContext, useEffect, useState } from 'react'
 import { BsChevronLeft, BsPin, BsX } from 'react-icons/bs'

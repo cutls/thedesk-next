@@ -1,6 +1,6 @@
 import Picker from '@emoji-mart/react'
 import { Icon } from '@rsuite/icons'
-import type { Entity, MegalodonInterface } from 'megalodon'
+import type { Entity, MegalodonInterface } from '@cutls/megalodon'
 import { type ChangeEvent, forwardRef, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { BsClock, BsEmojiLaughing, BsEnvelope, BsGlobe, BsLock, BsMenuButtonWide, BsMusicNoteBeamed, BsPaperclip, BsPencil, BsSpotify, BsUnlock, BsX, BsXCircle } from 'react-icons/bs'
 import {

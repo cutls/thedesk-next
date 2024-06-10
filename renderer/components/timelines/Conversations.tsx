@@ -1,5 +1,5 @@
 import { Icon } from '@rsuite/icons'
-import generator, { type MegalodonInterface, type Entity } from 'megalodon'
+import generator, { type MegalodonInterface, type Entity } from '@cutls/megalodon'
 import parse from 'parse-link-header'
 import { forwardRef, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { BsChevronLeft, BsChevronRight, BsEnvelope, BsSliders, BsX } from 'react-icons/bs'

@@ -1,5 +1,5 @@
 import { Icon } from '@rsuite/icons'
-import type { Entity } from 'megalodon'
+import type { Entity } from '@cutls/megalodon'
 import Image from 'next/image'
 import { type ReactElement, useCallback, useEffect, useState } from 'react'
 import { BsChevronLeft, BsChevronRight } from 'react-icons/bs'

@@ -1,4 +1,4 @@
-import type { Entity } from 'megalodon'
+import type { Entity } from '@cutls/megalodon'
 import { useState } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { Button, Modal, Radio, RadioGroup } from 'rsuite'

@@ -1,4 +1,4 @@
-import generator, { type WebSocketInterface, detector } from 'megalodon'
+import generator, { type WebSocketInterface, detector } from '@cutls/megalodon'
 import { createContext, useEffect, useState } from 'react'
 import { getAccount, listServers, listTimelines } from './utils/storage'
 import { set } from 'rsuite/esm/utils/dateUtils'
@@ -45,6 +45,7 @@ export const TheDeskProviderWrapper: React.FC = (props) => {
 					if (timeline.kind === 'direct') streaming = await client.directStreaming()
 					if (timeline.kind === 'list') streaming = await client.listStreaming(timeline.list_id)
 					if (timeline.kind === 'tag') streaming = await client.tagStreaming(timeline.name)
+					console.log(streaming)
 				} catch {
 					console.error('skipped')
 				}
@@ -58,6 +59,7 @@ export const TheDeskProviderWrapper: React.FC = (props) => {
 				const sns = await detector(server.base_url)
 				if (!account || !account.access_token) continue
 				const client = generator(sns, server.base_url, account.access_token)
+				console.log(client)
 				const streaming: WebSocketInterface = await client.userStreaming()
 				userStreamings.push(streaming)
 			}

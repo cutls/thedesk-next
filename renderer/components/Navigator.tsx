@@ -8,7 +8,7 @@ import type { Unread } from '@/entities/unread'
 import { TheDeskContext } from '@/context'
 import FailoverImg from '@/utils/failoverImg'
 import { Icon } from '@rsuite/icons'
-import generator, { type Entity } from 'megalodon'
+import generator, { type Entity } from '@cutls/megalodon'
 import { useRouter } from 'next/router'
 import { type Dispatch, type ReactElement, type SetStateAction, useContext, useEffect, useState } from 'react'
 import { BsDice1, BsDice2, BsDice3, BsDice4, BsDice5, BsDice6, BsGear, BsPencilSquare, BsPlus, BsSearch } from 'react-icons/bs'
@@ -53,7 +53,7 @@ const Navigator: React.FC<NavigatorProps> = (props): ReactElement => {
 			if (!set.account) return set
 			const client = generator(set.server.sns, set.server.base_url, set.account.access_token, 'Fedistar')
 			try {
-				const notifications = (await client.getNotifications()).data
+				const notifications = (await client.getNotifications({ limit: 20 })).data
 				const res = await client.getMarkers(['notifications'])
 				const marker = res.data as Entity.Marker
 				if (marker.notifications) {

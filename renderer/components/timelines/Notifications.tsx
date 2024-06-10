@@ -1,5 +1,5 @@
 import { Icon } from '@rsuite/icons'
-import generator, { type MegalodonInterface, type Entity } from 'megalodon'
+import generator, { type MegalodonInterface, type Entity } from '@cutls/megalodon'
 import { type Dispatch, type SetStateAction, forwardRef, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { BsArrowClockwise, BsBell, BsCheck2, BsChevronLeft, BsChevronRight, BsSliders, BsX } from 'react-icons/bs'
 import { Virtuoso } from 'react-virtuoso'

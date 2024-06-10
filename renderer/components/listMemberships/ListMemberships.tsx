@@ -1,7 +1,7 @@
 import { TheDeskContext } from '@/context'
 import emojify from '@/utils/emojify'
 import { Icon } from '@rsuite/icons'
-import type { Entity, MegalodonInterface } from 'megalodon'
+import type { Entity, MegalodonInterface } from '@cutls/megalodon'
 import { useContext, useEffect, useState } from 'react'
 import { BsCheck2, BsX } from 'react-icons/bs'
 import { FormattedMessage } from 'react-intl'

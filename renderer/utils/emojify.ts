@@ -1,4 +1,4 @@
-import type { Entity } from 'megalodon'
+import type { Entity } from '@cutls/megalodon'
 
 const emojify = (str: string | any, customEmoji: Array<Entity.Emoji> = []): string | null => {
 	if (typeof str !== 'string') {

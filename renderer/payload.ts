@@ -1,4 +1,4 @@
-import type { Entity } from 'megalodon'
+import type { Entity } from '@cutls/megalodon'
 import type { ThemeType } from './entities/settings'
 import type { localeType } from './i18n'
 

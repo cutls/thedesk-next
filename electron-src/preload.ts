@@ -7,8 +7,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
 	openBrowser: (url: string) => {
 		ipcRenderer.send('openBrowser', url)
 	},
-	requestInitialInfo: () => {
-		ipcRenderer.send('requestInitialInfo')
+	requestInitialInfo: (init: boolean) => {
+		ipcRenderer.send('requestInitialInfo', init)
 	},
 	requestAppleMusic: () => {
 		ipcRenderer.send('requestAppleMusic')

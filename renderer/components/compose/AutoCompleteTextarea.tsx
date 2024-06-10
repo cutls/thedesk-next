@@ -1,7 +1,7 @@
 import type { CustomEmojiCategory } from '@/entities/emoji'
 import { data } from '@/utils/emojiData'
 import { SearchIndex, init } from 'emoji-mart'
-import type { MegalodonInterface } from 'megalodon'
+import type { MegalodonInterface } from '@cutls/megalodon'
 import { type Dispatch, type KeyboardEventHandler, type SetStateAction, forwardRef, useEffect, useRef, useState } from 'react'
 import { Input, Popover, Whisper } from 'rsuite'
 import type { PrependParameters } from 'rsuite/esm/@types/utils'

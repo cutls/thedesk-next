@@ -1,4 +1,4 @@
-import type { Entity } from 'megalodon'
+import type { Entity } from '@cutls/megalodon'
 import type { MessageDescriptor } from 'react-intl'
 import sanitizeHtml from 'sanitize-html'
 

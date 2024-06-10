@@ -1,6 +1,6 @@
 import { TIMELINE_STATUSES_COUNT } from '@/defaults'
 import type { Account } from '@/entities/account'
-import type { Entity, MegalodonInterface } from 'megalodon'
+import type { Entity, MegalodonInterface } from '@cutls/megalodon'
 import parse from 'parse-link-header'
 import { useEffect, useImperativeHandle, useState } from 'react'
 import { List, Loader } from 'rsuite'

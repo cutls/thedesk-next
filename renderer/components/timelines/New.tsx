@@ -1,7 +1,7 @@
 import { time } from 'console'
 import { TheDeskContext } from '@/context'
 import { Icon } from '@rsuite/icons'
-import generator, { type Entity } from 'megalodon'
+import generator, { type Entity } from '@cutls/megalodon'
 import { useContext, useEffect, useState } from 'react'
 import { BsBell, BsBookmark, BsChevronLeft, BsEnvelope, BsGlobe2, BsHouseDoor, BsListUl, BsPeople, BsPlus, BsStar } from 'react-icons/bs'
 import { FormattedMessage, useIntl } from 'react-intl'
@@ -105,7 +105,7 @@ const AuthorizedTimelines: React.FC<AuthorizedProps> = (props) => {
 				</List.Item>
 			)}
 			{lists.map((list, index) => (
-				<List.Item key={index} index={8 + index} onClick={() => select('list', list.title, list.id)} style={{ cursor: 'pointer' }}>
+				<List.Item key={list.id} index={8 + index} onClick={() => select('list', list.title, list.id)} style={{ cursor: 'pointer' }}>
 					<FlexboxGrid align="middle">
 						<FlexboxGrid.Item colspan={4} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
 							<Icon as={BsListUl} />
@@ -146,7 +146,7 @@ const New: React.FC<Props> = (props) => {
 				<Dropdown.Menu onSelect={handleSelect}>
 					{props.servers.map((server) => (
 						<Dropdown.Item eventKey={server.server.id} key={server.server.id}>
-							{server.account ? server.account.username + '@' + server.server.domain : server.server.domain}
+							{server.account ? `${server.account.username}@${server.server.domain}` : server.server.domain}
 						</Dropdown.Item>
 					))}
 				</Dropdown.Menu>
@@ -256,9 +256,8 @@ const New: React.FC<Props> = (props) => {
 
 	if (server === null) {
 		return addButton()
-	} else {
-		return selectTimeline()
 	}
+	return selectTimeline()
 }
 
 export default New

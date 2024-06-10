@@ -1,7 +1,7 @@
 import { USER_AGENT } from '@/defaults'
 import type { Account } from '@/entities/account'
 import type { Server } from '@/entities/server'
-import generator, { type Entity, type MegalodonInterface } from 'megalodon'
+import generator, { type Entity, type MegalodonInterface } from '@cutls/megalodon'
 import { useEffect, useState } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { Modal } from 'rsuite'

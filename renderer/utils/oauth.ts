@@ -1,19 +1,64 @@
 import type { Account } from '@/entities/account'
 import type { Server } from '@/entities/server'
-import generator, { type OAuth, detector } from 'megalodon'
+import generator, { type OAuth, detector } from '@cutls/megalodon'
 import { open } from './openBrowser'
-
+const misskeyPremission = [
+    "read:account",
+    "write:account",
+    "read:blocks",
+    "write:blocks",
+    "read:drive",
+    "write:drive",
+    "read:favorites",
+    "write:favorites",
+    "read:following",
+    "write:following",
+    "read:messaging",
+    "write:messaging",
+    "read:mutes",
+    "write:mutes",
+    "write:notes",
+    "read:notifications",
+    "write:notifications",
+    "read:reactions",
+    "write:reactions",
+    "write:votes",
+    "read:pages",
+    "write:pages",
+    "write:page-likes",
+    "read:page-likes",
+    "read:user-groups",
+    "write:user-groups",
+    "read:channels",
+    "write:channels",
+    "read:gallery",
+    "write:gallery",
+    "read:gallery-likes",
+    "write:gallery-likes",
+    "read:flash",
+    "write:flash",
+    "read:flash-likes",
+    "write:flash-likes",
+    "write:invite-codes",
+    "read:invite-codes",
+    "write:clip-favorite",
+    "read:clip-favorite",
+    "read:federation",
+    "write:report-abuse"
+]
 export async function addApplication({ url, redirectUrl }: { url: string, redirectUrl: string }): Promise<OAuth.AppData> {
 	const sns = await detector(url)
 	if (sns === 'gotosocial') return
 	const client = generator(sns, url)
-	const app = await client.registerApp('TheDesk(Desktop)', { scopes: ['read', 'write', 'follow'], redirect_uris: redirectUrl, website: 'https://thedesk.top' })
+	const isMisskey = sns === 'misskey'
+	const scopes = isMisskey ? misskeyPremission : ['read', 'write', 'follow']
+	const app = await client.registerApp('TheDesk(Desktop)', { scopes, redirect_uris: !isMisskey ? redirectUrl : 'urn:ietf:wg:oauth:2.0:oob', website: 'https://thedesk.top' })
 	open(app.url)
 	return app
 }
 export async function authorizeCode({ server, app, code }: { server: Server; app: OAuth.AppData; code: string }): Promise<void> {
 	const client = generator(server.sns, server.base_url)
-	const token = await client.fetchAccessToken(app.client_id, app.client_secret, code, app.redirect_uri)
+	const token = await client.fetchAccessToken(app.client_id, app.client_secret, code || app.session_token, app.redirect_uri)
 	const authrizedClient = generator(server.sns, server.base_url, token.access_token)
 	const { data: accountData } = await authrizedClient.verifyAccountCredentials()
 	const accountsStr = localStorage.getItem('accounts')

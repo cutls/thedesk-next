@@ -1,4 +1,4 @@
-import type { Entity } from 'megalodon'
+import type { Entity } from '@cutls/megalodon'
 import Image from 'next/image'
 import { FlexboxGrid, Panel } from 'rsuite'
 

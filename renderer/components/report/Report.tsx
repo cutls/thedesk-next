@@ -1,5 +1,5 @@
 import alert from '@/components/utils/alert'
-import type { Entity, MegalodonInterface } from 'megalodon'
+import type { Entity, MegalodonInterface } from '@cutls/megalodon'
 import { useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Loader, Modal, Placeholder, useToaster } from 'rsuite'

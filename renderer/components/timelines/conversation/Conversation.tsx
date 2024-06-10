@@ -1,5 +1,5 @@
 import { Icon } from '@rsuite/icons'
-import type { Entity } from 'megalodon'
+import type { Entity } from '@cutls/megalodon'
 import { BsPaperclip } from 'react-icons/bs'
 import { Avatar, Badge, Button, FlexboxGrid } from 'rsuite'
 
