@@ -43,7 +43,7 @@ export default function Announcements(props: Props) {
 			<Modal.Body>
 				<Carousel placement="bottom" shape="bar" onSelect={onSelect}>
 					{announcements.map((announcement, index) => (
-						<div key={index}>
+						<div key={announcement.id}>
 							<div dangerouslySetInnerHTML={{ __html: announcement.content }} style={{ padding: '1em' }} />
 						</div>
 					))}

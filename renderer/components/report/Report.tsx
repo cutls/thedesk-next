@@ -63,11 +63,14 @@ export default function Report(props: Props) {
 	const body = () => {
 		if (category === null) {
 			return <Category next={(category: Entity.Category) => setCategory(category)} />
-		} else if (rules === null && category === 'violation') {
+		}
+		if (rules === null && category === 'violation') {
 			return <Rules client={props.client} next={(rules: Array<string>) => setRules(rules)} />
-		} else if (statuses === null) {
+		}
+		if (statuses === null) {
 			return <Statuses account={props.status.account} client={props.client} next={(statuses: Array<string>) => setStatuses(statuses)} />
-		} else if (comment === null) {
+		}
+		if (comment === null) {
 			return (
 				<Comment
 					next={(comment: string, forward: boolean) => {
@@ -77,7 +80,8 @@ export default function Report(props: Props) {
 					}}
 				/>
 			)
-		} else if (sending) {
+		}
+		if (sending) {
 			return (
 				<>
 					<Placeholder.Paragraph rows={3} />
@@ -98,12 +102,11 @@ export default function Report(props: Props) {
 				}}
 			>
 				<Modal.Header>
-					<FormattedMessage id="report.title" values={{ user: '@' + props.status.account.acct }} />
+					<FormattedMessage id="report.title" values={{ user: `@${props.status.account.acct}` }} />
 				</Modal.Header>
 				{body()}
 			</Modal>
 		)
-	} else {
-		return <></>
 	}
+	return <></>
 }

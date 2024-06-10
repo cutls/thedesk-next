@@ -70,7 +70,7 @@ export default function FollowedHashtags() {
 			<Content style={{ height: '100%', backgroundColor: 'var(--rs-bg-card)' }}>
 				<List style={{ height: '100%' }}>
 					{hashtags.map((tag, index) => (
-						<List.Item key={index}>
+						<List.Item key={tag.name}>
 							<div style={{ padding: '0 1.2em', cursor: 'pointer' }} onClick={() => openTag(tag.name)}>
 								{tag.name}
 							</div>

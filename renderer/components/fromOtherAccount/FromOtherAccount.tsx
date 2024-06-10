@@ -43,20 +43,19 @@ export default function FromOtherAccount(props: Props) {
 					}}
 				/>
 			)
-		} else {
-			return (
-				<Status
-					client={client}
-					account={account}
-					server={server}
-					target={props.status}
-					next={() => {
-						reset()
-						props.close()
-					}}
-				/>
-			)
 		}
+		return (
+			<Status
+				client={client}
+				account={account}
+				server={server}
+				target={props.status}
+				next={() => {
+					reset()
+					props.close()
+				}}
+			/>
+		)
 	}
 
 	if (props.status) {
@@ -75,7 +74,6 @@ export default function FromOtherAccount(props: Props) {
 				{body()}
 			</Modal>
 		)
-	} else {
-		return <></>
 	}
+	return <></>
 }

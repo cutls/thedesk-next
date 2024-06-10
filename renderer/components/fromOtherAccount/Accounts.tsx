@@ -30,7 +30,7 @@ export default function Accounts(props: Props) {
 				<div style={{ paddingTop: '2em' }}>
 					<RadioGroup name="account" value={index} onChange={(v) => setIndex(Number.parseInt(v.toString()))}>
 						{accounts.map((account, i) => (
-							<Radio key={i} value={i}>
+							<Radio key={account[0].id} value={i}>
 								{account[0].username}@{account[1].domain}
 							</Radio>
 						))}

@@ -59,9 +59,8 @@ const notification = (props: Props) => {
 						customEmojis={props.customEmojis}
 					/>
 				)
-			} else {
-				return null
 			}
+			return null
 		case 'mention':
 			if (props.notification.status) {
 				return (
@@ -83,9 +82,8 @@ const notification = (props: Props) => {
 						filters={props.filters}
 					/>
 				)
-			} else {
-				return null
 			}
+			return null
 		default:
 			return null
 	}

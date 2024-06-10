@@ -15,13 +15,11 @@ type Props = {
 const Poll: React.FC<Props> = (props) => {
 	if (props.poll.voted || props.poll.expired) {
 		return <PollResult {...props} />
-	} else {
-		if (props.poll.multiple) {
-			return <MultiplePoll {...props} />
-		} else {
-			return <SimplePoll {...props} />
-		}
 	}
+	if (props.poll.multiple) {
+		return <MultiplePoll {...props} />
+	}
+	return <SimplePoll {...props} />
 }
 
 const SimplePoll: React.FC<Props> = (props) => {
@@ -38,6 +36,7 @@ const SimplePoll: React.FC<Props> = (props) => {
 		<>
 			<RadioGroup value={pollRadio} onChange={(value) => setPollRadio(Number.parseInt(value.toString()))}>
 				{props.poll.options.map((option, index) => (
+					// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
 					<div key={index}>
 						<Radio value={index}>
 							<span dangerouslySetInnerHTML={{ __html: emojify(option.title, props.emojis) }} />
@@ -70,6 +69,7 @@ const MultiplePoll: React.FC<Props> = (props) => {
 		<>
 			<CheckboxGroup value={pollCheck} onChange={(value) => setPollCheck(value.map((v) => Number.parseInt(v.toString())))}>
 				{props.poll.options.map((option, index) => (
+					// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
 					<div key={index}>
 						<Checkbox value={index}>
 							<span dangerouslySetInnerHTML={{ __html: emojify(option.title, props.emojis) }} />
@@ -92,6 +92,7 @@ const PollResult: React.FC<Props> = (props) => {
 	return (
 		<>
 			{props.poll.options.map((option, index) => (
+				// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
 				<div key={index}>
 					<span style={{ paddingLeft: '12px' }}>
 						<span dangerouslySetInnerHTML={{ __html: emojify(option.title, props.emojis) }} />
@@ -121,9 +122,8 @@ const PollResult: React.FC<Props> = (props) => {
 const percent = (votes: number, all: number) => {
 	if (all > 0) {
 		return Math.round((votes * 100) / all)
-	} else {
-		return 0
 	}
+	return 0
 }
 
 export default Poll

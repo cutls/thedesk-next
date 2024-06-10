@@ -70,7 +70,7 @@ export default function ListsDetail(props: Props) {
 			<Content style={{ height: '100%', backgroundColor: 'var(--rs-bg-card)' }}>
 				<List style={{ height: '100%' }}>
 					{lists.map((list, index) => (
-						<List.Item key={index}>
+						<List.Item key={list.id}>
 							<div style={{ display: 'flex', justifyContent: 'space-between' }}>
 								<FlexboxGrid
 									align="middle"

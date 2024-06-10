@@ -53,7 +53,8 @@ export default function EditMedia(props: Props) {
 		if (loading) return
 		if (formRef === undefined || formRef.current === undefined) {
 			return
-		} else if (!formRef.current.check()) {
+		}
+		if (!formRef.current.check()) {
 			return
 		}
 		setLoading(true)
