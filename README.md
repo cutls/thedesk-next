@@ -1,5 +1,7 @@
 # TheDesk next(v25~)
 
+[日本語](https://github.com/cutls/thedesk-next/blob/main/README.ja.md)
+
 Mastodon(and Misskey) client for PC, based on [Fedistar](https://github.com/h3poteto/fedistar)
 
 ## What difference from Fedistar?

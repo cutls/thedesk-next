@@ -1,5 +1,7 @@
 # TheDesk next(v25~)
 
+[English](https://github.com/cutls/thedesk-next)
+
 [Fedistar](https://github.com/h3poteto/fedistar)ベースのPC用Mastodo(とMisskey)クライアント。
 
 ## Fedistarとの違いは？
