@@ -46,6 +46,7 @@ export const TheDeskProviderWrapper: React.FC = (props) => {
 				let streaming: StreamingArray = undefined
 				try {
 					if (!noStreaming && timeline.kind === 'public') streaming = [timeline.id, await client.publicStreaming()]
+					if (!noStreaming && timeline.kind === 'public:media') streaming = [timeline.id, await client.publicStreaming()]
 					if (!noStreaming && timeline.kind === 'local') streaming = [timeline.id, await client.localStreaming()]
 					if (!noStreaming && timeline.kind === 'direct') streaming = [timeline.id, await client.directStreaming()]
 					if (!noStreaming && timeline.kind === 'list') streaming = [timeline.id, await client.listStreaming(timeline.list_id)]
@@ -53,7 +54,7 @@ export const TheDeskProviderWrapper: React.FC = (props) => {
 				} catch {
 					console.error('skipped')
 				}
-				streamings.push(streaming)
+				streamings.push(streaming || [timeline.id, undefined])
 				i++
 			}
 			const userStreamings: StreamingArray[] = []
@@ -85,6 +86,23 @@ export const TheDeskProviderWrapper: React.FC = (props) => {
 				const streaming = useStreaming[i][1]
 				if (!streaming) continue
 				streaming.on('update', (status) => {
+					if (tts) {
+						const html = status.content
+						const b = stripForVoice(html)
+						const synthApi = window.speechSynthesis
+						const utter = new SpeechSynthesisUtterance(b)
+						synthApi.speak(utter)
+					}
+					callback({ payload: { status: status, timeline_id: useStreaming[i][0] } })
+				})
+			}
+		}
+		if (channel === 'receive-timeline-media') {
+			for (let i = 0; i < useStreaming.length; i++) {
+				const streaming = useStreaming[i][1]
+				if (!streaming) continue
+				streaming.on('update', (status) => {
+					if (status.media_attachments.length === 0) return
 					if (tts) {
 						const html = status.content
 						const b = stripForVoice(html)

@@ -301,6 +301,7 @@
 		"direct": "Direct messages",
 		"local": "Local",
 		"public": "Federated",
+		"public_media": "Federated(Media)",
 		"back": "Back"
 	},
 	"detail": {

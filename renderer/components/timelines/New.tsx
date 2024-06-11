@@ -247,6 +247,18 @@ const New: React.FC<Props> = (props) => {
 								</FlexboxGrid.Item>
 							</FlexboxGrid>
 						</List.Item>
+						<List.Item index={2} onClick={() => select('public:media', 'Federated(Media)', null)} style={{ cursor: 'pointer' }}>
+							<FlexboxGrid align="middle">
+								<FlexboxGrid.Item colspan={4} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+									<Icon as={BsGlobe2} />
+								</FlexboxGrid.Item>
+								<FlexboxGrid.Item colspan={20}>
+									<div>
+										<FormattedMessage id="timeline.public_media" />
+									</div>
+								</FlexboxGrid.Item>
+							</FlexboxGrid>
+						</List.Item>
 						{server.account_id && <AuthorizedTimelines server={server} select={select} />}
 					</List>
 				</Content>
