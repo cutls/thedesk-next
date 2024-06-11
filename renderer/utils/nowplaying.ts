@@ -64,9 +64,9 @@ export async function nowplaying(key: 'spotify' | 'appleMusic', showToaster: (me
 				content = content.replace(regExp9, '')
 				const regExp0 = /{genre}/g
 				content = content.replace(regExp0, '')
-				return { text: content, file }
+				return { text: content, file, title: item.name }
 			} catch (e: any) {
-				console.log(e)
+				await refreshSpotifyToken()
 				showToaster('compose.nowplaying.error')
 				return null
 			}
@@ -74,7 +74,7 @@ export async function nowplaying(key: 'spotify' | 'appleMusic', showToaster: (me
 	} else if (key === 'appleMusic') {
 		console.log('request')
 		window.electronAPI.requestAppleMusic()
-		type IFile = { text: string; file: File }
+		type IFile = { text: string; file: File, title: string }
 		const data: IFile = await new Promise((resolve) =>
 			window.electronAPI.appleMusic(async (_, item) => {
 				console.log(item)
@@ -101,7 +101,7 @@ export async function nowplaying(key: 'spotify' | 'appleMusic', showToaster: (me
 				content = content.replace(regExp9, '')
 				const regExp0 = /{genre}/g
 				content = content.replace(regExp0, '')
-				resolve({ text: content, file: artwork })
+				resolve({ text: content, file: artwork, title: item.name })
 			}),
 		)
 		console.log(data)
@@ -119,9 +119,21 @@ async function refreshSpotifyToken() {
 			},
 		})
 		const json = await api.json()
-		const { accessToken, refreshToken } = json
+		const { accessToken, refreshToken: _newRT } = json
 		localStorage.setItem('spotifyV2Token', accessToken)
-		localStorage.setItem('spotifyV2Refresh', refreshToken)
 		localStorage.setItem('spotifyV2Expires', `${new Date().getTime() / 1000 + 3600}`)
 	} catch (e: any) {}
+}
+export async function getUnknownAA(q: string, country: string) {
+	const start = `https://itunes.apple.com/search?term=${q}&country=${country}&entity=song`
+	const promise = await fetch(start, {
+		method: 'GET',
+	})
+	const json = await promise.json()
+	if (!json.resultCount) {
+		return null
+	}
+	const data = json.results[0].artworkUrl100
+	const file = new File([await (await fetch(data.replace(/100x100/, '512x512'))).blob()], 'cover.jpg', { type: 'image/jpeg' })
+	return file
 }

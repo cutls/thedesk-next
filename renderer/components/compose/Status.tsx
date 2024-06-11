@@ -31,7 +31,7 @@ import type { Server } from '@/entities/server'
 import { Context } from '@/theme'
 import { data, mapCustomEmojiCategory } from '@/utils/emojiData'
 import languages from '@/utils/languages'
-import { nowplaying } from '@/utils/nowplaying'
+import { getUnknownAA, nowplaying } from '@/utils/nowplaying'
 import { open } from '@/utils/openBrowser'
 import { FormattedMessage, useIntl } from 'react-intl'
 import AutoCompleteTextarea, { type ArgProps as AutoCompleteTextareaProps } from './AutoCompleteTextarea'
@@ -107,6 +107,7 @@ const Status: React.FC<Props> = (props) => {
 	const [cw, setCW] = useState<boolean>(false)
 	const [config, setConfig] = useState<Settings['compose']>(defaultSetting.compose)
 	const [language, setLanguage] = useState<string>('en')
+	const [searchAA, setSearchAA] = useState('')
 	const [editMediaModal, setEditMediaModal] = useState(false)
 	const [editMedia, setEditMedia] = useState<Entity.Attachment | null>(null)
 	const [maxCharacters, setMaxCharacters] = useState<number | null>(null)
@@ -497,6 +498,7 @@ const Status: React.FC<Props> = (props) => {
 			const showToaster = (message: string) => toast.push(alert('info', formatMessage({ id: message })), { placement: 'topStart' })
 			const ret = await nowplaying(key as 'spotify' | 'appleMusic', showToaster)
 			if (!ret) return toast.push(alert('info', formatMessage({ id: 'compose.nowplaying.error' })), { placement: 'topStart' })
+			if (!ret.file) setSearchAA(ret.title)
 			if (ret.file) coreUploader(ret.file)
 			setFormValue({
 				spoiler: formValue.spoiler,
@@ -519,6 +521,13 @@ const Status: React.FC<Props> = (props) => {
 				</Dropdown.Menu>
 			</Popover>
 		)
+	}
+	const getUnknownAAFn = async () => {
+		const langStr = localStorage.getItem('lang') || 'en-US'
+		const [_, country] = langStr.split('-')
+		const file = await getUnknownAA(searchAA, country || 'US')
+		if (file) coreUploader(file)
+		setSearchAA('')
 	}
 
 	const targetId = () => {
@@ -652,6 +661,12 @@ const Status: React.FC<Props> = (props) => {
 					</ButtonToolbar>
 				</Form.Group>
 			</Form>
+			{searchAA !== '' && <>
+				<p style={{ marginTop: '1rem', marginBottom: '1rem' }}><FormattedMessage id="compose.nowplaying.unkwnown_aa" /></p>
+				<Button onClick={() => getUnknownAAFn()}>
+					<FormattedMessage id="compose.nowplaying.unkwnown_aa_btn" />
+				</Button>
+			</>}
 			<EditMedia
 				opened={editMediaModal}
 				attachment={editMedia}
