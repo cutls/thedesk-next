@@ -12,7 +12,8 @@ import type { Account } from '@/entities/account'
 import type { CustomEmojiCategory } from '@/entities/emoji'
 import { Instruction } from '@/entities/instruction'
 import type { Server } from '@/entities/server'
-import { Color, type Timeline, type TimelineKind, colorList, columnWidth } from '@/entities/timeline'
+import { Color, type Timeline, type TimelineKind, colorList, columnWidth as columnWidthCalc, type ColumnWidth, columnWidthSet } from '@/entities/timeline'
+import { ResizableBox } from 'react-resizable'
 import type {
 	DeleteHomeStatusPayload,
 	DeleteTimelineStatusPayload,
@@ -53,6 +54,7 @@ export default function TimelineColumn(props: Props) {
 	const [walkthrough, setWalkthrough] = useState<boolean>(false)
 	const [customEmojis, setCustomEmojis] = useState<Array<CustomEmojiCategory>>([])
 	const [filters, setFilters] = useState<Array<Entity.Filter>>([])
+	const [columnWidth, setColumnWidth] = useState(columnWidthCalc(props.timeline.column_width))
 
 	const scrollerRef = useRef<HTMLElement | null>(null)
 	const triggerRef = useRef(null)
@@ -93,6 +95,7 @@ export default function TimelineColumn(props: Props) {
 			setCustomEmojis(mapCustomEmojiCategory(props.server.domain, emojis.data))
 		}
 		f()
+		setColumnWidth(columnWidthCalc(props.timeline.column_width))
 
 		if (props.timeline.kind === 'home') {
 			listen<ReceiveHomeStatusPayload>('receive-home-status', (ev) => {
@@ -360,6 +363,11 @@ export default function TimelineColumn(props: Props) {
 			behavior: 'smooth',
 		})
 	}
+	const columnWidthSet = (widthRaw: number) => {
+		const width = Math.round(widthRaw / 50) * 50
+		updateColumnWidth({ id: props.timeline.id, columnWidth: width })
+		setColumnWidth(width)
+	}
 	const headerStyle: CSSProperties = {
 		backgroundColor: props.timeline.color ? `var(--rs-color-${props.timeline.color})` : 'var(--rs-color-card)',
 		borderBottomWidth: '3px',
@@ -368,7 +376,7 @@ export default function TimelineColumn(props: Props) {
 	}
 
 	return (
-		<div style={{ width: columnWidth(props.timeline.column_width), minWidth: columnWidth(props.timeline.column_width), margin: '0 4px' }}>
+		<ResizableBox width={columnWidth} height={0} axis="x" style={{ margin: '0 4px', minHeight: '100%', flexShrink: 0, width: columnWidth }} resizeHandles={['e']} onResizeStop={(_, e) => columnWidthSet(e.size.width)}>
 			<Container style={{ height: '100%' }}>
 				<Header style={headerStyle}>
 					<FlexboxGrid align="middle" justify="space-between">
@@ -483,7 +491,7 @@ export default function TimelineColumn(props: Props) {
 											client={client}
 											server={props.server}
 											account={account}
-											columnWidth={props.timeline.column_width}
+											columnWidth={columnWidth}
 											updateStatus={(status) => setStatuses((current) => updateStatus(current, status))}
 											openMedia={props.openMedia}
 											setReplyOpened={(opened) => { replyOpened.current = opened }}
@@ -501,7 +509,7 @@ export default function TimelineColumn(props: Props) {
 					</Content>
 				)}
 			</Container>
-		</div>
+		</ResizableBox>
 	)
 }
 const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: () => void }>((props, ref) => {
@@ -524,8 +532,10 @@ const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: ()
 		props.close()
 	}
 
+	const isColumnWidthGuard = (value: string): value is ColumnWidth => columnWidthSet.includes(value as any)
 	const updateColumnWidthFn = async (timeline: Timeline, columnWidth: string) => {
-		await updateColumnWidth({ id: timeline.id, columnWidth: columnWidth })
+		if (!isColumnWidthGuard(columnWidth)) return
+		await updateColumnWidth({ id: timeline.id, columnWidth: columnWidthCalc(columnWidth) })
 		timelineRefresh()
 		props.close()
 	}

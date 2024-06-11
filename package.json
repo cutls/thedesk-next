@@ -24,6 +24,7 @@
 		"thirdparty": "license-checker --production --json > thirdparty.json && node scripts/thirdparty.js"
 	},
 	"dependencies": {
+		"@cutls/megalodon": "6.0.12",
 		"@emoji-mart/react": "^1.1.1",
 		"@rsuite/icons": "^1.0.3",
 		"cheerio": "1.0.0-rc.12",
@@ -32,7 +33,6 @@
 		"electron-next": "^3.1.5",
 		"electron-window-state": "^5.0.3",
 		"emoji-mart": "^5.6.0",
-		"@cutls/megalodon": "6.0.12",
 		"parse-link-header": "^2.0.0",
 		"react": "18.2.0",
 		"react-blurhash": "^0.3.0",
@@ -40,6 +40,7 @@
 		"react-draggable": "^4.4.6",
 		"react-icons": "^5.2.1",
 		"react-intl": "^6.6.8",
+		"react-resizable": "^3.0.5",
 		"react-viewer": "^3.2.2",
 		"react-virtuoso": "4.7.11",
 		"rsuite": "5.60.2",
@@ -53,6 +54,7 @@
 		"@types/node": "^14.18.63",
 		"@types/react": "^16.14.52",
 		"@types/react-dom": "^16.9.24",
+		"@types/react-resizable": "^3.0.7",
 		"@types/sanitize-html": "^2.11.0",
 		"@types/superagent": "^8.1.7",
 		"electron": "^27.1.2",
@@ -85,7 +87,10 @@
 			"oneClick": false
 		},
 		"linux": {
-			"target": ["zip", "deb"]
+			"target": [
+				"zip",
+				"deb"
+			]
 		},
 		"mac": {
 			"mergeASARs": false,

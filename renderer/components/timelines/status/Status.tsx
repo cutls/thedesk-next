@@ -26,7 +26,7 @@ type Props = {
 	server: Server
 	account: Account | null
 	pinned?: boolean
-	columnWidth: ColumnWidth
+	columnWidth: number
 	updateStatus: (status: Entity.Status) => void
 	openMedia: (media: Array<Entity.Attachment>, index: number) => void
 	setReplyOpened?: (opened: boolean) => void

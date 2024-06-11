@@ -14,7 +14,7 @@ type Props = {
 	attachments: Array<Entity.Attachment>
 	sensitive: boolean
 	openMedia: (media: Array<Entity.Attachment>, index: number) => void
-	columnWidth: ColumnWidth
+	columnWidth: number
 }
 
 const Attachments: React.FC<Props> = (props) => {
@@ -36,7 +36,7 @@ type AttachmentBoxProps = {
 	openMedia: (media: Array<Entity.Attachment>, index: number) => void
 	changeSensitive: () => void
 	sensitive: boolean
-	columnWidth: ColumnWidth
+	columnWidth: number
 }
 
 function AttachmentBox(props: AttachmentBoxProps) {
@@ -45,16 +45,7 @@ function AttachmentBox(props: AttachmentBoxProps) {
 
 	useEffect(() => {
 		let m = 1
-		switch (props.columnWidth) {
-			case 'xs':
-			case 'sm':
-				m = 1
-				break
-			case 'md':
-			case 'lg':
-				m = 2
-				break
-		}
+		if (props.columnWidth >= 420) m = 2
 		setMax(m)
 		const length = props.attachments.length
 		setRemains(length - m)

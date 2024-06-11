@@ -57,6 +57,9 @@ dependencies:
   react-intl:
     specifier: ^6.6.8
     version: 6.6.8(react@18.2.0)(typescript@4.9.5)
+  react-resizable:
+    specifier: ^3.0.5
+    version: 3.0.5(react-dom@18.2.0)(react@18.2.0)
   react-viewer:
     specifier: ^3.2.2
     version: 3.2.2
@@ -92,6 +95,9 @@ devDependencies:
   '@types/react-dom':
     specifier: ^16.9.24
     version: 16.9.24
+  '@types/react-resizable':
+    specifier: ^3.0.7
+    version: 3.0.7
   '@types/sanitize-html':
     specifier: ^2.11.0
     version: 2.11.0
@@ -664,6 +670,12 @@ packages:
 
   /@types/react-dom@16.9.24:
     resolution: {integrity: sha512-Gcmq2JTDheyWn/1eteqyzzWKSqDjYU6KYsIvH7thb7CR5OYInAWOX+7WnKf6PaU/cbdOc4szJItcDEJO7UGmfA==}
+    dependencies:
+      '@types/react': 16.14.52
+    dev: true
+
+  /@types/react-resizable@3.0.7:
+    resolution: {integrity: sha512-V4N7/xDUME+cxKya/A73MmFrHofTupVdE45boRxeA8HL4Q5pJh3AuG0FWCEy2GB84unIMSRISyEAS/GHWum9EQ==}
     dependencies:
       '@types/react': 16.14.52
     dev: true
@@ -2606,6 +2618,18 @@ packages:
 
   /react-is@17.0.2:
     resolution: {integrity: sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==}
+    dev: false
+
+  /react-resizable@3.0.5(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-vKpeHhI5OZvYn82kXOs1bC8aOXktGU5AmKAgaZS4F5JPburCtbmDPqE7Pzp+1kN4+Wb81LlF33VpGwWwtXem+w==}
+    peerDependencies:
+      react: '>= 16.3'
+    dependencies:
+      prop-types: 15.8.1
+      react: 18.2.0
+      react-draggable: 4.4.6(react-dom@18.2.0)(react@18.2.0)
+    transitivePeerDependencies:
+      - react-dom
     dev: false
 
   /react-use-set@1.0.0(react@18.2.0):

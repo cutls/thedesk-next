@@ -144,12 +144,10 @@ export async function getUsualAccount(): Promise<number> {
 	localStorage.getItem('usualAccount')
 	return Number.parseInt(localStorage.getItem('usualAccount') || '0')
 }
-const isColumnWidthGuard = (value: string): value is ColumnWidth => columnWidthSet.includes(value as any)
-export async function updateColumnWidth({ id, columnWidth }: { id: number; columnWidth: string }) {
+export async function updateColumnWidth({ id, columnWidth }: { id: number; columnWidth: number }) {
 	const timelinesStr = localStorage.getItem('timelines')
 	const timelines: Array<Timeline> = JSON.parse(timelinesStr || '[]')
 	const timeline = timelines.find((timeline) => timeline.id === id)
-	if (!timeline || !isColumnWidthGuard(columnWidth)) return
 	timeline.column_width = columnWidth
 	localStorage.setItem('timelines', JSON.stringify(timelines))
 	return

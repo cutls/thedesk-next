@@ -5,7 +5,7 @@ export type Timeline = {
 	sort: number
 	server_id: number
 	list_id: string | null
-	column_width: ColumnWidth
+	column_width: ColumnWidth | number
 	color?: Color
 	tts?: boolean
 	mediaOnly?: boolean
@@ -14,7 +14,7 @@ export type AddTimeline = {
 	kind: TimelineKind
 	name: string
 	listId?: string
-	columnWidth: ColumnWidth
+	columnWidth: ColumnWidth | number
 }
 export const colorList = ['red', 'orange', 'yellow', 'green', 'cyan', 'blue', 'violet'] as const
 export type Color = (typeof colorList)[number]
@@ -22,17 +22,18 @@ export type TimelineKind = 'home' | 'notifications' | 'local' | 'public' | 'favo
 export const columnWidthSet = ['xs', 'sm', 'md', 'lg'] as const
 export type ColumnWidth = (typeof columnWidthSet)[number]
 
-export function columnWidth(width: ColumnWidth) {
+export function columnWidth(width: ColumnWidth | number) {
+	if (typeof width === 'number') return width
 	switch (width) {
 		case 'xs':
-			return '280px'
+			return 280
 		case 'sm':
-			return '340px'
+			return 340
 		case 'md':
-			return '420px'
+			return 420
 		case 'lg':
-			return '500px'
+			return 500
 		default:
-			return '340px'
+			return 340
 	}
 }
