@@ -7,6 +7,7 @@ export type Server = {
 	sns: 'mastodon' | 'pleroma' | 'friendica' | 'firefish' | 'misskey'
 	favicon: string | null
 	account_id: number | null
+	no_streaming?: boolean
 }
 
 export type ServerSet = {

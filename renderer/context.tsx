@@ -37,15 +37,15 @@ export const TheDeskProviderWrapper: React.FC = (props) => {
 				const [account] = await getAccount({ id: accountId })
 				const sns = await detector(server.base_url)
 				const client = generator(sns, server.base_url, account?.access_token, 'TheDesk(Desktop)')
+				const noStreaming = server.no_streaming
 
-				let streaming: WebSocketInterface
+				let streaming: WebSocketInterface = undefined
 				try {
-					if (timeline.kind === 'public') streaming = await client.publicStreaming()
-					if (timeline.kind === 'local') streaming = await client.localStreaming()
-					if (timeline.kind === 'direct') streaming = await client.directStreaming()
-					if (timeline.kind === 'list') streaming = await client.listStreaming(timeline.list_id)
-					if (timeline.kind === 'tag') streaming = await client.tagStreaming(timeline.name)
-					console.log(streaming)
+					if (!noStreaming && timeline.kind === 'public') streaming = await client.publicStreaming()
+					if (!noStreaming && timeline.kind === 'local') streaming = await client.localStreaming()
+					if (!noStreaming && timeline.kind === 'direct') streaming = await client.directStreaming()
+					if (!noStreaming && timeline.kind === 'list') streaming = await client.listStreaming(timeline.list_id)
+					if (!noStreaming && timeline.kind === 'tag') streaming = await client.tagStreaming(timeline.name)
 				} catch {
 					console.error('skipped')
 				}
@@ -56,11 +56,11 @@ export const TheDeskProviderWrapper: React.FC = (props) => {
 
 			const servers = await listServers()
 			for (const [server, account] of servers) {
+				const noStreaming = server.no_streaming
 				const sns = await detector(server.base_url)
 				if (!account || !account.access_token) continue
 				const client = generator(sns, server.base_url, account.access_token)
-				console.log(client)
-				const streaming: WebSocketInterface = await client.userStreaming()
+				const streaming = !noStreaming ? await client.userStreaming() : undefined
 				userStreamings.push(streaming)
 			}
 			window.streamings = streamings
@@ -167,8 +167,8 @@ export const TheDeskProviderWrapper: React.FC = (props) => {
 		}
 
 		return () => {
-			for (const streaming of window.streamings) streaming.removeListener(channel, callback)
-			for (const streaming of window.userStreamings) streaming.removeListener(channel, callback)
+			for (const streaming of window.streamings) streaming?.removeListener(channel, callback)
+			for (const streaming of window.userStreamings) streaming?.removeListener(channel, callback)
 		}
 	}
 
