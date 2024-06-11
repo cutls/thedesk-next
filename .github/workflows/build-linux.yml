@@ -23,7 +23,8 @@ jobs:
     - uses: actions/setup-node@v2
       with:
         node-version: ${{ matrix.node-version }}
-    - run: pnpm install
+    - uses: pnpm/action-setup@v2.2.2
+    - run: pnpm install --shamefully-hoist
     - run: pnpm run build
     - run: pnpm run pack:linux
     - uses: shogo82148/actions-upload-release-asset@v1
