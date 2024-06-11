@@ -9,6 +9,7 @@
 * TheDeskのUI（[TheDesk ~v24](https://github.com/cutls/TheDesk)ライクなUI）
   * フローティング投稿ボックス
   * カラムやアカウントごとに色分けできます
+  * 柔軟かつ直感的にに横幅をリサイズできるタイムライン
 * TheDeskの設定
   * タイムラインに表示する時間の形式を変更可能(絶対/相対時間)
   * アイコンのアニメーション有無の設定
@@ -19,6 +20,7 @@
   * Spotify NowPlaying
   * Apple Music/iTunes NowPlaying(macOS)
   * タイムライン読み上げ
+  * メディアだけのタイムライン
 * その他
   * Misskeyに部分的に対応
 

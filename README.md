@@ -9,6 +9,7 @@ Mastodon(and Misskey) client for PC, based on [Fedistar](https://github.com/h3po
 * TheDesk UI(like [TheDesk ~v24](https://github.com/cutls/TheDesk))
   * Floating post box
   * It can be color-coded by column or account
+  * Flexible and intuitive width resizing timeline
 * TheDesk config
   * The format of the time displayed on the timeline can be changed(absolute/relative)
   * Allow icons to animate or not
@@ -19,6 +20,7 @@ Mastodon(and Misskey) client for PC, based on [Fedistar](https://github.com/h3po
   * Spotify NowPlaying
   * Apple Music/iTunes NowPlaying(macOS only)
   * Text-to-speech of timeline posts
+  * Media only timeline
 * Others
   * Partial support for Misskey
 
