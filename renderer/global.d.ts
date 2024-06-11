@@ -9,10 +9,11 @@ export interface IElectronAPI {
 	appleMusic: (callback: (event: Electron.IpcRendererEvent, data: any) => void) => void
 }
 
+type StreamingArray = [number, WebSocketInterface]
 declare global {
 	interface Window {
 		electronAPI: IElectronAPI
-		streamings: WebSocketInterface[]
-		userStreamings: WebSocketInterface[]
+		streamings: StreamingArray[]
+		userStreamings: StreamingArray[]
 	}
 }

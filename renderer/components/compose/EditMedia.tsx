@@ -1,6 +1,7 @@
+import { TheDeskContext } from '@/context'
 import type { Entity, MegalodonInterface } from '@cutls/megalodon'
 import Image from 'next/image'
-import { forwardRef, useEffect, useRef, useState } from 'react'
+import { forwardRef, useEffect, useRef, useState, useContext } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { Button, ButtonToolbar, FlexboxGrid, Form, Input, Modal, Schema } from 'rsuite'
 
@@ -25,6 +26,11 @@ export default function EditMedia(props: Props) {
 	})
 	const [loading, setLoading] = useState(false)
 	const [attachment, setAttachment] = useState<Entity.Attachment | null>(null)
+	const { setFocused } = useContext(TheDeskContext)
+	const focusAttr = {
+		onFocus: () => setFocused(true),
+		onBlur: () => setFocused(false),
+	}
 
 	const formRef = useRef<any>()
 
@@ -79,7 +85,7 @@ export default function EditMedia(props: Props) {
 									<FormattedMessage id="compose.edit_attachment.label" />
 								</Form.ControlLabel>
 								{/** @ts-ignore **/}
-								<Form.Control name="description" rows={5} accepter={Textarea} />
+								<Form.Control name="description" {...focusAttr} rows={5} accepter={Textarea} />
 							</Form.Group>
 							<Form.Group>
 								<ButtonToolbar style={{ justifyContent: 'flex-end' }}>

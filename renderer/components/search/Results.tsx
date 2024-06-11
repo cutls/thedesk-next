@@ -31,6 +31,11 @@ export default function Results(props: Props) {
 	const [hashtags, setHashtags] = useState<Array<Entity.Tag>>([])
 	const [statuses, setStatuses] = useState<Array<Entity.Status>>([])
 	const [customEmojis, setCustomEmojis] = useState<Array<CustomEmojiCategory>>([])
+	const { setFocused } = useContext(TheDeskContext)
+	const focusAttr = {
+		onFocus: () => setFocused(true),
+		onBlur: () => setFocused(false),
+	}
 
 	const search = async (word: string) => {
 		const res = await props.client.search(word, { limit: 5, resolve: true })
@@ -107,7 +112,7 @@ export default function Results(props: Props) {
 			<div style={{ margin: '12px 0' }}>
 				<Form onCheck={() => search(word)}>
 					<InputGroup inside>
-						<Input placeholder={formatMessage({ id: 'search.placeholder' })} value={word} onChange={(value) => setWord(value)} />
+						<Input placeholder={formatMessage({ id: 'search.placeholder' })} {...setFocused} value={word} onChange={(value) => setWord(value)} />
 						<InputGroup.Button onClick={() => search(word)}>
 							<Icon as={BsSearch} />
 						</InputGroup.Button>

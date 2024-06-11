@@ -26,7 +26,11 @@ const New: React.FC<Props> = (props) => {
 	const [useAuto, setUseAuto] = useState<boolean>(true)
 	const [domain, setDomain] = useState('')
 	const [code, setCode] = useState('')
-	const { timelineRefresh } = useContext(TheDeskContext)
+	const { setFocused } = useContext(TheDeskContext)
+	const focusAttr = {
+		onFocus: () => setFocused(true),
+		onBlur: () => setFocused(false),
+	}
 
 	const toast = useToaster()
 
@@ -128,7 +132,7 @@ const New: React.FC<Props> = (props) => {
 							<Form.ControlLabel>
 								<FormattedMessage id="servers.new.domain" />
 							</Form.ControlLabel>
-							<Form.Control name="domain" placeholder="mastodon.social" />
+							<Form.Control {...focusAttr} name="domain" placeholder="mastodon.social" />
 						</Form.Group>
 						<Form.Group>
 							<ButtonToolbar>
@@ -150,7 +154,7 @@ const New: React.FC<Props> = (props) => {
 							</p>
 						</Form.Group>
 						<Form.Group>
-							<Input value={domain} readOnly />
+							<Input value={domain} {...focusAttr} readOnly />
 						</Form.Group>
 						<Checkbox style={{ marginBottom: '5px' }} checked={useAuto} value="useAuto" onChange={() => setUseAuto(!useAuto)}><FormattedMessage id="servers.new.auto_login" /></Checkbox>
 
@@ -206,7 +210,7 @@ const New: React.FC<Props> = (props) => {
 								<Form.ControlLabel>
 									<FormattedMessage id="servers.new.authorization_code" />
 								</Form.ControlLabel>
-								<Form.Control name="code" />
+								<Form.Control {...focusAttr} name="code" />
 								<Form.HelpText>
 									<FormattedMessage id="servers.new.authorization_help" />
 								</Form.HelpText>

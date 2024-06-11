@@ -1,7 +1,8 @@
+import { TheDeskContext } from '@/context'
 import { defaultSetting, type Settings as SettingsType, type ThemeType } from '@/entities/settings'
 import type { localeType } from '@/i18n'
 import { readSettings, saveSetting } from '@/utils/storage'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useContext } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Button, ButtonToolbar, Form, InputNumber, InputPicker, RadioGroup, Radio, Modal, Panel, Schema } from 'rsuite'
 
@@ -43,6 +44,11 @@ const vis = ['public', 'unlisted', 'private', 'direct']
 
 export default function Settings(props: Props) {
 	const { formatMessage } = useIntl()
+	const { setFocused } = useContext(TheDeskContext)
+	const focusAttr = {
+		onFocus: () => setFocused(true),
+		onBlur: () => setFocused(false),
+	}
 	const [appearance, setAppearance] = useState<SettingsType['appearance']>(defaultSetting.appearance)
 	const [timelineConfig, setTimelineConfig] = useState<SettingsType['timeline']>(defaultSetting.timeline)
 	const [compose, setCompose] = useState<SettingsType['compose']>(defaultSetting.compose)
@@ -108,19 +114,19 @@ export default function Settings(props: Props) {
 							<Form.ControlLabel>
 								<FormattedMessage id="settings.settings.appearance.language" />
 							</Form.ControlLabel>
-							<Form.Control name="language" accepter={InputPicker} cleanable={false} data={languages} />
+							<Form.Control name="language" {...focusAttr} accepter={InputPicker} cleanable={false} data={languages} />
 						</Form.Group>
 						<Form.Group controlId="font_size">
 							<Form.ControlLabel>
 								<FormattedMessage id="settings.settings.appearance.font_size" />
 							</Form.ControlLabel>
-							<Form.Control name="font_size" accepter={InputNumber} postfix="px" />
+							<Form.Control name="font_size" {...focusAttr} accepter={InputNumber} postfix="px" />
 						</Form.Group>
 						<Form.Group controlId="color_theme">
 							<Form.ControlLabel>
 								<FormattedMessage id="settings.settings.appearance.color_theme" />
 							</Form.ControlLabel>
-							<Form.Control name="color_theme" accepter={InputPicker} cleanable={false} data={themes} />
+							<Form.Control name="color_theme" {...focusAttr} accepter={InputPicker} cleanable={false} data={themes} />
 						</Form.Group>
 					</Panel>
 				</Form>
@@ -130,7 +136,7 @@ export default function Settings(props: Props) {
 							<Form.ControlLabel>
 								<FormattedMessage id="settings.settings.timeline.time.title" />
 							</Form.ControlLabel>
-							<Form.Control name="time" accepter={InputPicker} cleanable={false} data={time.map((t) => { return { label: formatMessage({ id: `settings.settings.timeline.time.${t}` }), value: t } })} />
+							<Form.Control name="time" {...focusAttr} accepter={InputPicker} cleanable={false} data={time.map((t) => { return { label: formatMessage({ id: `settings.settings.timeline.time.${t}` }), value: t } })} />
 						</Form.Group>
 						<Form.Group controlId="animation">
 							<Form.ControlLabel>
@@ -145,7 +151,7 @@ export default function Settings(props: Props) {
 							<Form.ControlLabel>
 								<FormattedMessage id="settings.settings.timeline.max_length" />
 							</Form.ControlLabel>
-							<Form.Control name="max_length" accepter={InputNumber} postfix={formatMessage({ id: 'settings.settings.timeline.max_length_unit' })} />
+							<Form.Control name="max_length" {...focusAttr} accepter={InputNumber} postfix={formatMessage({ id: 'settings.settings.timeline.max_length_unit' })} />
 						</Form.Group>
 						<p style={{ fontSize: '0.8rem', textAlign: 'right', paddingRight: '20px'}}><FormattedMessage id="settings.settings.timeline.max_length_hint" /></p>
 					</Panel>
@@ -156,13 +162,13 @@ export default function Settings(props: Props) {
 							<Form.ControlLabel>
 								<FormattedMessage id="settings.settings.compose.afterPost.title" />
 							</Form.ControlLabel>
-							<Form.Control name="afterPost" accepter={InputPicker} cleanable={false} data={afterPost.map((t) => { return { label: formatMessage({ id: `settings.settings.compose.afterPost.${t}` }), value: t } })} />
+							<Form.Control name="afterPost" {...focusAttr} accepter={InputPicker} cleanable={false} data={afterPost.map((t) => { return { label: formatMessage({ id: `settings.settings.compose.afterPost.${t}` }), value: t } })} />
 						</Form.Group>
 						<Form.Group controlId="secondaryToot" style={{ marginBottom: 0}}>
 							<Form.ControlLabel>
 								<FormattedMessage id="settings.settings.compose.secondaryToot" />
 							</Form.ControlLabel>
-							<Form.Control name="secondaryToot" accepter={InputPicker} cleanable={false} data={[{ label: formatMessage({ id: 'timeline.settings.not_do' }), value: 'no'},...vis.map((t) => { return { label: formatMessage({ id: `compose.visibility.${t}` }), value: t } })]} />
+							<Form.Control name="secondaryToot" {...focusAttr} accepter={InputPicker} cleanable={false} data={[{ label: formatMessage({ id: 'timeline.settings.not_do' }), value: 'no'},...vis.map((t) => { return { label: formatMessage({ id: `compose.visibility.${t}` }), value: t } })]} />
 						</Form.Group>
 						<p style={{ fontSize: '0.8rem', textAlign: 'right', paddingRight: '20px'}}><FormattedMessage id="settings.settings.compose.secondaryToot_hint" /></p>
 					</Panel>

@@ -20,6 +20,11 @@ export default function ListMemberships(props: Props) {
 	const [users, setUsers] = useState<Array<Entity.Account>>([])
 	const { timelineConfig } = useContext(TheDeskContext)
 	const isAnimeIcon = timelineConfig.animation === 'yes'
+	const { setFocused } = useContext(TheDeskContext)
+	const focusAttr = {
+		onFocus: () => setFocused(true),
+		onBlur: () => setFocused(false),
+	}
 
 	useEffect(() => {
 		if (props.list && props.client) {
@@ -66,12 +71,13 @@ export default function ListMemberships(props: Props) {
 		>
 			<Modal.Header>
 				<div style={{ display: 'flex', paddingBottom: '0.7em' }}>
-					<Input value={title} onChange={(value) => setTitle(value)} />
+					<Input value={title} onChange={(value) => setTitle(value)} {...setFocused} />
 					<Button appearance="link" onClick={() => updateListTitle()}>
 						<Icon as={BsCheck2} />
 					</Button>
 				</div>
 				<InputPicker
+					{...focusAttr}
 					placeholder={<FormattedMessage id="list_memberships.search_placeholder" />}
 					data={users}
 					labelKey="acct"

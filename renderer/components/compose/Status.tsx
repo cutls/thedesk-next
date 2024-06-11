@@ -38,6 +38,7 @@ import EditMedia from './EditMedia'
 import { privacyColor, privacyIcon } from '@/utils/statusParser'
 import { readSettings } from '@/utils/storage'
 import { type Settings, defaultSetting } from '@/entities/settings'
+import { TheDeskContext } from '@/context'
 
 type Props = {
 	server: Server
@@ -84,10 +85,15 @@ const model = Schema.Model({
 		return true
 	}, 'Must be at least 5 minutes in the future'),
 })
-
 const Status: React.FC<Props> = (props) => {
 	const { formatMessage } = useIntl()
 	const { theme } = useContext(Context)
+	const { focused, setFocused } = useContext(TheDeskContext)
+	const focusAttr = {
+		onFocus: () => setFocused(true),
+		onBlur: () => setFocused(false),
+	
+	}
 
 	const [formValue, setFormValue] = useState<FormValue>({
 		spoiler: '',
@@ -112,6 +118,10 @@ const Status: React.FC<Props> = (props) => {
 	const uploaderRef = useRef<HTMLInputElement>()
 	const toast = useToaster()
 	const isDarwin = localStorage.getItem('os') === 'darwin'
+
+	useEffect(() => {
+		console.log(focused)
+	}, [focused])
 
 	// Update instance custom emoji
 	useEffect(() => {
@@ -283,11 +293,11 @@ const Status: React.FC<Props> = (props) => {
 	const handleKeyPress = useCallback(
 		(event: KeyboardEvent) => {
 			const ctrl = event.ctrlKey || event.metaKey
-			if (ctrl === true && event.key === 'm') {
+			if (!focused && event.key === 'm') {
 				event.preventDefault()
 				props.setOpened(false)
 			}
-			if (ctrl === true && event.key === 'n') {
+			if (!focused && event.key === 'n') {
 				props.setOpened(true)
 				statusRef.current?.getElementsByTagName('textarea')[0]?.focus()
 				event.preventDefault()
@@ -432,7 +442,7 @@ const Status: React.FC<Props> = (props) => {
 
 	const EmojiPicker = forwardRef<HTMLDivElement>((props, ref) => (
 		<Popover ref={ref} {...props}>
-			<Picker data={data} custom={customEmojis} onEmojiSelect={onEmojiSelect} previewPosition="none" set="native" perLine="7" theme={theme === 'high-contrast' ? 'dark' : theme} />
+			<Picker data={data} onFocus={() => setFocused(true)} onBlur={() => setFocused(false)} custom={customEmojis} onEmojiSelect={onEmojiSelect} previewPosition="none" set="native" perLine="7" theme={theme === 'high-contrast' ? 'dark' : theme} />
 		</Popover>
 	))
 
@@ -527,7 +537,7 @@ const Status: React.FC<Props> = (props) => {
 			<Form fluid model={model} ref={formRef} onChange={setFormValue} onCheck={setFormError} formValue={formValue}>
 				{cw && (
 					<Form.Group controlId="spoiler">
-						<Form.Control name="spoiler" ref={cwRef} placeholder={formatMessage({ id: 'compose.spoiler.placeholder' })} />
+						<Form.Control name="spoiler" {...focusAttr} ref={cwRef} placeholder={formatMessage({ id: 'compose.spoiler.placeholder' })} />
 					</Form.Group>
 				)}
 
@@ -542,6 +552,7 @@ const Status: React.FC<Props> = (props) => {
 						emojis={customEmojis}
 						client={props.client}
 						style={{ fontSize: '1em' }}
+						{...focusAttr}
 					/>
 					{/** delay is required to fix popover position **/}
 					<Whisper trigger="click" placement="bottomEnd" controlId={targetId()} delay={100} preventOverflow={false} ref={emojiPickerRef} speaker={<EmojiPicker />}>
@@ -555,8 +566,8 @@ const Status: React.FC<Props> = (props) => {
 						</div>
 					)}
 				</Form.Group>
-				{formValue.poll && <Form.Control name="poll" accepter={PollInputControl} fieldError={formError.poll} />}
-				{formValue.scheduled_at && <Form.Control name="scheduled_at" accepter={DatePicker} format="yyyy-MM-dd HH:mm" />}
+				{formValue.poll && <Form.Control name="poll" {...focusAttr} accepter={PollInputControl} fieldError={formError.poll} />}
+				{formValue.scheduled_at && <Form.Control name="scheduled_at" {...focusAttr} accepter={DatePicker} format="yyyy-MM-dd HH:mm" />}
 
 				<Form.Group controlId="actions" style={{ marginBottom: '4px' }}>
 					<ButtonToolbar style={{ gap: 0 }}>
@@ -668,7 +679,7 @@ const defaultPoll = () => ({
 	multiple: false,
 })
 
-const PollInputControl: FormControlProps<Poll, any> = ({ value, onChange, fieldError, setPollFocused }) => {
+const PollInputControl: FormControlProps<Poll, any> = ({ value, onChange, fieldError, onFocus, onBlur }) => {
 	const { formatMessage } = useIntl()
 	const [poll, setPoll] = useState<Poll>(value)
 	const errors = fieldError ? fieldError.object : {}
@@ -720,13 +731,6 @@ const PollInputControl: FormControlProps<Poll, any> = ({ value, onChange, fieldE
 		setFocused(currentFocused.splice(index, 1))
 		handleChangePoll(next)
 	}
-	const setFocusedOption = (index: number, isFocused: boolean) => {
-		const currentFocused = focused
-		if (isFocused) currentFocused[index] = 1
-		if (!isFocused) currentFocused[index] = 0
-		setFocused(currentFocused)
-		setPollFocused(currentFocused.findIndex((v) => v === 1) !== -1)
-	}
 
 	return (
 		<>
@@ -737,7 +741,7 @@ const PollInputControl: FormControlProps<Poll, any> = ({ value, onChange, fieldE
 						<FlexboxGrid align="middle">
 							<FlexboxGrid.Item>{poll.multiple ? <Checkbox disabled /> : <Radio />}</FlexboxGrid.Item>
 							<FlexboxGrid.Item>
-								<Input value={option} onChange={(value) => setOption(value, index)} onFocus={() => setFocusedOption(index, true)} onBlur={() => setFocusedOption(index, false)} />
+								<Input value={option} onChange={(value) => setOption(value, index)} onFocus={onFocus} onBlur={onBlur} />
 							</FlexboxGrid.Item>
 							<FlexboxGrid.Item>
 								<Button appearance="link" onClick={() => removeOption(index)}>
@@ -776,6 +780,8 @@ const PollInputControl: FormControlProps<Poll, any> = ({ value, onChange, fieldE
 							cleanable={false}
 							onChange={(value) => setPoll((current) => Object.assign({}, current, { expires_in: value }))}
 							style={{ width: '100px' }}
+							onFocus={onFocus}
+							onBlur={onBlur}
 						/>
 					</FlexboxGrid.Item>
 				</FlexboxGrid>
