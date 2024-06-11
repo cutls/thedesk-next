@@ -146,7 +146,6 @@ const Status: React.FC<Props> = (props) => {
 		const res = await props.client.getStatus(props.status.id)
 		props.updateStatus(res.data)
 	}
-
 	if (!ignoreFilter && props.filters?.map((f) => f.phrase).filter((keyword) => props.status.content.toLowerCase().includes(keyword.toLowerCase())).length > 0) {
 		return (
 			<div className="status" style={{ textAlign: 'center', paddingTop: '0.5em', paddingBottom: '0.5em' }}>
@@ -307,7 +306,7 @@ async function searchAccount(account: ParsedAccount, status: Entity.Status, clie
 		}
 	}
 	if (status.in_reply_to_id) {
-		const res = await client.getStatusContext(status.id, { limit: TIMELINE_STATUSES_COUNT})
+		const res = await client.getStatusContext(status.id, { limit: TIMELINE_STATUSES_COUNT })
 		if (res.status === 200) {
 			const accounts: Array<Entity.Account> = res.data.ancestors.map((s) => s.account).concat(res.data.descendants.map((s) => s.account))
 			const user = accountMatch(accounts, account, server.domain)

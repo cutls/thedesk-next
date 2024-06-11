@@ -484,8 +484,10 @@ export default function TimelineColumn(props: Props) {
 								endReached={loadMore}
 								overscan={TIMELINE_STATUSES_COUNT}
 								defaultItemHeight={44}
-								itemContent={(_, status) => (
-									(!props.timeline.mediaOnly || (props.timeline.mediaOnly && status.media_attachments.length > 0)) && <List.Item key={status.id} style={{ paddingTop: '2px', paddingBottom: '2px', backgroundColor: 'var(--rs-bg-well)' }}>
+								itemContent={(_, status) => {
+									if (props.timeline.mediaOnly && status.media_attachments.length === 0) return null
+									if (filters?.map((f) => [f.phrase, f.irreversible] as [string, boolean]).findIndex(([keyword, irreversible]) => irreversible ? status.content.toLowerCase().includes(keyword.toLowerCase()) : false) > 0) return null
+									return <List.Item key={status.id} style={{ paddingTop: '2px', paddingBottom: '2px', backgroundColor: 'var(--rs-bg-well)' }}>
 										<Status
 											status={status}
 											client={client}
@@ -503,7 +505,8 @@ export default function TimelineColumn(props: Props) {
 											customEmojis={customEmojis}
 											filters={filters}
 										/>
-									</List.Item>)}
+									</List.Item>
+								}}
 							/>
 						</List>
 					</Content>
