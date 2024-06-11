@@ -175,7 +175,7 @@ export default function Results(props: Props) {
 										client={props.client}
 										server={props.server}
 										account={props.account}
-										columnWidth="xs"
+										columnWidth={280}
 										updateStatus={updateStatus}
 										openMedia={props.openMedia}
 										setStatusDetail={setStatusDetail}
