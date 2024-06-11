@@ -126,8 +126,7 @@ export default function TimelineColumn(props: Props) {
 				setStatuses((last) => deleteStatus(last, ev.payload.status_id))
 			})
 		} else {
-			const kind = props.timeline.kind === 'public:media' ? 'receive-timeline-media' : 'receive-timeline-status'
-			listen<ReceiveTimelineStatusPayload>(kind, (ev) => {
+			listen<ReceiveTimelineStatusPayload>('receive-timeline-status', (ev) => {
 				if (ev.payload.timeline_id !== props.timeline.id) {
 					return
 				}
@@ -203,10 +202,6 @@ export default function TimelineColumn(props: Props) {
 			}
 			case 'public': {
 				const res = await client.getPublicTimeline(options)
-				return res.data
-			}
-			case 'public:media': {
-				const res = await client.getPublicTimeline({only_media: true, ...options})
 				return res.data
 			}
 			case 'favourites': {

@@ -17,7 +17,7 @@ export type AddTimeline = {
 }
 export const colorList = ['red', 'orange', 'yellow', 'green', 'cyan', 'blue', 'violet'] as const
 export type Color = (typeof colorList)[number]
-export type TimelineKind = 'home' | 'notifications' | 'local' | 'public' | 'favourites' | 'list' | 'bookmarks' | 'direct' | 'tag' | 'public:media'
+export type TimelineKind = 'home' | 'notifications' | 'local' | 'public' | 'favourites' | 'list' | 'bookmarks' | 'direct' | 'tag'
 export const columnWidthSet = ['xs', 'sm', 'md', 'lg'] as const
 export type ColumnWidth = (typeof columnWidthSet)[number]
 
