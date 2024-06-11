@@ -18,6 +18,7 @@ import Attachments from './Attachments'
 import Body from './Body'
 import Poll from './Poll'
 import { TheDeskContext } from '@/context'
+import { TIMELINE_STATUSES_COUNT } from '@/defaults'
 
 type Props = {
 	status: Entity.Status
@@ -306,7 +307,7 @@ async function searchAccount(account: ParsedAccount, status: Entity.Status, clie
 		}
 	}
 	if (status.in_reply_to_id) {
-		const res = await client.getStatusContext(status.id)
+		const res = await client.getStatusContext(status.id, { limit: TIMELINE_STATUSES_COUNT})
 		if (res.status === 200) {
 			const accounts: Array<Entity.Account> = res.data.ancestors.map((s) => s.account).concat(res.data.descendants.map((s) => s.account))
 			const user = accountMatch(accounts, account, server.domain)

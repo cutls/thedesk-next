@@ -15,6 +15,7 @@ import { Avatar, Button, FlexboxGrid, Notification, toaster } from 'rsuite'
 import Actions from '../status/Actions'
 import Body from '../status/Body'
 import Poll from '../status/Poll'
+import { TIMELINE_STATUSES_COUNT } from '@/defaults'
 
 type Props = {
 	server: Server
@@ -304,7 +305,7 @@ async function searchAccount(account: ParsedAccount, status: Entity.Status, clie
 		}
 	}
 	if (status.in_reply_to_id) {
-		const res = await client.getStatusContext(status.id)
+		const res = await client.getStatusContext(status.id, { limit: TIMELINE_STATUSES_COUNT})
 		if (res.status === 200) {
 			const accounts: Array<Entity.Account> = res.data.ancestors.map((s) => s.account).concat(res.data.descendants.map((s) => s.account))
 			const user = accountMatch(accounts, account, server.domain)
