@@ -27,7 +27,7 @@ import FailoverImg from '@/utils/failoverImg'
 import timelineName from '@/utils/timelineName'
 import { useRouter } from 'next/router'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { getAccount, removeTimeline, updateColumnColor, updateColumnOrder, updateColumnTts, updateColumnWidth } from 'utils/storage'
+import { getAccount, removeTimeline, updateColumnColor, updateColumnMediaOnly, updateColumnOrder, updateColumnTts, updateColumnWidth } from 'utils/storage'
 import Status from './status/Status'
 
 type Props = {
@@ -477,7 +477,7 @@ export default function TimelineColumn(props: Props) {
 								overscan={TIMELINE_STATUSES_COUNT}
 								defaultItemHeight={44}
 								itemContent={(_, status) => (
-									<List.Item key={status.id} style={{ paddingTop: '2px', paddingBottom: '2px', backgroundColor: 'var(--rs-bg-well)' }}>
+									(!props.timeline.mediaOnly || (props.timeline.mediaOnly && status.media_attachments.length > 0)) && <List.Item key={status.id} style={{ paddingTop: '2px', paddingBottom: '2px', backgroundColor: 'var(--rs-bg-well)' }}>
 										<Status
 											status={status}
 											client={client}
@@ -495,8 +495,7 @@ export default function TimelineColumn(props: Props) {
 											customEmojis={customEmojis}
 											filters={filters}
 										/>
-									</List.Item>
-								)}
+									</List.Item>)}
 							/>
 						</List>
 					</Content>
@@ -543,6 +542,12 @@ const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: ()
 		props.close()
 	}
 
+	const updateColumnMediaOnlyFn = async (timeline: Timeline, mediaOnly: boolean) => {
+		await updateColumnMediaOnly({ id: timeline.id, toggle: mediaOnly })
+		timelineRefresh()
+		props.close()
+	}
+
 	return (
 		<Popover ref={ref} style={{ opacity: 1 }}>
 			<div style={{ display: 'flex', flexDirection: 'column', width: '220px' }}>
@@ -565,6 +570,14 @@ const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: ()
 						))}
 					</Stack>
 				</FlexboxGrid>
+				<Divider style={{ margin: '8px 0' }} />
+				<label>
+					<FormattedMessage id="timeline.settings.media_only" />
+				</label>
+				<RadioGroup inline value={props.timeline?.mediaOnly?.toString() || 'false'} onChange={(value) => updateColumnMediaOnlyFn(props.timeline, value === 'true')}>
+					<Radio value="false"><FormattedMessage id="timeline.settings.not_do" /></Radio>
+					<Radio value="true"><FormattedMessage id="timeline.settings.do" /></Radio>
+				</RadioGroup>
 				<Divider style={{ margin: '8px 0' }} />
 				<label>
 					<FormattedMessage id="timeline.settings.tts" />

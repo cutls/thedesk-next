@@ -8,6 +8,7 @@ export type Timeline = {
 	column_width: ColumnWidth
 	color?: Color
 	tts?: boolean
+	mediaOnly?: boolean
 }
 export type AddTimeline = {
 	kind: TimelineKind

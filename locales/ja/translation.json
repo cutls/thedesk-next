@@ -212,6 +212,7 @@
 			"color_default": "デフォルト",
 			"do": "する",
 			"not_do": "しない",
+			"media_only": "メディアのみ",
 			"tts": "タイムラインの読み上げ"
 		},
 		"mark_as_read": "全て既読にする",

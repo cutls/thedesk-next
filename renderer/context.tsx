@@ -53,7 +53,7 @@ export const TheDeskProviderWrapper: React.FC = (props) => {
 				} catch {
 					console.error('skipped')
 				}
-				streamings.push(streaming)
+				streamings.push(streaming || [timeline.id, undefined])
 				i++
 			}
 			const userStreamings: StreamingArray[] = []
