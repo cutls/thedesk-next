@@ -21,6 +21,7 @@ import {
 	Toggle,
 	Whisper,
 	useToaster,
+	SelectPicker,
 } from 'rsuite'
 
 import alert from '@/components/utils/alert'
@@ -92,7 +93,7 @@ const Status: React.FC<Props> = (props) => {
 	const focusAttr = {
 		onFocus: () => setFocused(true),
 		onBlur: () => setFocused(false),
-	
+
 	}
 
 	const [formValue, setFormValue] = useState<FormValue>({
@@ -210,7 +211,7 @@ const Status: React.FC<Props> = (props) => {
 		if (props.defaultLanguage) {
 			setLanguage(props.defaultLanguage)
 		} else {
-			const key = localStorage.getItem('language')
+			const [key] = (localStorage.getItem('lang') || 'en').split('-')
 			if (key) {
 				setLanguage(key)
 			}
@@ -476,7 +477,6 @@ const Status: React.FC<Props> = (props) => {
 	const LanguageDropdown = ({ onClose, left, top, className }, ref: any) => {
 		const handleSelect = (key: string) => {
 			setLanguage(key)
-			localStorage.setItem('language', key)
 			onClose()
 		}
 
@@ -586,11 +586,7 @@ const Status: React.FC<Props> = (props) => {
 						<Button appearance="subtle" onClick={() => toggleCW()}>
 							<span style={{ fontSize: '0.8em' }}>CW</span>
 						</Button>
-						<Whisper placement="bottomEnd" delay={100} trigger="click" speaker={LanguageDropdown} preventOverflow>
-							<Button appearance="subtle">
-								<span style={{ fontSize: '0.8em' }}>{language.toUpperCase()}</span>
-							</Button>
-						</Whisper>
+						<SelectPicker data={languages} appearance="subtle" value={language} onChange={setLanguage} onOpen={() => setFocused(true)} onClose={() => setFocused(false)} cleanable={false} style={{ width: '43px' }} renderValue={() => <><span style={{ position: 'absolute', fontSize: '0.9em' }}>{language.toUpperCase()}</span><span style={{ opacity: 0 }}>{language.toUpperCase()}</span></>} caretAs={() => <></>} />
 						<Button appearance="subtle" onClick={toggleSchedule}>
 							<Icon as={BsClock} style={{ fontSize: '1.1em' }} />
 						</Button>
