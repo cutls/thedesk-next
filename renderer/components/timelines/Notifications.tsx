@@ -1,6 +1,6 @@
 import { Icon } from '@rsuite/icons'
 import generator, { type MegalodonInterface, type Entity } from '@cutls/megalodon'
-import { type Dispatch, type SetStateAction, forwardRef, useCallback, useContext, useEffect, useRef, useState } from 'react'
+import { type Dispatch, type SetStateAction, forwardRef, useCallback, useContext, useEffect, useRef, useState, type CSSProperties } from 'react'
 import { BsArrowClockwise, BsBell, BsCheck2, BsChevronLeft, BsChevronRight, BsSliders, BsX } from 'react-icons/bs'
 import { Virtuoso } from 'react-virtuoso'
 import { Avatar, Button, Container, Content, Divider, Dropdown, FlexboxGrid, Header, List, Loader, Popover, Radio, RadioGroup, Stack, Whisper, useToaster } from 'rsuite'
@@ -101,7 +101,7 @@ const Notifications: React.FC<Props> = (props) => {
 		}
 		f()
 		setColumnWidth(columnWidthCalc(props.timeline.column_width))
-	}, [])
+	}, [props.timeline])
 
 	useEffect(() => {
 		if (!replyOpened.current) {
@@ -260,12 +260,18 @@ const Notifications: React.FC<Props> = (props) => {
 		updateColumnWidth({ id: props.timeline.id, columnWidth: width })
 		setColumnWidth(width)
 	}
+	const headerStyle: CSSProperties = {
+		backgroundColor: props.timeline.color ? `var(--rs-color-${props.timeline.color})` : 'var(--rs-color-card)',
+		borderBottomWidth: '3px',
+		borderBottomStyle: 'solid',
+		borderBottomColor: account && account.color ? `var(--rs-color-${account.color})` : 'transparent',
+	}
 
 	return (
 
 		<ResizableBox width={columnWidth} height={0} axis="x" style={{ margin: '0 4px', minHeight: '100%', flexShrink: 0, width: columnWidth }} resizeHandles={['e']} onResizeStop={(_, e) => columnWidthSet(e.size.width)} className={`timeline notifications notification${props.timeline.id}`}>
 			<Container style={{ height: '100%' }}>
-				<Header style={{ backgroundColor: 'var(--rs-bg-card)' }}>
+				<Header style={headerStyle}>
 					<FlexboxGrid align="middle" justify="space-between">
 						<FlexboxGrid.Item style={{ width: 'calc(100% - 108px)' }}>
 							<FlexboxGrid align="middle" onClick={backToTop} style={{ cursor: 'pointer' }}>

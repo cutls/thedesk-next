@@ -81,7 +81,7 @@ const Conversations: React.FC<Props> = (props) => {
 				setConversations((current) => prependConversation(current, ev.payload.conversation))
 			}
 		})
-	}, [])
+	}, [props.timeline])
 
 	const loadConversations = async (client: MegalodonInterface, maxId?: string): Promise<Array<Entity.Conversation>> => {
 		let options = { limit: TIMELINE_STATUSES_COUNT }
