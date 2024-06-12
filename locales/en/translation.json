@@ -133,6 +133,13 @@
 				"secondaryToot": "Secondary Post Button",
 				"secondaryToot_hint": "Displays a button that allows you to post immediately in the public area you set."
 			},
+			"spotify": {
+				"title": "Spotify Integration",
+				"connect": "Connect",
+				"disconnect": "Disconnect",
+				"code_help": "Please enter the code displayed on the Spotify app.",
+				"code": "Complete"
+			},
 			"save": "Save",
 			"close": "Close",
 			"validation": {

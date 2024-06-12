@@ -1,10 +1,12 @@
 import { TheDeskContext } from '@/context'
 import { defaultSetting, type Settings as SettingsType, type ThemeType } from '@/entities/settings'
 import type { localeType } from '@/i18n'
+import { nowplayingCode, nowplayingDisconnect, nowplayingInit } from '@/utils/nowplaying'
 import { readSettings, saveSetting } from '@/utils/storage'
 import { useEffect, useState, useContext } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { Button, ButtonToolbar, Form, InputNumber, InputPicker, RadioGroup, Radio, Modal, Panel, Schema } from 'rsuite'
+import { Button, ButtonToolbar, Form, InputNumber, InputPicker, RadioGroup, Radio, Modal, Panel, Schema, Input, useToaster } from 'rsuite'
+import alert from '@/components/utils/alert'
 
 type Props = {
 	open: boolean
@@ -53,6 +55,14 @@ export default function Settings(props: Props) {
 	const [timelineConfig, setTimelineConfig] = useState<SettingsType['timeline']>(defaultSetting.timeline)
 	const [compose, setCompose] = useState<SettingsType['compose']>(defaultSetting.compose)
 
+	const toast = useToaster()
+	const showToaster = (message: string) => toast.push(alert('info', formatMessage({ id: message })), { placement: 'topStart' })
+	const [spotifyConnected, setSpotifyConnected] = useState(false)
+	const [spotifyDev, setSpotifyDev] = useState(true)
+	const [spotifyInitiating, setSpotifyInitiating] = useState(false)
+	const [spotifyConnecting, setSpotifyConnecting] = useState(false)
+	const [spotifyCode, setSpotifyCode] = useState('')
+
 	const appearanceModel = Schema.Model<SettingsType['appearance']>({
 		font_size: Schema.Types.NumberType(formatMessage({ id: 'settings.settings.validation.general_number.type' }))
 			.range(1, 30, formatMessage({ id: 'settings.settings.validation.general_number.range' }, { from: 1, to: 30 }))
@@ -74,7 +84,7 @@ export default function Settings(props: Props) {
 			setAppearance((current) => Object.assign({}, current, settings.appearance))
 			setTimelineConfig((current) => Object.assign({}, current, settings.timeline))
 			setCompose((current) => Object.assign({}, current, settings.compose))
-
+			setSpotifyConnected(!!localStorage.getItem('spotifyV2Token'))
 		}
 		f()
 	}, [])
@@ -98,6 +108,22 @@ export default function Settings(props: Props) {
 		}
 		await saveSetting({ obj: settings })
 		props.reloadAppearance()
+	}
+	const nowplayingInitFn = () => {
+		setSpotifyInitiating(true)
+		nowplayingInit(spotifyDev, showToaster)
+	}
+	const nowplayingCodeFn = async () => {
+		setSpotifyConnecting(true)
+		try {
+			await nowplayingCode(spotifyCode, showToaster)
+			setSpotifyInitiating(false)
+			setSpotifyConnected(!!localStorage.getItem('spotifyV2Token'))
+		} catch (e: any) {
+			showToaster('settings.nowplaying.error')
+		} finally {
+			setSpotifyConnecting(false)
+		}
 	}
 
 	return (
@@ -147,13 +173,13 @@ export default function Settings(props: Props) {
 								<Radio value="yes" ><FormattedMessage id="timeline.settings.do" /></Radio>
 							</Form.Control>
 						</Form.Group>
-						<Form.Group style={{ marginBottom: 0}} controlId="max_length">
+						<Form.Group style={{ marginBottom: 0 }} controlId="max_length">
 							<Form.ControlLabel>
 								<FormattedMessage id="settings.settings.timeline.max_length" />
 							</Form.ControlLabel>
 							<Form.Control name="max_length" {...focusAttr} accepter={InputNumber} postfix={formatMessage({ id: 'settings.settings.timeline.max_length_unit' })} />
 						</Form.Group>
-						<p style={{ fontSize: '0.8rem', textAlign: 'right', paddingRight: '20px'}}><FormattedMessage id="settings.settings.timeline.max_length_hint" /></p>
+						<p style={{ fontSize: '0.8rem', textAlign: 'right', paddingRight: '20px' }}><FormattedMessage id="settings.settings.timeline.max_length_hint" /></p>
 					</Panel>
 				</Form>
 				<Form layout="horizontal" formValue={compose} onChange={setCompose}>
@@ -164,13 +190,13 @@ export default function Settings(props: Props) {
 							</Form.ControlLabel>
 							<Form.Control name="afterPost" {...focusAttr} accepter={InputPicker} cleanable={false} data={afterPost.map((t) => { return { label: formatMessage({ id: `settings.settings.compose.afterPost.${t}` }), value: t } })} />
 						</Form.Group>
-						<Form.Group controlId="secondaryToot" style={{ marginBottom: 0}}>
+						<Form.Group controlId="secondaryToot" style={{ marginBottom: 0 }}>
 							<Form.ControlLabel>
 								<FormattedMessage id="settings.settings.compose.secondaryToot" />
 							</Form.ControlLabel>
-							<Form.Control name="secondaryToot" {...focusAttr} accepter={InputPicker} cleanable={false} data={[{ label: formatMessage({ id: 'timeline.settings.not_do' }), value: 'no'},...vis.map((t) => { return { label: formatMessage({ id: `compose.visibility.${t}` }), value: t } })]} />
+							<Form.Control name="secondaryToot" {...focusAttr} accepter={InputPicker} cleanable={false} data={[{ label: formatMessage({ id: 'timeline.settings.not_do' }), value: 'no' }, ...vis.map((t) => { return { label: formatMessage({ id: `compose.visibility.${t}` }), value: t } })]} />
 						</Form.Group>
-						<p style={{ fontSize: '0.8rem', textAlign: 'right', paddingRight: '20px'}}><FormattedMessage id="settings.settings.compose.secondaryToot_hint" /></p>
+						<p style={{ fontSize: '0.8rem', textAlign: 'right', paddingRight: '20px' }}><FormattedMessage id="settings.settings.compose.secondaryToot_hint" /></p>
 					</Panel>
 				</Form>
 				<Form.Group>
@@ -183,6 +209,14 @@ export default function Settings(props: Props) {
 						</Button>
 					</ButtonToolbar>
 				</Form.Group>
+				<Panel header={<FormattedMessage id="settings.settings.spotify.title" />}>
+					<Button appearance="primary" disabled={spotifyConnected} style={{ marginRight: '5px' }} color="green" onClick={() => nowplayingInitFn()}><FormattedMessage id="settings.settings.spotify.connect" /></Button>
+					<Button appearance="primary" disabled={!spotifyConnected} color="green" onClick={() => { nowplayingDisconnect(); setSpotifyConnected(false) }}><FormattedMessage id="settings.settings.spotify.disconnect" /></Button>
+					{spotifyInitiating && <div style={{ marginTop: '5px' }}>
+						<Input value={spotifyCode} onChange={(e) => setSpotifyCode(e)} placeholder={formatMessage({ id: 'settings.settings.spotify.code_help'})} />
+						<Button appearance="ghost" loading={spotifyConnecting} disabled={!spotifyCode} color="green" onClick={() => nowplayingCodeFn()}><FormattedMessage id="settings.settings.spotify.code" /></Button>
+					</div>}
+				</Panel>
 			</Modal.Body>
 		</Modal>
 	)

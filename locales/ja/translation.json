@@ -133,6 +133,13 @@
 				"secondaryToot": "サブ投稿ボタンを表示",
 				"secondaryToot_hint": "設定した公開範囲ですぐ投稿できるボタンを表示します。"
 			},
+			"spotify": {
+				"title": "Spotify連携",
+				"connect": "接続",
+				"disconnect": "接続解除",
+				"code_help": "表示されたコードを入力",
+				"code": "完了"
+			},
 			"save": "保存",
 			"close": "閉じる",
 			"validation": {

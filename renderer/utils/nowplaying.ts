@@ -4,28 +4,11 @@ export async function nowplaying(key: 'spotify' | 'appleMusic', showToaster: (me
 	if (key === 'spotify') {
 		const token = localStorage.getItem('spotifyV2Token')
 		if (!token) {
-			open(`${apiGateway}?state=connect`)
-
-			window.electronAPI.customUrl(async (_, data) => {
-				if (data[0] === 'spotifyv2') {
-					const code = data[1]
-					const api = await fetch(`${apiGateway}?state=auth&code=${code}`, {
-						headers: {
-							'content-type': 'application/json',
-						},
-					})
-					const json = await api.json()
-					const { accessToken, refreshToken } = json
-					localStorage.setItem('spotifyV2Token', accessToken)
-					localStorage.setItem('spotifyV2Refresh', refreshToken)
-					localStorage.setItem('spotifyV2Expires', `${new Date().getTime() / 1000 + 3600}`)
-					showToaster('compose.nowplaying.again')
-				}
-			})
+			nowplayingInit(false, showToaster)
 		}
 		const expires = localStorage.getItem('spotifyV2Expires') || `${new Date().getTime()}`
-		if (new Date().getTime() / 1000 > Number.parseInt(expires, 10)) await refreshSpotifyToken()
-		const at = localStorage.getItem('spotifyV2Token')
+		const isExpired = new Date().getTime() / 1000 > Number.parseInt(expires, 10)
+		const at = isExpired ? await refreshSpotifyToken() : localStorage.getItem('spotifyV2Token')
 		if (!at) return showToaster('compose.nowplaying.error')
 		const start = 'https://api.spotify.com/v1/me/player/currently-playing'
 		if (at) {
@@ -120,9 +103,11 @@ async function refreshSpotifyToken() {
 		})
 		const json = await api.json()
 		const { accessToken, refreshToken: _newRT } = json
+		if (!accessToken) throw new Error('No access token')
 		localStorage.setItem('spotifyV2Token', accessToken)
 		localStorage.setItem('spotifyV2Expires', `${new Date().getTime() / 1000 + 3600}`)
-	} catch (e: any) {}
+		return accessToken
+	} catch (e: any) { }
 }
 export async function getUnknownAA(q: string, country: string) {
 	const start = `https://itunes.apple.com/search?term=${q}&country=${country}&entity=song`
@@ -137,3 +122,34 @@ export async function getUnknownAA(q: string, country: string) {
 	const file = new File([await (await fetch(data.replace(/100x100/, '512x512'))).blob()], 'cover.jpg', { type: 'image/jpeg' })
 	return file
 }
+export async function nowplayingInit(isDev: boolean, showToaster: (m: string) => void) {
+	if (!isDev) open(`${apiGateway}?state=connect`)
+	if (isDev) open(`${apiGateway}?state=connectDev2`)
+
+	window.electronAPI.customUrl(async (_, data) => {
+		if (data[0] === 'spotifyv2') {
+			const code = data[1]
+			nowplayingCode(code, showToaster)
+		}
+	})
+}
+export async function nowplayingCode(code: string, showToaster: (m: string) => void) {
+	const api = await fetch(`${apiGateway}?state=auth&code=${code.replace(/\n/g, '')}`, {
+		headers: {
+			'content-type': 'application/json',
+		},
+	})
+	const json = await api.json()
+	const { accessToken, refreshToken } = json
+	localStorage.setItem('spotifyV2Token', accessToken)
+	localStorage.setItem('spotifyV2Refresh', refreshToken)
+	localStorage.setItem('spotifyV2Expires', `${new Date().getTime() / 1000 + 3600}`)
+	showToaster('compose.nowplaying.again')
+}
+
+export function nowplayingDisconnect() {
+	localStorage.removeItem('spotifyV2Token')
+	localStorage.removeItem('spotifyV2Refresh')
+	localStorage.removeItem('spotifyV2Expires')
+}
+
