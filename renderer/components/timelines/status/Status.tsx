@@ -125,10 +125,6 @@ const Status: React.FC<Props> = (props) => {
 			open(url)
 			e.preventDefault()
 			e.stopPropagation()
-		} else {
-			if (props.setStatusDetail) {
-				props.setStatusDetail(props.status.id, props.server.id, props.account?.id)
-			}
 		}
 	}
 
@@ -181,7 +177,6 @@ const Status: React.FC<Props> = (props) => {
 							<FlexboxGrid.Item
 								colspan={18}
 								style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
-								onClick={() => props.setAccountDetail(status.account.id, props.server.id, props.account?.id)}
 							>
 								<span dangerouslySetInnerHTML={{ __html: emojify(status.account.display_name, status.account.emojis) }} />
 								<span style={{ color: 'var(--rs-text-tertiary)' }}>@{status.account.acct}</span>

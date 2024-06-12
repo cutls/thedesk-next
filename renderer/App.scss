@@ -248,6 +248,9 @@
 
   time {
     cursor: pointer;
+    &:hover {
+      text-decoration: underline;
+    }
   }
 }
 
