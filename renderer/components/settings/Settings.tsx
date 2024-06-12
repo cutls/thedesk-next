@@ -199,6 +199,14 @@ export default function Settings(props: Props) {
 						<p style={{ fontSize: '0.8rem', textAlign: 'right', paddingRight: '20px' }}><FormattedMessage id="settings.settings.compose.secondaryToot_hint" /></p>
 					</Panel>
 				</Form>
+				<Panel header={<FormattedMessage id="settings.settings.spotify.title" />}>
+					<Button appearance="primary" disabled={spotifyConnected} style={{ marginRight: '5px' }} color="green" onClick={() => nowplayingInitFn()}><FormattedMessage id="settings.settings.spotify.connect" /></Button>
+					<Button appearance="primary" disabled={!spotifyConnected} color="green" onClick={() => { nowplayingDisconnect(); setSpotifyConnected(false) }}><FormattedMessage id="settings.settings.spotify.disconnect" /></Button>
+					{spotifyInitiating && <div style={{ marginTop: '5px' }}>
+						<Input value={spotifyCode} onChange={(e) => setSpotifyCode(e)} placeholder={formatMessage({ id: 'settings.settings.spotify.code_help' })} />
+						<Button appearance="ghost" loading={spotifyConnecting} disabled={!spotifyCode} color="green" onClick={() => nowplayingCodeFn()}><FormattedMessage id="settings.settings.spotify.code" /></Button>
+					</div>}
+				</Panel>
 				<Form.Group>
 					<ButtonToolbar style={{ justifyContent: 'flex-end' }}>
 						<Button appearance="primary" color="green" type="submit" onClick={handleSubmit}>
@@ -209,14 +217,6 @@ export default function Settings(props: Props) {
 						</Button>
 					</ButtonToolbar>
 				</Form.Group>
-				<Panel header={<FormattedMessage id="settings.settings.spotify.title" />}>
-					<Button appearance="primary" disabled={spotifyConnected} style={{ marginRight: '5px' }} color="green" onClick={() => nowplayingInitFn()}><FormattedMessage id="settings.settings.spotify.connect" /></Button>
-					<Button appearance="primary" disabled={!spotifyConnected} color="green" onClick={() => { nowplayingDisconnect(); setSpotifyConnected(false) }}><FormattedMessage id="settings.settings.spotify.disconnect" /></Button>
-					{spotifyInitiating && <div style={{ marginTop: '5px' }}>
-						<Input value={spotifyCode} onChange={(e) => setSpotifyCode(e)} placeholder={formatMessage({ id: 'settings.settings.spotify.code_help'})} />
-						<Button appearance="ghost" loading={spotifyConnecting} disabled={!spotifyCode} color="green" onClick={() => nowplayingCodeFn()}><FormattedMessage id="settings.settings.spotify.code" /></Button>
-					</div>}
-				</Panel>
 			</Modal.Body>
 		</Modal>
 	)
