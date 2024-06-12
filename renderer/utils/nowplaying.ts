@@ -64,7 +64,7 @@ export async function nowplaying(key: 'spotify' | 'appleMusic', showToaster: (me
 				content = content.replace(regExp9, '')
 				const regExp0 = /{genre}/g
 				content = content.replace(regExp0, '')
-				return { text: content, file, title: item.name }
+				return { text: content, file, title: `${item.name} ${item.album.name} ${item.artists[0].name}` }
 			} catch (e: any) {
 				await refreshSpotifyToken()
 				showToaster('compose.nowplaying.error')
@@ -101,7 +101,7 @@ export async function nowplaying(key: 'spotify' | 'appleMusic', showToaster: (me
 				content = content.replace(regExp9, '')
 				const regExp0 = /{genre}/g
 				content = content.replace(regExp0, '')
-				resolve({ text: content, file: artwork, title: item.name })
+				resolve({ text: content, file: artwork, title: `${item.name} ${item.album} ${item.artist}` })
 			}),
 		)
 		console.log(data)

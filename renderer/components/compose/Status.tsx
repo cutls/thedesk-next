@@ -662,12 +662,11 @@ const Status: React.FC<Props> = (props) => {
 					</ButtonToolbar>
 				</Form.Group>
 			</Form>
-			{searchAA !== '' && <>
-				<p style={{ marginTop: '1rem', marginBottom: '1rem' }}><FormattedMessage id="compose.nowplaying.unkwnown_aa" /></p>
-				<Button onClick={() => getUnknownAAFn()}>
+			{searchAA !== '' && 
+				<Button onClick={() => getUnknownAAFn()} appearance="link">
 					<FormattedMessage id="compose.nowplaying.unkwnown_aa_btn" />
 				</Button>
-			</>}
+			}
 			<EditMedia
 				opened={editMediaModal}
 				attachment={editMedia}
