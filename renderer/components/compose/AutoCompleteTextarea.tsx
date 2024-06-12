@@ -90,7 +90,7 @@ const AutoCompleteTextarea: React.ForwardRefRenderFunction<HTMLTextAreaElement, 
 				return
 			}
 			case '@': {
-				const res = await props.client.searchAccount(token.replace('@', ''))
+				const res = await props.client.searchAccount(token.replace('@', ''), { limit: 5 })
 				if (shouldOpen.current) {
 					setSuggestList(
 						res.data.map((a) => ({
@@ -104,7 +104,7 @@ const AutoCompleteTextarea: React.ForwardRefRenderFunction<HTMLTextAreaElement, 
 				return
 			}
 			case '#': {
-				const res = await props.client.search(token, { type: 'hashtags' })
+				const res = await props.client.search(token.replace('#', ''), { type: 'hashtags', limit: 5 })
 				if (shouldOpen.current) {
 					setSuggestList(
 						res.data.hashtags.map((tag) => ({

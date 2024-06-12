@@ -51,7 +51,7 @@ export default function ListMemberships(props: Props) {
 	}
 
 	const onSearch = async (keyword: string) => {
-		const res = await props.client.searchAccount(keyword, { following: true, resolve: true })
+		const res = await props.client.searchAccount(keyword, { following: true, resolve: true, limit: 5 })
 		setUsers(res.data)
 	}
 

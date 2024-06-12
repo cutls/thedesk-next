@@ -10,8 +10,8 @@ overrides:
 
 dependencies:
   '@cutls/megalodon':
-    specifier: 6.0.12
-    version: 6.0.12
+    specifier: 6.0.13
+    version: 6.0.13
   '@emoji-mart/react':
     specifier: ^1.1.1
     version: 1.1.1(emoji-mart@5.6.0)(react@18.2.0)
@@ -229,8 +229,8 @@ packages:
     dev: true
     optional: true
 
-  /@cutls/megalodon@6.0.12:
-    resolution: {integrity: sha512-JY4qiqjZD+oynEwDBXqrfRmYpGqKiEyn0SKxO20e9RTroITd2riCRUP/VWYkOqM8BND1D3JYh5xHY/KMdPmsAw==}
+  /@cutls/megalodon@6.0.13:
+    resolution: {integrity: sha512-LNLX7ruxh4fScIvsB+eWiLwgKvz4lsEyFNkmo0TGOL3WVemC498NP3WG84gzb834rTx1JFVsWIJztii0LAIF3g==}
     engines: {node: '>=20.12.2'}
     dependencies:
       '@badgateway/oauth2-client': 2.3.0
