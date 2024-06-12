@@ -327,6 +327,7 @@ const Status: React.FC<Props> = (props) => {
 			status: '',
 		})
 		setCW(false)
+		setSearchAA('')
 		if (finished && props.onClose && config.afterPost === 'close') {
 			props.onClose()
 		}
