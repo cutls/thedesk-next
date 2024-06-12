@@ -59,10 +59,11 @@ export async function listServers(): Promise<Array<[Server, Account]>> {
 export async function addServer({ domain }: { domain: string }): Promise<Server> {
 	const serversStr = localStorage.getItem('servers')
 	const servers: Array<Server> = JSON.parse(serversStr || '[]')
+	const serverMaxId = servers.reduce((max, server) => (server.id > max ? server.id : max), 0)
 	const sns = await detector(`https://${domain}`)
 	if (sns === 'gotosocial') return
 	const server = {
-		id: servers.length + 1,
+		id: serverMaxId + 1,
 		domain: domain,
 		base_url: `https://${domain}`,
 		sns,
