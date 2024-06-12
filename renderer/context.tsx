@@ -148,7 +148,7 @@ export const TheDeskProviderWrapper: React.FC = (props) => {
 			for (let i = 0; i < userStreamings.length; i++) {
 				const streaming = userStreamings[i][1]
 				if (!streaming) continue
-				streaming.on('status.update', (status) => {
+				streaming.on('status_update', (status) => {
 					callback({ payload: { status: status, server_id: userStreamings[i][0] } })
 				})
 			}

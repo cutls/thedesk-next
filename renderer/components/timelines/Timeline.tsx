@@ -113,6 +113,7 @@ export default function TimelineColumn(props: Props) {
 			}, props.timeline.tts)
 
 			listen<ReceiveHomeStatusUpdatePayload>('receive-home-status-update', (ev) => {
+				console.log('receive-home-status-update', ev.payload.server_id, props.server.id)
 				if (ev.payload.server_id !== props.server.id) {
 					return
 				}
