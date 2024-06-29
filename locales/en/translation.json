@@ -104,6 +104,8 @@
 	"settings": {
 		"settings": {
 			"title": "Settings",
+			"require_reload": "Required to reload after changing",
+			"reload": "Whole Reload",
 			"appearance": {
 				"title": "Appearance",
 				"font_size": "Font size",
@@ -125,6 +127,11 @@
 			},
 			"compose": {
 				"title": "Compose",
+				"btnPosition": {
+					"title": "Compose button on bottom-bar position",
+					"left": "Left",
+					"right": "Right"
+				},
 				"afterPost": {
 					"title": "After posting, compose box will be...",
 					"close": "Close",

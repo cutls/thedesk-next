@@ -14,7 +14,8 @@ import { type Dispatch, type ReactElement, type SetStateAction, useContext, useE
 import { BsDice1, BsDice2, BsDice3, BsDice4, BsDice5, BsDice6, BsGear, BsPencilSquare, BsPlus, BsSearch } from 'react-icons/bs'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Avatar, Badge, Button, Dropdown, FlexboxGrid, Popover, Sidebar, Sidenav, Stack, Text, Whisper, useToaster } from 'rsuite'
-import { addTimeline, listTimelines, removeServer, updateAccountColor } from 'utils/storage'
+import { addTimeline, listTimelines, readSettings, removeServer, updateAccountColor } from 'utils/storage'
+import { type Settings, defaultSetting } from '@/entities/settings'
 
 type NavigatorProps = {
 	servers: Array<ServerSet>
@@ -43,6 +44,7 @@ const Navigator: React.FC<NavigatorProps> = (props): ReactElement => {
 	const { servers, openAuthorize, openAnnouncements, openThirdparty, openSettings } = props
 	const [awake, setAwake] = useState(0)
 	const [walkthrough, setWalkthrough] = useState(false)
+	const [config, setConfig] = useState<Settings['compose']>(defaultSetting.compose)
 	const toaster = useToaster()
 	const { timelineRefresh } = useContext(TheDeskContext)
 
@@ -80,6 +82,8 @@ const Navigator: React.FC<NavigatorProps> = (props): ReactElement => {
 		})
 	}, [props.servers])
 	useEffect(() => {
+		const fn = async () => setConfig((await readSettings()).compose || defaultSetting.compose)
+		fn()
 		setInterval(() => {
 			setAwake((current) => current + 1)
 		}, 600000)
@@ -120,6 +124,9 @@ const Navigator: React.FC<NavigatorProps> = (props): ReactElement => {
 		<div style={{ display: 'flex', justifyContent: 'space-between', backgroundColor: 'var(--rs-sidenav-default-bg)', height: '56px' }}>
 			<div style={{ display: 'flex', alignItems: 'center' }}>
 				<div style={{ display: 'flex', alignItems: 'center' }}>
+					{config.btnPosition === 'left' && <Button appearance="primary" color="green" size="lg" onClick={props.toggleCompose} startIcon={<Icon as={BsPencilSquare} />} style={{ marginLeft: '15px' }}>
+						<FormattedMessage id="compose.post" />
+					</Button>}
 					<Button appearance="link" size="lg" onClick={props.toggleSearch} style={{ marginRight: '15px' }}>
 						<Icon as={BsSearch} style={{ fontSize: '1.4em' }} />
 					</Button>
@@ -174,7 +181,7 @@ const Navigator: React.FC<NavigatorProps> = (props): ReactElement => {
 								>
 									<Badge content={!!props.unreads.find((u) => u.server_id === server.server.id && u.count > 0)}>
 										<Avatar size="sm" src={server.account?.avatar || FailoverImg(server.server.favicon)} className="server-icon colorChangeBtn" alt={server.server.domain} key={server.server.id} />
-										
+
 									</Badge>
 								</Button>
 							</Whisper>
@@ -219,9 +226,9 @@ const Navigator: React.FC<NavigatorProps> = (props): ReactElement => {
 						<Icon as={BsGear} style={{ fontSize: '1.4em' }} />
 					</Button>
 				</div>
-				<Button appearance="primary" color="green" size="lg" onClick={props.toggleCompose} startIcon={<Icon as={BsPencilSquare} />}>
+				{(!config.btnPosition || config.btnPosition === 'right') && <Button appearance="primary" color="green" size="lg" onClick={props.toggleCompose} startIcon={<Icon as={BsPencilSquare} />}>
 					<FormattedMessage id="compose.post" />
-				</Button>
+				</Button>}
 			</div>
 		</div>
 	)

@@ -12,6 +12,7 @@ export type Settings = {
 		max_length: number
 	},
 	compose: {
+		btnPosition: 'left' | 'right',
 		afterPost: 'close' | 'stay',
 		secondaryToot: 'no' | "public" | "unlisted" | "private" | "direct"
 	}
@@ -31,6 +32,7 @@ export const defaultSetting: Settings = {
 		max_length: 0
 	},
 	compose: {
+		btnPosition: 'right',
 		afterPost: 'close',
 		secondaryToot: 'no'
 	}

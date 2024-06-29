@@ -42,6 +42,7 @@ const themes = [
 ]
 const time = ['relative', 'absolute', '12h']
 const afterPost = ['close', 'stay']
+const btnPosition = ['left', 'right']
 const vis = ['public', 'unlisted', 'private', 'direct']
 
 export default function Settings(props: Props) {
@@ -103,6 +104,7 @@ export default function Settings(props: Props) {
 			},
 			compose: {
 				afterPost: compose.afterPost,
+				btnPosition: compose.btnPosition,
 				secondaryToot: compose.secondaryToot
 			}
 		}
@@ -184,6 +186,13 @@ export default function Settings(props: Props) {
 				</Form>
 				<Form layout="horizontal" formValue={compose} onChange={setCompose}>
 					<Panel header={<FormattedMessage id="settings.settings.compose.title" />}>
+						<p style={{ fontSize: '0.8rem' }}><FormattedMessage id="settings.settings.require_reload" /></p>
+						<Form.Group controlId="btnPosition" style={{ marginBottom: 0 }}>
+							<Form.ControlLabel>
+								<FormattedMessage id="settings.settings.compose.btnPosition.title" />
+							</Form.ControlLabel>
+							<Form.Control name="btnPosition" {...focusAttr} accepter={InputPicker} cleanable={false} data={btnPosition.map((t) => { return { label: formatMessage({ id: `settings.settings.compose.btnPosition.${t}` }), value: t } })} />
+						</Form.Group>
 						<Form.Group controlId="afterPost">
 							<Form.ControlLabel>
 								<FormattedMessage id="settings.settings.compose.afterPost.title" />
@@ -217,6 +226,7 @@ export default function Settings(props: Props) {
 						</Button>
 					</ButtonToolbar>
 				</Form.Group>
+				<Button appearance="link" onClick={() => location.reload()}><FormattedMessage id="settings.settings.reload" /></Button>
 			</Modal.Body>
 		</Modal>
 	)

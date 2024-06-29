@@ -104,6 +104,8 @@
 	"settings": {
 		"settings": {
 			"title": "設定",
+			"require_reload": "変更後は再読み込みが必要です",
+			"reload": "全体を再読み込み",
 			"appearance": {
 				"title": "外観",
 				"font_size": "フォントサイズ",
@@ -125,6 +127,11 @@
 			},
 			"compose": {
 				"title": "投稿",
+				"btnPosition": {
+					"title": "ボトムバーの投稿ボタンの位置",
+					"left": "左",
+					"right": "右"
+				},
 				"afterPost": {
 					"title": "投稿後投稿ボックスの挙動",
 					"close": "しまう",
