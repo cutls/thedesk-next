@@ -47,32 +47,7 @@ const Navigator: React.FC<NavigatorProps> = (props): ReactElement => {
 	const [walkthrough, setWalkthrough] = useState(false)
 	const [config, setConfig] = useState<Settings['compose']>(defaultSetting.compose)
 	const toaster = useToaster()
-	const { timelineRefresh } = useContext(TheDeskContext)
-
-	const actionText = (notification: Entity.Notification) => {
-		const useName = notification.account.display_name || notification.account.username
-		switch (notification.type) {
-			case 'favourite':
-				return formatMessage({ id: 'timeline.notification.favourite.body' }, { user: useName })
-			case 'reblog':
-				return formatMessage({ id: 'timeline.notification.reblog.body' }, { user: useName })
-			case 'poll_expired':
-				return formatMessage({ id: 'timeline.notification.poll_expired.body' }, { user: useName })
-			case 'poll_vote':
-				return formatMessage({ id: 'timeline.notification.poll_vote.body' }, { user: useName })
-			case 'quote':
-				return formatMessage({ id: 'timeline.notification.quote.body' }, { user: useName })
-			case 'status':
-				return formatMessage({ id: 'timeline.notification.status.body' }, { user: useName })
-			case 'update':
-				return formatMessage({ id: 'timeline.notification.update.body' }, { user: useName })
-			case 'emoji_reaction':
-			case 'reaction':
-				return formatMessage({ id: 'timeline.notification.emoji_reaction.body' }, { user: useName })
-			default:
-				return null
-		}
-	}
+	const { timelineRefresh, timelineConfig } = useContext(TheDeskContext)
 
 	// Walkthrough instruction
 
@@ -107,7 +82,7 @@ const Navigator: React.FC<NavigatorProps> = (props): ReactElement => {
 				const marker = res.data as Entity.Marker
 				if (marker.notifications) {
 					const count = unreadCount(marker.notifications, notifications)
-					if (count > 0) new window.Notification(`TheDesk: ${set.account.username}@${set.server.domain}`, {
+					if (count > 0 && timelineConfig.notification !== 'no') new window.Notification(`TheDesk: ${set.account.username}@${set.server.domain}`, {
 						body: formatMessage({ id: 'timeline.notification.unread' }, { count })
 					}).onclick = () => read(notifications[0].id)
 					const target = props.unreads.find((u) => u.server_id === set.server.id)
