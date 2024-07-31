@@ -123,7 +123,8 @@
 				"animation": "アイコンのアニメーション",
 				"max_length": "表示する最大文字数",
 				"max_length_hint": "0 で制限なし。設定した以上の長さの投稿は自動的に隠されます。",
-				"max_length_unit": "字"
+				"max_length_unit": "字",
+				"notification": "デスクトップ通知"
 			},
 			"compose": {
 				"title": "投稿",
@@ -275,7 +276,8 @@
 			"move": {
 				"title": "引越し",
 				"body": "{user} が引越しました"
-			}
+			},
+			"unread": "{count} 件の未読通知 (クリックして既読にする)"
 		},
 		"actions": {
 			"reply": "返信",

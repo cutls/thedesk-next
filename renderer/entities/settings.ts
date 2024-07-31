@@ -8,8 +8,9 @@ export type Settings = {
 	},
 	timeline: {
 		time: 'relative' | 'absolute' | '12h'
-		animation: FormBoolean,
+		animation: FormBoolean
 		max_length: number
+		notification: FormBoolean
 	},
 	compose: {
 		btnPosition: 'left' | 'right',
@@ -29,7 +30,8 @@ export const defaultSetting: Settings = {
 	timeline: {
 		time: 'relative',
 		animation: 'yes',
-		max_length: 0
+		max_length: 0,
+		notification: 'yes'
 	},
 	compose: {
 		btnPosition: 'right',

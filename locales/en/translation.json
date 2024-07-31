@@ -123,7 +123,8 @@
 				"animation": "Animate icon",
 				"max_length": "Max length of post to show",
 				"max_length_hint": "Unlimit: 0 Posts longer than the set length will be automatically hidden.",
-				"max_length_unit": "Letters"
+				"max_length_unit": "Letters",
+				"notification": "Desktop notification"
 			},
 			"compose": {
 				"title": "Compose",
@@ -275,7 +276,8 @@
 			"move": {
 				"title": "Move",
 				"body": "{user} migrated to"
-			}
+			},
+			"unread": "{count} unread notifications (Click to mark as read)"
 		},
 		"actions": {
 			"reply": "Reply",

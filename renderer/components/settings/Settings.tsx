@@ -77,6 +77,7 @@ export default function Settings(props: Props) {
 		max_length: Schema.Types.NumberType(formatMessage({ id: 'settings.settings.validation.general_number.type' }))
 			.range(0, 3000, formatMessage({ id: 'settings.settings.validation.general_number.range' }, { from: 0, to: 3000 }))
 			.isRequired(formatMessage({ id: 'settings.settings.validation.general_number.required' })),
+		notification: Schema.Types.StringType().isRequired(formatMessage({ id: 'settings.settings.validation.general_required' }))
 	})
 
 	useEffect(() => {
@@ -101,6 +102,7 @@ export default function Settings(props: Props) {
 				time: timelineConfig.time,
 				animation: timelineConfig.animation,
 				max_length: Number(timelineConfig.max_length),
+				notification: timelineConfig.notification
 			},
 			compose: {
 				afterPost: compose.afterPost,
@@ -182,6 +184,15 @@ export default function Settings(props: Props) {
 							<Form.Control name="max_length" {...focusAttr} accepter={InputNumber} postfix={formatMessage({ id: 'settings.settings.timeline.max_length_unit' })} />
 						</Form.Group>
 						<p style={{ fontSize: '0.8rem', textAlign: 'right', paddingRight: '20px' }}><FormattedMessage id="settings.settings.timeline.max_length_hint" /></p>
+						<Form.Group controlId="notification">
+							<Form.ControlLabel>
+								<FormattedMessage id="settings.settings.timeline.notification" />
+							</Form.ControlLabel>
+							<Form.Control accepter={RadioGroup} name="notification">
+								<Radio value="no"><FormattedMessage id="timeline.settings.not_do" /></Radio>
+								<Radio value="yes" ><FormattedMessage id="timeline.settings.do" /></Radio>
+							</Form.Control>
+						</Form.Group>
 					</Panel>
 				</Form>
 				<Form layout="horizontal" formValue={compose} onChange={setCompose}>

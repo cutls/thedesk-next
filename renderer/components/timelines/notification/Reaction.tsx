@@ -63,6 +63,7 @@ const actionIcon = (notification: Entity.Notification) => {
 
 const actionText = (notification: Entity.Notification, setAccountDetail: (account: Entity.Account) => void) => {
 	const { formatMessage } = useIntl()
+	const useName = notification.account.display_name || notification.account.username
 
 	switch (notification.type) {
 		case 'favourite':
@@ -70,7 +71,7 @@ const actionText = (notification: Entity.Notification, setAccountDetail: (accoun
 				<span
 					style={{ color: 'var(--rs-text-secondary)', cursor: 'pointer' }}
 					dangerouslySetInnerHTML={{
-						__html: emojify(formatMessage({ id: 'timeline.notification.favourite.body' }, { user: notification.account.display_name }), notification.account.emojis),
+						__html: emojify(formatMessage({ id: 'timeline.notification.favourite.body' }, { user: useName }), notification.account.emojis),
 					}}
 					onClick={() => setAccountDetail(notification.account)}
 				/>
@@ -80,7 +81,7 @@ const actionText = (notification: Entity.Notification, setAccountDetail: (accoun
 				<span
 					style={{ color: 'var(--rs-text-secondary)', cursor: 'pointer' }}
 					dangerouslySetInnerHTML={{
-						__html: emojify(formatMessage({ id: 'timeline.notification.reblog.body' }, { user: notification.account.display_name }), notification.account.emojis),
+						__html: emojify(formatMessage({ id: 'timeline.notification.reblog.body' }, { user: useName }), notification.account.emojis),
 					}}
 					onClick={() => setAccountDetail(notification.account)}
 				/>
@@ -90,7 +91,7 @@ const actionText = (notification: Entity.Notification, setAccountDetail: (accoun
 				<span
 					style={{ color: 'var(--rs-text-secondary)', cursor: 'pointer' }}
 					dangerouslySetInnerHTML={{
-						__html: emojify(formatMessage({ id: 'timeline.notification.poll_expired.body' }, { user: notification.account.display_name }), notification.account.emojis),
+						__html: emojify(formatMessage({ id: 'timeline.notification.poll_expired.body' }, { user: useName }), notification.account.emojis),
 					}}
 					onClick={() => setAccountDetail(notification.account)}
 				/>
@@ -100,7 +101,7 @@ const actionText = (notification: Entity.Notification, setAccountDetail: (accoun
 				<span
 					style={{ color: 'var(--rs-text-secondary)', cursor: 'pointer' }}
 					dangerouslySetInnerHTML={{
-						__html: emojify(formatMessage({ id: 'timeline.notification.poll_vote.body' }, { user: notification.account.display_name }), notification.account.emojis),
+						__html: emojify(formatMessage({ id: 'timeline.notification.poll_vote.body' }, { user: useName }), notification.account.emojis),
 					}}
 					onClick={() => setAccountDetail(notification.account)}
 				/>
@@ -110,7 +111,7 @@ const actionText = (notification: Entity.Notification, setAccountDetail: (accoun
 				<span
 					style={{ color: 'var(--rs-text-secondary)', cursor: 'pointer' }}
 					dangerouslySetInnerHTML={{
-						__html: emojify(formatMessage({ id: 'timeline.notification.quote.body' }, { user: notification.account.display_name }), notification.account.emojis),
+						__html: emojify(formatMessage({ id: 'timeline.notification.quote.body' }, { user: useName }), notification.account.emojis),
 					}}
 					onClick={() => setAccountDetail(notification.account)}
 				/>
@@ -120,7 +121,7 @@ const actionText = (notification: Entity.Notification, setAccountDetail: (accoun
 				<span
 					style={{ color: 'var(--rs-text-secondary)', cursor: 'pointer' }}
 					dangerouslySetInnerHTML={{
-						__html: emojify(formatMessage({ id: 'timeline.notification.status.body' }, { user: notification.account.display_name }), notification.account.emojis),
+						__html: emojify(formatMessage({ id: 'timeline.notification.status.body' }, { user: useName }), notification.account.emojis),
 					}}
 					onClick={() => setAccountDetail(notification.account)}
 				/>
@@ -130,7 +131,7 @@ const actionText = (notification: Entity.Notification, setAccountDetail: (accoun
 				<span
 					style={{ color: 'var(--rs-text-secondary)', cursor: 'pointer' }}
 					dangerouslySetInnerHTML={{
-						__html: emojify(formatMessage({ id: 'timeline.notification.update.body' }, { user: notification.account.display_name }), notification.account.emojis),
+						__html: emojify(formatMessage({ id: 'timeline.notification.update.body' }, { user: useName }), notification.account.emojis),
 					}}
 					onClick={() => setAccountDetail(notification.account)}
 				/>
@@ -141,7 +142,7 @@ const actionText = (notification: Entity.Notification, setAccountDetail: (accoun
 				<span
 					style={{ color: 'var(--rs-text-secondary)', cursor: 'pointer' }}
 					dangerouslySetInnerHTML={{
-						__html: emojify(formatMessage({ id: 'timeline.notification.emoji_reaction.body' }, { user: notification.account.display_name }), notification.account.emojis),
+						__html: emojify(formatMessage({ id: 'timeline.notification.emoji_reaction.body' }, { user: useName }), notification.account.emojis),
 					}}
 					onClick={() => setAccountDetail(notification.account)}
 				/>

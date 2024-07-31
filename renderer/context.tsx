@@ -76,7 +76,7 @@ export const TheDeskProviderWrapper: React.FC = (props) => {
 	})
 	const listen = async (channel: string, callback: any, tts?: boolean) => {
 		const useStreaming = window.streamings
-		while (useStreaming.length === 0) {
+		while (!useStreaming || useStreaming.length === 0) {
 			console.log('waiting1')
 			await new Promise((resolve) => setTimeout(resolve, 1000))
 		}
@@ -124,7 +124,7 @@ export const TheDeskProviderWrapper: React.FC = (props) => {
 			}
 		}
 		const userStreamings = window.userStreamings
-		while (userStreamings.length === 0) {
+		while (!userStreamings || userStreamings.length === 0) {
 			console.log('waiting2')
 			await new Promise((resolve) => setTimeout(resolve, 1000))
 		}

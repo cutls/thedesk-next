@@ -16,6 +16,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { Avatar, Badge, Button, Dropdown, FlexboxGrid, Popover, Sidebar, Sidenav, Stack, Text, Whisper, useToaster } from 'rsuite'
 import { addTimeline, listTimelines, readSettings, removeServer, updateAccountColor } from 'utils/storage'
 import { type Settings, defaultSetting } from '@/entities/settings'
+import type { ReceiveNotificationPayload } from '@/payload'
 
 type NavigatorProps = {
 	servers: Array<ServerSet>
@@ -48,19 +49,67 @@ const Navigator: React.FC<NavigatorProps> = (props): ReactElement => {
 	const toaster = useToaster()
 	const { timelineRefresh } = useContext(TheDeskContext)
 
+	const actionText = (notification: Entity.Notification) => {
+		const useName = notification.account.display_name || notification.account.username
+		switch (notification.type) {
+			case 'favourite':
+				return formatMessage({ id: 'timeline.notification.favourite.body' }, { user: useName })
+			case 'reblog':
+				return formatMessage({ id: 'timeline.notification.reblog.body' }, { user: useName })
+			case 'poll_expired':
+				return formatMessage({ id: 'timeline.notification.poll_expired.body' }, { user: useName })
+			case 'poll_vote':
+				return formatMessage({ id: 'timeline.notification.poll_vote.body' }, { user: useName })
+			case 'quote':
+				return formatMessage({ id: 'timeline.notification.quote.body' }, { user: useName })
+			case 'status':
+				return formatMessage({ id: 'timeline.notification.status.body' }, { user: useName })
+			case 'update':
+				return formatMessage({ id: 'timeline.notification.update.body' }, { user: useName })
+			case 'emoji_reaction':
+			case 'reaction':
+				return formatMessage({ id: 'timeline.notification.emoji_reaction.body' }, { user: useName })
+			default:
+				return null
+		}
+	}
+
 	// Walkthrough instruction
 
 	useEffect(() => {
 		props.servers.map(async (set) => {
 			if (!set.account) return set
 			const client = generator(set.server.sns, set.server.base_url, set.account.access_token, 'Fedistar')
+			const read = async (id: string) => {
+				props.setUnreads((current) => {
+					const updated = current.map((u) => {
+						if (u.server_id === set.server.id) {
+							return Object.assign({}, u, { count: 0 })
+						}
+						return u
+					})
+
+					return updated
+				})
+				// Update maker for server-side
+				try {
+					await client.saveMarkers({ notifications: { last_read_id: id } })
+					if (set.server.sns === 'pleroma') {
+						await client.readNotifications({ max_id: id })
+					}
+				} catch {
+					console.error('failed to update marker')
+				}
+			}
 			try {
 				const notifications = (await client.getNotifications({ limit: 20 })).data
 				const res = await client.getMarkers(['notifications'])
 				const marker = res.data as Entity.Marker
 				if (marker.notifications) {
 					const count = unreadCount(marker.notifications, notifications)
-
+					if (count > 0) new window.Notification(`TheDesk: ${set.account.username}@${set.server.domain}`, {
+						body: formatMessage({ id: 'timeline.notification.unread' }, { count })
+					}).onclick = () => read(notifications[0].id)
 					const target = props.unreads.find((u) => u.server_id === set.server.id)
 					if (target) {
 						props.setUnreads((unreads) =>
@@ -82,7 +131,9 @@ const Navigator: React.FC<NavigatorProps> = (props): ReactElement => {
 		})
 	}, [props.servers])
 	useEffect(() => {
-		const fn = async () => setConfig((await readSettings()).compose || defaultSetting.compose)
+		const fn = async () => {
+			setConfig((await readSettings()).compose || defaultSetting.compose)
+		}
 		fn()
 		setInterval(() => {
 			setAwake((current) => current + 1)
