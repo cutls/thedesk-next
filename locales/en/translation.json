@@ -157,7 +157,9 @@
 					"range": "Please enter a number from {from} to {to}",
 					"required": "Required."
 				}
-			}
+			},
+			"open_appData_folder": "Open AppData folder",
+			"appData_hint": "config.json in this folder allows you to change system settings."
 		},
 		"thirdparty": {
 			"title": "About TheDesk and 3rd party licenses"

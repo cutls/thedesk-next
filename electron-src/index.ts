@@ -1,10 +1,16 @@
 // Native
 import { join } from 'path'
 import { format } from 'url'
+import fs from 'fs'
 
 import { execFile } from 'child_process'
 import { promisify } from 'util'
 import stateKeeper from 'electron-window-state'
+type SystemConfig = {
+	hardwareAcceleration: boolean
+	allowDoH: boolean
+}
+
 const promisifyExecFile = promisify(execFile)
 // Packages
 import { BrowserWindow, type IpcMainEvent, app, clipboard, ipcMain, shell } from 'electron'
@@ -12,9 +18,27 @@ import isDev from 'electron-is-dev'
 import prepareNext from 'electron-next'
 // Prepare the renderer once the app is ready
 let mainWindow: BrowserWindow | null = null
+const appDataPath = app.getPath('appData')
+const configPath = join(appDataPath, 'config.json')
+const defaultConfig = fs.readFileSync(join(__dirname, 'defaultConfig.json')).toString()
+let config: SystemConfig = JSON.parse(defaultConfig)
+if (!fs.existsSync(configPath)) {
+	fs.writeFileSync(configPath, defaultConfig)
+} else {
+	try  {
+		const data = fs.readFileSync(configPath)
+		config = JSON.parse(data.toString())
+		if (!config.hardwareAcceleration) app.disableHardwareAcceleration()
+		
+	} catch {
+		console.error('config.json is corrupted')
+	}
+}
+
 app.on('ready', async () => {
 	console.log('start')
 	await prepareNext('./renderer')
+	if (!config.allowDoH) app.configureHostResolver({ secureDnsMode: 'off' })
 	const windowState = stateKeeper({
 		defaultWidth: 800,
 		defaultHeight: 600,

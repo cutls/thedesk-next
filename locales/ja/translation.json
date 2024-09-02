@@ -157,7 +157,9 @@
 					"range": "{from} から {to} までの数字を入力してください",
 					"required": "必須項目です"
 				}
-			}
+			},
+			"open_appData_folder": "アプリケーションデータフォルダを表示",
+			"appData_hint": "このフォルダのconfig.jsonでシステム設定を変更できます。"
 		},
 		"thirdparty": {
 			"title": "このアプリについて / ライセンス"

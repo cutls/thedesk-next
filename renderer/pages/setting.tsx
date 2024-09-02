@@ -13,7 +13,7 @@ import NumberForm from '@/components/settings/form/NumberForm'
 import SelectForm from '@/components/settings/form/SelectForm'
 import RadioBoolean from '@/components/settings/form/RadioBooleanForm'
 import { Icon } from '@rsuite/icons'
-import { BsCheck, BsCheck2, BsChevronLeft } from 'react-icons/bs'
+import { BsCheck2, BsChevronLeft } from 'react-icons/bs'
 import { useRouter } from 'next/router'
 import { nowplayingDisconnect } from '@/utils/nowplaying'
 const languages = [
@@ -165,6 +165,11 @@ function App() {
 							</Button>
 						</div>
 					)}
+                    <Divider />
+                    <Button appearance="ghost"><FormattedMessage id="settings.settings.open_appData_folder" /></Button>
+                    <Text style={{ fontSize: 10, margin: 10 }}>
+                    <FormattedMessage id="settings.settings.appData_hint" />
+                    </Text>
                 </Content>
             </Stack>
         </div>
