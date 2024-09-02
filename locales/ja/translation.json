@@ -104,7 +104,7 @@
 	"settings": {
 		"settings": {
 			"title": "設定",
-			"require_reload": "変更後は再読み込みが必要です",
+			"saved": "保存しました",
 			"reload": "全体を再読み込み",
 			"appearance": {
 				"title": "外観",

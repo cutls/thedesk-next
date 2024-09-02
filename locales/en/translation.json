@@ -104,7 +104,7 @@
 	"settings": {
 		"settings": {
 			"title": "Settings",
-			"require_reload": "Required to reload after changing",
+			"saved": "Saved",
 			"reload": "Whole Reload",
 			"appearance": {
 				"title": "Appearance",

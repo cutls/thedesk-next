@@ -34,13 +34,14 @@ import type { Entity, MegalodonInterface } from '@cutls/megalodon'
 import Head from 'next/head'
 import Draggable from 'react-draggable'
 import { useIntl } from 'react-intl'
-import { set } from 'rsuite/esm/utils/dateUtils'
 import { listServers, listTimelines, readSettings } from 'utils/storage'
+import { useRouter } from 'next/router'
 
 const { scrollLeft } = DOMHelper
 
 function App() {
 	const { formatMessage } = useIntl()
+	const router = useRouter()
 	const [width, height] = useWindowSize()
 	const { start, latestTimelineRefreshed, allClose, saveTimelineConfig } = useContext(TheDeskContext)
 	const { loadTheme } = useContext(ContextLoadTheme)
@@ -288,7 +289,7 @@ function App() {
 				openAuthorize={(server: Server) => dispatch({ target: 'newServer', value: true, object: server })}
 				openAnnouncements={(server: Server, account: Account) => dispatch({ target: 'announcements', value: true, object: { server, account } })}
 				openThirdparty={() => dispatch({ target: 'thirdparty', value: true })}
-				openSettings={() => dispatch({ target: 'settings', value: true })}
+				openSettings={() => router.push('/setting') }
 				toggleCompose={toggleCompose}
 				toggleSearch={toggleSearch}
 				setHighlighted={setHighlighted}
