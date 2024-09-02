@@ -1,6 +1,6 @@
 {
 	"private": true,
-	"main": "main-build/index.js",
+	"main": "main-build/electron-src/index.js",
 	"name": "thedesk-next",
 	"author": {
 		"name": "cutls",

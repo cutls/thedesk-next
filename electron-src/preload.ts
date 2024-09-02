@@ -7,6 +7,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
 	openBrowser: (url: string) => {
 		ipcRenderer.send('openBrowser', url)
 	},
+	openAppDataFolder: () => {
+		ipcRenderer.send('openAppDataFolder')
+	},
 	requestInitialInfo: (init: boolean) => {
 		ipcRenderer.send('requestInitialInfo', init)
 	},
@@ -16,7 +19,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
 	onInitialInfo: (callback: (event: Electron.IpcRendererEvent, data: any) => void) => {
 		ipcRenderer.on('initialInfo', callback)
 	},
-
 	appleMusic: (callback: (event: Electron.IpcRendererEvent, data: any) => void) => {
 		ipcRenderer.on('appleMusic', callback)
 	},

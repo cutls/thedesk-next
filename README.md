@@ -29,6 +29,14 @@ Mastodon(and Misskey) client for PC, based on [Fedistar](https://github.com/h3po
 
 [Website](https://thedesk.top) or [GitHub Release page](https://github.com/cutls/thedesk-next/releases)
 
+### System Config
+
+Can be edited in config.json in AppData(macOS: Application Support) folder.
+You can easily jump to this folder from the settings screen
+
+`hardwareAcceleration`: Hardware Acceleration(default: true)  
+`allowDoH`: Use DNS over HTTPS (default: true)
+
 ## Development
 
 ```

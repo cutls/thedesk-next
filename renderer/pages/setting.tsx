@@ -166,7 +166,7 @@ function App() {
 						</div>
 					)}
                     <Divider />
-                    <Button appearance="ghost"><FormattedMessage id="settings.settings.open_appData_folder" /></Button>
+                    <Button appearance="ghost" onClick={() =>  window.electronAPI.openAppDataFolder()}><FormattedMessage id="settings.settings.open_appData_folder" /></Button>
                     <Text style={{ fontSize: 10, margin: 10 }}>
                     <FormattedMessage id="settings.settings.appData_hint" />
                     </Text>

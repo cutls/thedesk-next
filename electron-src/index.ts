@@ -16,20 +16,19 @@ const promisifyExecFile = promisify(execFile)
 import { BrowserWindow, type IpcMainEvent, app, clipboard, ipcMain, shell } from 'electron'
 import isDev from 'electron-is-dev'
 import prepareNext from 'electron-next'
+import defaultConfig from '../defaultConfig.json'
 // Prepare the renderer once the app is ready
 let mainWindow: BrowserWindow | null = null
-const appDataPath = app.getPath('appData')
+const appDataPath = join(app.getPath('appData'), app.getName())
 const configPath = join(appDataPath, 'config.json')
-const defaultConfig = fs.readFileSync(join(__dirname, 'defaultConfig.json')).toString()
-let config: SystemConfig = JSON.parse(defaultConfig)
+let config: SystemConfig = defaultConfig
 if (!fs.existsSync(configPath)) {
-	fs.writeFileSync(configPath, defaultConfig)
+	fs.writeFileSync(configPath, JSON.stringify(defaultConfig))
 } else {
 	try  {
 		const data = fs.readFileSync(configPath)
 		config = JSON.parse(data.toString())
 		if (!config.hardwareAcceleration) app.disableHardwareAcceleration()
-		
 	} catch {
 		console.error('config.json is corrupted')
 	}
@@ -119,5 +118,8 @@ ipcMain.on('writeText', (_event: IpcMainEvent, message: any) => {
 })
 ipcMain.on('openBrowser', (_event: IpcMainEvent, message: any) => {
 	shell.openExternal(message)
+})
+ipcMain.on('openAppDataFolder', (_event: IpcMainEvent) => {
+	shell.openPath(appDataPath)
 })
 app.setAsDefaultProtocolClient('thedesk')

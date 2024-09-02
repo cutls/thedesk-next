@@ -29,6 +29,12 @@
 
 [ウェブサイト](https://thedesk.top)または[GitHub Release page](https://github.com/cutls/thedesk-next/releases)
 
+### システム設定
+
+システム設定はAppData(macOS: Application Support)フォルダ内のconfig.jsonで編集できます。このフォルダへは設定画面から簡単に飛ぶことができます。
+
+`hardwareAcceleration`: ハードウェアアクセラレーション(default: true)  
+`allowDoH`: DNS over HTTPS (default: true)
 ## 開発
 
 ```

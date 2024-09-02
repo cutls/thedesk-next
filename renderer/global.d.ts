@@ -7,6 +7,7 @@ export interface IElectronAPI {
 	onInitialInfo: (callback: (event: Electron.IpcRendererEvent, data: any) => void) => void
 	customUrl: (callback: (event: Electron.IpcRendererEvent, data: any) => void) => void
 	appleMusic: (callback: (event: Electron.IpcRendererEvent, data: any) => void) => void
+	openAppDataFolder: () => void
 }
 
 type StreamingArray = [number, WebSocketInterface]
