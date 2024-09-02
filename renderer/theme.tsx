@@ -14,7 +14,7 @@ const initValue: CustomProviderProps = {
 
 export const Context = createContext(initValue)
 export const ContextLoadTheme = createContext({
-	loadTheme: async () => { }
+	loadTheme: async () => {},
 })
 
 export const RsuiteProviderWrapper: React.FC<Props> = (props) => {

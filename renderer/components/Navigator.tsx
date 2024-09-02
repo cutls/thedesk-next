@@ -1,22 +1,22 @@
 import alert from '@/components/utils/alert'
+import { TheDeskContext } from '@/context'
 import type { Account } from '@/entities/account'
 import { Instruction } from '@/entities/instruction'
 import type { Marker } from '@/entities/marker'
 import type { Server, ServerSet } from '@/entities/server'
+import { type Settings, defaultSetting } from '@/entities/settings'
 import { type Timeline, colorList } from '@/entities/timeline'
 import type { Unread } from '@/entities/unread'
-import { TheDeskContext } from '@/context'
+import type { ReceiveNotificationPayload } from '@/payload'
 import FailoverImg from '@/utils/failoverImg'
-import { Icon } from '@rsuite/icons'
 import generator, { type Entity } from '@cutls/megalodon'
+import { Icon } from '@rsuite/icons'
 import { useRouter } from 'next/router'
 import { type Dispatch, type ReactElement, type SetStateAction, useContext, useEffect, useState } from 'react'
 import { BsDice1, BsDice2, BsDice3, BsDice4, BsDice5, BsDice6, BsGear, BsPencilSquare, BsPlus, BsSearch } from 'react-icons/bs'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Avatar, Badge, Button, Dropdown, FlexboxGrid, Popover, Sidebar, Sidenav, Stack, Text, Whisper, useToaster } from 'rsuite'
 import { addTimeline, listTimelines, readSettings, removeServer, updateAccountColor } from 'utils/storage'
-import { type Settings, defaultSetting } from '@/entities/settings'
-import type { ReceiveNotificationPayload } from '@/payload'
 
 type NavigatorProps = {
 	servers: Array<ServerSet>
@@ -38,7 +38,6 @@ const diceCt = (dice: number) => {
 	if (dice <= 4) return BsDice4
 	if (dice <= 5) return BsDice5
 	return BsDice6
-
 }
 const Navigator: React.FC<NavigatorProps> = (props): ReactElement => {
 	const { formatMessage } = useIntl()
@@ -82,9 +81,10 @@ const Navigator: React.FC<NavigatorProps> = (props): ReactElement => {
 				const marker = res.data as Entity.Marker
 				if (marker.notifications) {
 					const count = unreadCount(marker.notifications, notifications)
-					if (count > 0 && timelineConfig.notification !== 'no') new window.Notification(`TheDesk: ${set.account.username}@${set.server.domain}`, {
-						body: formatMessage({ id: 'timeline.notification.unread' }, { count })
-					}).onclick = () => read(notifications[0].id)
+					if (count > 0 && timelineConfig.notification !== 'no')
+						new window.Notification(`TheDesk: ${set.account.username}@${set.server.domain}`, {
+							body: formatMessage({ id: 'timeline.notification.unread' }, { count }),
+						}).onclick = () => read(notifications[0].id)
 					const target = props.unreads.find((u) => u.server_id === set.server.id)
 					if (target) {
 						props.setUnreads((unreads) =>
@@ -150,9 +150,11 @@ const Navigator: React.FC<NavigatorProps> = (props): ReactElement => {
 		<div style={{ display: 'flex', justifyContent: 'space-between', backgroundColor: 'var(--rs-sidenav-default-bg)', height: '56px' }}>
 			<div style={{ display: 'flex', alignItems: 'center' }}>
 				<div style={{ display: 'flex', alignItems: 'center' }}>
-					{config.btnPosition === 'left' && <Button appearance="primary" color="green" size="lg" onClick={props.toggleCompose} startIcon={<Icon as={BsPencilSquare} />} style={{ marginLeft: '15px' }}>
-						<FormattedMessage id="compose.post" />
-					</Button>}
+					{config.btnPosition === 'left' && (
+						<Button appearance="primary" color="green" size="lg" onClick={props.toggleCompose} startIcon={<Icon as={BsPencilSquare} />} style={{ marginLeft: '15px' }}>
+							<FormattedMessage id="compose.post" />
+						</Button>
+					)}
 					<Button appearance="link" size="lg" onClick={props.toggleSearch} style={{ marginRight: '15px' }}>
 						<Icon as={BsSearch} style={{ fontSize: '1.4em' }} />
 					</Button>
@@ -207,7 +209,6 @@ const Navigator: React.FC<NavigatorProps> = (props): ReactElement => {
 								>
 									<Badge content={!!props.unreads.find((u) => u.server_id === server.server.id && u.count > 0)}>
 										<Avatar size="sm" src={server.account?.avatar || FailoverImg(server.server.favicon)} className="server-icon colorChangeBtn" alt={server.server.domain} key={server.server.id} />
-
 									</Badge>
 								</Button>
 							</Whisper>
@@ -234,17 +235,13 @@ const Navigator: React.FC<NavigatorProps> = (props): ReactElement => {
 									top,
 									onClose,
 									openThirdparty,
-									openSettings
+									openSettings,
 								},
 								ref,
 							)
 						}
 					>
-						<Button
-							appearance="link"
-							size="lg"
-							style={{ paddingRight: 0 }}
-						>
+						<Button appearance="link" size="lg" style={{ paddingRight: 0 }}>
 							<Icon as={diceCt(awake)} style={{ fontSize: '1.4em' }} />
 						</Button>
 					</Whisper>
@@ -252,9 +249,11 @@ const Navigator: React.FC<NavigatorProps> = (props): ReactElement => {
 						<Icon as={BsGear} style={{ fontSize: '1.4em' }} />
 					</Button>
 				</div>
-				{(!config.btnPosition || config.btnPosition === 'right') && <Button appearance="primary" color="green" size="lg" onClick={props.toggleCompose} startIcon={<Icon as={BsPencilSquare} />}>
-					<FormattedMessage id="compose.post" />
-				</Button>}
+				{(!config.btnPosition || config.btnPosition === 'right') && (
+					<Button appearance="primary" color="green" size="lg" onClick={props.toggleCompose} startIcon={<Icon as={BsPencilSquare} />}>
+						<FormattedMessage id="compose.post" />
+					</Button>
+				)}
 			</div>
 		</div>
 	)
@@ -346,7 +345,14 @@ const serverMenu = ({ className, left, top, onClose, server, openAuthorize, open
 				<Stack wrap spacing={6} style={{ maxWidth: '150px', padding: '5px' }}>
 					<Button style={{ textTransform: 'capitalize', width: '30px', height: '30px' }} className="colorChangeBtn" onClick={() => updateAccountColorFn(server.server.account_id, 'unset')} />
 					{colorList.map((c) => (
-						<Button appearance="primary" className="colorChangeBtn" key={c} color={c} style={{ textTransform: 'capitalize', width: '30px', height: '30px' }} onClick={() => updateAccountColorFn(server.server.account_id, c)} />
+						<Button
+							appearance="primary"
+							className="colorChangeBtn"
+							key={c}
+							color={c}
+							style={{ textTransform: 'capitalize', width: '30px', height: '30px' }}
+							onClick={() => updateAccountColorFn(server.server.account_id, c)}
+						/>
 					))}
 				</Stack>
 			</FlexboxGrid>

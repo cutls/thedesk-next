@@ -1,14 +1,14 @@
 import type { ColumnWidth } from '@/entities/timeline'
 import failoverImg from '@/utils/failoverImg'
 import { open } from '@/utils/openBrowser'
-import { Icon } from '@rsuite/icons'
 import type { Entity } from '@cutls/megalodon'
+import { Icon } from '@rsuite/icons'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
+import { Blurhash } from 'react-blurhash'
 import { BsBoxArrowUpRight, BsCaretRightFill, BsEyeSlash, BsVolumeUp } from 'react-icons/bs'
 import { FormattedMessage } from 'react-intl'
 import { Button, IconButton } from 'rsuite'
-import { Blurhash } from 'react-blurhash'
 
 type Props = {
 	attachments: Array<Entity.Attachment>
@@ -116,19 +116,17 @@ const Attachment: React.FC<AttachmentProps> = (props) => {
 				<IconButton icon={<Icon as={BsVolumeUp} />} circle onClick={() => props.openMedia(media)} style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }} />
 			)}
 
-			{sensitive ?
+			{sensitive ? (
 				<>
-					{media.blurhash ? <Blurhash
-						hash={media.blurhash ? media.blurhash : ''}
-						width={128}
-						height={128}
-						resolutionX={32}
-						resolutionY={32}
-						punch={1}
-					/> : <div style={{ width: 128, height: 128, backgroundColor: '#f0f0f0', justifyContent: 'center', display: 'flex', alignItems: 'center' }}>
-						<div style={{ color: 'black', fontSize: '1.2rem' }}>CW</div>
-					</div>}
-				</> :
+					{media.blurhash ? (
+						<Blurhash hash={media.blurhash ? media.blurhash : ''} width={128} height={128} resolutionX={32} resolutionY={32} punch={1} />
+					) : (
+						<div style={{ width: 128, height: 128, backgroundColor: '#f0f0f0', justifyContent: 'center', display: 'flex', alignItems: 'center' }}>
+							<div style={{ color: 'black', fontSize: '1.2rem' }}>CW</div>
+						</div>
+					)}
+				</>
+			) : (
 				<Image
 					width={128}
 					height={128}
@@ -137,7 +135,8 @@ const Attachment: React.FC<AttachmentProps> = (props) => {
 					title={media.description ? media.description : media.id}
 					onClick={() => props.openMedia(media)}
 					style={{ objectFit: 'cover', cursor: 'pointer' }}
-				/>}
+				/>
+			)}
 		</div>
 	)
 }

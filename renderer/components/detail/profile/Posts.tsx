@@ -78,7 +78,7 @@ const Posts: React.ForwardRefRenderFunction<FuncProps, ArgProps> = (props, ref) 
 			}
 			if (status.reblog && s.reblog && s.reblog.id === status.reblog.id) {
 				return Object.assign({}, s, { reblog: status.reblog })
-			} 
+			}
 			return s
 		})
 		setStatuses(renew)

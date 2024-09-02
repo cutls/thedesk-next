@@ -1,10 +1,10 @@
-import type { Server } from '@/entities/server'
 import { TheDeskContext } from '@/context'
+import type { Server } from '@/entities/server'
 import { parseDomain } from '@/utils/domainParser'
 import { addApplication, authorizeCode } from '@/utils/oauth'
 import { addServer } from '@/utils/storage'
-import { Icon } from '@rsuite/icons'
 import type { OAuth } from '@cutls/megalodon'
+import { Icon } from '@rsuite/icons'
 import { useContext, useEffect, useState } from 'react'
 import { BsClipboard } from 'react-icons/bs'
 import { FormattedMessage, useIntl } from 'react-intl'
@@ -156,7 +156,9 @@ const New: React.FC<Props> = (props) => {
 						<Form.Group>
 							<Input value={domain} {...focusAttr} readOnly />
 						</Form.Group>
-						<Checkbox style={{ marginBottom: '5px' }} checked={useAuto} value="useAuto" onChange={() => setUseAuto(!useAuto)}><FormattedMessage id="servers.new.auto_login" /></Checkbox>
+						<Checkbox style={{ marginBottom: '5px' }} checked={useAuto} value="useAuto" onChange={() => setUseAuto(!useAuto)}>
+							<FormattedMessage id="servers.new.auto_login" />
+						</Checkbox>
 
 						<Form.Group>
 							<ButtonToolbar>

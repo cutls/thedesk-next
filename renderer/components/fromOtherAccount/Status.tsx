@@ -1,19 +1,19 @@
 import Reply from '@/components/compose/Status'
 import Time from '@/components/utils/Time'
+import { TheDeskContext } from '@/context'
 import type { Account } from '@/entities/account'
 import type { CustomEmojiCategory } from '@/entities/emoji'
 import type { Server } from '@/entities/server'
 import { mapCustomEmojiCategory } from '@/utils/emojiData'
 import emojify from '@/utils/emojify'
-import { Icon } from '@rsuite/icons'
 import type { Entity, MegalodonInterface } from '@cutls/megalodon'
+import { Icon } from '@rsuite/icons'
 import { useContext, useEffect, useState } from 'react'
 import { BsPaperclip } from 'react-icons/bs'
 import { FormattedMessage } from 'react-intl'
 import { Avatar, Button, FlexboxGrid, Loader, Modal, Placeholder } from 'rsuite'
 import Actions from '../timelines/status/Actions'
 import Body from '../timelines/status/Body'
-import { TheDeskContext } from '@/context'
 
 type Props = {
 	target: Entity.Status
@@ -53,7 +53,7 @@ export default function Status(props: Props) {
 			current.map((s) => {
 				if (s.id === status.id) return status
 				if (s.reblog && s.reblog.id === status.id) return Object.assign({}, s, { reblog: status })
-				if (status.reblog && s.id === status.reblog.id)  return status.reblog
+				if (status.reblog && s.id === status.reblog.id) return status.reblog
 				if (status.reblog && s.reblog && s.reblog.id === status.reblog.id) return Object.assign({}, s, { reblog: status.reblog })
 				return s
 			}),

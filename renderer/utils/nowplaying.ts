@@ -57,7 +57,7 @@ export async function nowplaying(key: 'spotify' | 'appleMusic', showToaster: (me
 	} else if (key === 'appleMusic') {
 		console.log('request')
 		window.electronAPI.requestAppleMusic()
-		type IFile = { text: string; file: File, title: string }
+		type IFile = { text: string; file: File; title: string }
 		const data: IFile = await new Promise((resolve) =>
 			window.electronAPI.appleMusic(async (_, item) => {
 				console.log(item)
@@ -107,7 +107,7 @@ async function refreshSpotifyToken() {
 		localStorage.setItem('spotifyV2Token', accessToken)
 		localStorage.setItem('spotifyV2Expires', `${new Date().getTime() / 1000 + 3600}`)
 		return accessToken
-	} catch (e: any) { }
+	} catch (e: any) {}
 }
 export async function getUnknownAA(q: string, country: string) {
 	const start = `https://itunes.apple.com/search?term=${q}&country=${country}&entity=song`
@@ -152,4 +152,3 @@ export function nowplayingDisconnect() {
 	localStorage.removeItem('spotifyV2Refresh')
 	localStorage.removeItem('spotifyV2Expires')
 }
-

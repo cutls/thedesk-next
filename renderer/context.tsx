@@ -1,26 +1,26 @@
 import generator, { type WebSocketInterface, detector } from '@cutls/megalodon'
 import { createContext, useEffect, useState } from 'react'
-import { getAccount, listServers, listTimelines } from './utils/storage'
 import { set } from 'rsuite/esm/utils/dateUtils'
-import { defaultSetting, type Settings } from './entities/settings'
-import type { Timeline } from './entities/timeline'
 import type { Server } from './entities/server'
+import { type Settings, defaultSetting } from './entities/settings'
+import type { Timeline } from './entities/timeline'
+import { getAccount, listServers, listTimelines } from './utils/storage'
 
 export const TheDeskContext = createContext({
 	start: async (timelines: Array<[Timeline, Server]>) => [] as StreamingArray[],
 	listen: ((channel: string, callback: any, tts?: boolean) => null) as <T>(channel: string, callback: (a: { payload: T }) => void, tts?: boolean) => void | null,
-	allClose: () => { },
-	timelineRefresh: () => { },
+	allClose: () => {},
+	timelineRefresh: () => {},
 	latestTimelineRefreshed: new Date().getTime(),
 	timelineConfig: defaultSetting.timeline,
-	saveTimelineConfig: (config: Settings['timeline']) => { },
+	saveTimelineConfig: (config: Settings['timeline']) => {},
 	focused: false,
-	setFocused: (focused: boolean) => { }
+	setFocused: (focused: boolean) => {},
 })
 const stripForVoice = (html: string) => {
-	const div = document.createElement("div")
+	const div = document.createElement('div')
 	div.innerHTML = html
-	const text = div.textContent || div.innerText || ""
+	const text = div.textContent || div.innerText || ''
 	const protomatch = /(https?|ftp):\/\//g
 	const b = text.replace(protomatch, '').replace(/:[a-zA-Z0-9_]:/g, '')
 	return b
@@ -31,49 +31,50 @@ export const TheDeskProviderWrapper: React.FC = (props) => {
 	const [latestTimelineRefreshed, setLatestTimelineRefreshed] = useState(0)
 	const [timelineConfig, setTimelineConfig] = useState<Settings['timeline']>(defaultSetting.timeline)
 	const saveTimelineConfig = (config: Settings['timeline']) => setTimelineConfig(config)
-	const start = async (timelines: Array<[Timeline, Server]>) => new Promise<StreamingArray[] | null>((resolve, reject) => {
-		const fn = async () => {
-			const streamings: StreamingArray[] = []
-			let i = 0
-			for (const [timeline, server] of timelines) {
-				if (!server || !server.account_id) continue
-				const accountId = server.account_id
-				const [account] = await getAccount({ id: accountId })
-				const sns = await detector(server.base_url)
-				const client = generator(sns, server.base_url, account?.access_token, 'TheDesk(Desktop)')
-				const noStreaming = server.no_streaming
+	const start = async (timelines: Array<[Timeline, Server]>) =>
+		new Promise<StreamingArray[] | null>((resolve, reject) => {
+			const fn = async () => {
+				const streamings: StreamingArray[] = []
+				let i = 0
+				for (const [timeline, server] of timelines) {
+					if (!server || !server.account_id) continue
+					const accountId = server.account_id
+					const [account] = await getAccount({ id: accountId })
+					const sns = await detector(server.base_url)
+					const client = generator(sns, server.base_url, account?.access_token, 'TheDesk(Desktop)')
+					const noStreaming = server.no_streaming
 
-				let streaming: StreamingArray = undefined
-				try {
-					if (!noStreaming && timeline.kind === 'public') streaming = [timeline.id, await client.publicStreaming()]
-					if (!noStreaming && timeline.kind === 'local') streaming = [timeline.id, await client.localStreaming()]
-					if (!noStreaming && timeline.kind === 'direct') streaming = [timeline.id, await client.directStreaming()]
-					if (!noStreaming && timeline.kind === 'list') streaming = [timeline.id, await client.listStreaming(timeline.list_id)]
-					if (!noStreaming && timeline.kind === 'tag') streaming = [timeline.id, await client.tagStreaming(timeline.name)]
-				} catch {
-					console.error('skipped')
+					let streaming: StreamingArray = undefined
+					try {
+						if (!noStreaming && timeline.kind === 'public') streaming = [timeline.id, await client.publicStreaming()]
+						if (!noStreaming && timeline.kind === 'local') streaming = [timeline.id, await client.localStreaming()]
+						if (!noStreaming && timeline.kind === 'direct') streaming = [timeline.id, await client.directStreaming()]
+						if (!noStreaming && timeline.kind === 'list') streaming = [timeline.id, await client.listStreaming(timeline.list_id)]
+						if (!noStreaming && timeline.kind === 'tag') streaming = [timeline.id, await client.tagStreaming(timeline.name)]
+					} catch {
+						console.error('skipped')
+					}
+					streamings.push(streaming || [timeline.id, undefined])
+					i++
 				}
-				streamings.push(streaming || [timeline.id, undefined])
-				i++
-			}
-			const userStreamings: StreamingArray[] = []
+				const userStreamings: StreamingArray[] = []
 
-			const servers = await listServers()
-			for (const [server, account] of servers) {
-				const noStreaming = server.no_streaming
-				const sns = await detector(server.base_url)
-				if (!account || !account.access_token) continue
-				const client = generator(sns, server.base_url, account.access_token)
-				const streaming = !noStreaming ? await client.userStreaming() : undefined
-				userStreamings.push([server.id, streaming])
+				const servers = await listServers()
+				for (const [server, account] of servers) {
+					const noStreaming = server.no_streaming
+					const sns = await detector(server.base_url)
+					if (!account || !account.access_token) continue
+					const client = generator(sns, server.base_url, account.access_token)
+					const streaming = !noStreaming ? await client.userStreaming() : undefined
+					userStreamings.push([server.id, streaming])
+				}
+				window.streamings = streamings
+				window.userStreamings = userStreamings
+				console.log('resolver')
+				resolve(streamings)
 			}
-			window.streamings = streamings
-			window.userStreamings = userStreamings
-			console.log('resolver')
-			resolve(streamings)
-		}
-		fn()
-	})
+			fn()
+		})
 	const listen = async (channel: string, callback: any, tts?: boolean) => {
 		const useStreaming = window.streamings
 		while (!useStreaming || useStreaming.length === 0) {
@@ -195,5 +196,9 @@ export const TheDeskProviderWrapper: React.FC = (props) => {
 		setLatestTimelineRefreshed(new Date().getTime())
 	}
 
-	return <TheDeskContext.Provider value={{ listen, start, allClose, timelineRefresh, latestTimelineRefreshed, timelineConfig, saveTimelineConfig, focused, setFocused }}>{props.children}</TheDeskContext.Provider>
+	return (
+		<TheDeskContext.Provider value={{ listen, start, allClose, timelineRefresh, latestTimelineRefreshed, timelineConfig, saveTimelineConfig, focused, setFocused }}>
+			{props.children}
+		</TheDeskContext.Provider>
+	)
 }

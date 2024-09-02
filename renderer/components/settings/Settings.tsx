@@ -1,19 +1,18 @@
+import alert from '@/components/utils/alert'
 import { TheDeskContext } from '@/context'
-import { defaultSetting, type Settings as SettingsType, type ThemeType } from '@/entities/settings'
+import { type Settings as SettingsType, type ThemeType, defaultSetting } from '@/entities/settings'
 import type { localeType } from '@/i18n'
 import { nowplayingCode, nowplayingDisconnect, nowplayingInit } from '@/utils/nowplaying'
 import { readSettings, saveSetting } from '@/utils/storage'
-import { useEffect, useState, useContext } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { Button, ButtonToolbar, Form, InputNumber, InputPicker, RadioGroup, Radio, Modal, Panel, Schema, Input, useToaster } from 'rsuite'
-import alert from '@/components/utils/alert'
+import { Button, ButtonToolbar, Form, Input, InputNumber, InputPicker, Modal, Panel, Radio, RadioGroup, Schema, useToaster } from 'rsuite'
 
 type Props = {
 	open: boolean
 	onClose: () => void
 	reloadAppearance: () => void
 }
-
 
 const languages = [
 	{
@@ -23,7 +22,7 @@ const languages = [
 	{
 		label: '日本語',
 		value: 'ja',
-	}
+	},
 ]
 
 const themes = [
@@ -77,7 +76,7 @@ export default function Settings(props: Props) {
 		max_length: Schema.Types.NumberType(formatMessage({ id: 'settings.settings.validation.general_number.type' }))
 			.range(0, 3000, formatMessage({ id: 'settings.settings.validation.general_number.range' }, { from: 0, to: 3000 }))
 			.isRequired(formatMessage({ id: 'settings.settings.validation.general_number.required' })),
-		notification: Schema.Types.StringType().isRequired(formatMessage({ id: 'settings.settings.validation.general_required' }))
+		notification: Schema.Types.StringType().isRequired(formatMessage({ id: 'settings.settings.validation.general_required' })),
 	})
 
 	useEffect(() => {
@@ -102,13 +101,13 @@ export default function Settings(props: Props) {
 				time: timelineConfig.time,
 				animation: timelineConfig.animation,
 				max_length: Number(timelineConfig.max_length),
-				notification: timelineConfig.notification
+				notification: timelineConfig.notification,
 			},
 			compose: {
 				afterPost: compose.afterPost,
 				btnPosition: compose.btnPosition,
-				secondaryToot: compose.secondaryToot
-			}
+				secondaryToot: compose.secondaryToot,
+			},
 		}
 		await saveSetting({ obj: settings })
 		props.reloadAppearance()
@@ -166,15 +165,27 @@ export default function Settings(props: Props) {
 							<Form.ControlLabel>
 								<FormattedMessage id="settings.settings.timeline.time.title" />
 							</Form.ControlLabel>
-							<Form.Control name="time" {...focusAttr} accepter={InputPicker} cleanable={false} data={time.map((t) => { return { label: formatMessage({ id: `settings.settings.timeline.time.${t}` }), value: t } })} />
+							<Form.Control
+								name="time"
+								{...focusAttr}
+								accepter={InputPicker}
+								cleanable={false}
+								data={time.map((t) => {
+									return { label: formatMessage({ id: `settings.settings.timeline.time.${t}` }), value: t }
+								})}
+							/>
 						</Form.Group>
 						<Form.Group controlId="animation">
 							<Form.ControlLabel>
 								<FormattedMessage id="settings.settings.timeline.animation" />
 							</Form.ControlLabel>
 							<Form.Control accepter={RadioGroup} name="animation">
-								<Radio value="no"><FormattedMessage id="timeline.settings.not_do" /></Radio>
-								<Radio value="yes" ><FormattedMessage id="timeline.settings.do" /></Radio>
+								<Radio value="no">
+									<FormattedMessage id="timeline.settings.not_do" />
+								</Radio>
+								<Radio value="yes">
+									<FormattedMessage id="timeline.settings.do" />
+								</Radio>
 							</Form.Control>
 						</Form.Group>
 						<Form.Group style={{ marginBottom: 0 }} controlId="max_length">
@@ -183,49 +194,102 @@ export default function Settings(props: Props) {
 							</Form.ControlLabel>
 							<Form.Control name="max_length" {...focusAttr} accepter={InputNumber} postfix={formatMessage({ id: 'settings.settings.timeline.max_length_unit' })} />
 						</Form.Group>
-						<p style={{ fontSize: '0.8rem', textAlign: 'right', paddingRight: '20px' }}><FormattedMessage id="settings.settings.timeline.max_length_hint" /></p>
+						<p style={{ fontSize: '0.8rem', textAlign: 'right', paddingRight: '20px' }}>
+							<FormattedMessage id="settings.settings.timeline.max_length_hint" />
+						</p>
 						<Form.Group controlId="notification">
 							<Form.ControlLabel>
 								<FormattedMessage id="settings.settings.timeline.notification" />
 							</Form.ControlLabel>
 							<Form.Control accepter={RadioGroup} name="notification">
-								<Radio value="no"><FormattedMessage id="timeline.settings.not_do" /></Radio>
-								<Radio value="yes" ><FormattedMessage id="timeline.settings.do" /></Radio>
+								<Radio value="no">
+									<FormattedMessage id="timeline.settings.not_do" />
+								</Radio>
+								<Radio value="yes">
+									<FormattedMessage id="timeline.settings.do" />
+								</Radio>
 							</Form.Control>
 						</Form.Group>
 					</Panel>
 				</Form>
 				<Form layout="horizontal" formValue={compose} onChange={setCompose}>
 					<Panel header={<FormattedMessage id="settings.settings.compose.title" />}>
-						<p style={{ fontSize: '0.8rem' }}><FormattedMessage id="settings.settings.require_reload" /></p>
+						<p style={{ fontSize: '0.8rem' }}>
+							<FormattedMessage id="settings.settings.require_reload" />
+						</p>
 						<Form.Group controlId="btnPosition" style={{ marginBottom: 0 }}>
 							<Form.ControlLabel>
 								<FormattedMessage id="settings.settings.compose.btnPosition.title" />
 							</Form.ControlLabel>
-							<Form.Control name="btnPosition" {...focusAttr} accepter={InputPicker} cleanable={false} data={btnPosition.map((t) => { return { label: formatMessage({ id: `settings.settings.compose.btnPosition.${t}` }), value: t } })} />
+							<Form.Control
+								name="btnPosition"
+								{...focusAttr}
+								accepter={InputPicker}
+								cleanable={false}
+								data={btnPosition.map((t) => {
+									return { label: formatMessage({ id: `settings.settings.compose.btnPosition.${t}` }), value: t }
+								})}
+							/>
 						</Form.Group>
 						<Form.Group controlId="afterPost">
 							<Form.ControlLabel>
 								<FormattedMessage id="settings.settings.compose.afterPost.title" />
 							</Form.ControlLabel>
-							<Form.Control name="afterPost" {...focusAttr} accepter={InputPicker} cleanable={false} data={afterPost.map((t) => { return { label: formatMessage({ id: `settings.settings.compose.afterPost.${t}` }), value: t } })} />
+							<Form.Control
+								name="afterPost"
+								{...focusAttr}
+								accepter={InputPicker}
+								cleanable={false}
+								data={afterPost.map((t) => {
+									return { label: formatMessage({ id: `settings.settings.compose.afterPost.${t}` }), value: t }
+								})}
+							/>
 						</Form.Group>
 						<Form.Group controlId="secondaryToot" style={{ marginBottom: 0 }}>
 							<Form.ControlLabel>
 								<FormattedMessage id="settings.settings.compose.secondaryToot" />
 							</Form.ControlLabel>
-							<Form.Control name="secondaryToot" {...focusAttr} accepter={InputPicker} cleanable={false} data={[{ label: formatMessage({ id: 'timeline.settings.not_do' }), value: 'no' }, ...vis.map((t) => { return { label: formatMessage({ id: `compose.visibility.${t}` }), value: t } })]} />
+							<Form.Control
+								name="secondaryToot"
+								{...focusAttr}
+								accepter={InputPicker}
+								cleanable={false}
+								data={[
+									{ label: formatMessage({ id: 'timeline.settings.not_do' }), value: 'no' },
+									...vis.map((t) => {
+										return { label: formatMessage({ id: `compose.visibility.${t}` }), value: t }
+									}),
+								]}
+							/>
 						</Form.Group>
-						<p style={{ fontSize: '0.8rem', textAlign: 'right', paddingRight: '20px' }}><FormattedMessage id="settings.settings.compose.secondaryToot_hint" /></p>
+						<p style={{ fontSize: '0.8rem', textAlign: 'right', paddingRight: '20px' }}>
+							<FormattedMessage id="settings.settings.compose.secondaryToot_hint" />
+						</p>
 					</Panel>
 				</Form>
 				<Panel header={<FormattedMessage id="settings.settings.spotify.title" />}>
-					<Button appearance="primary" disabled={spotifyConnected} style={{ marginRight: '5px' }} color="green" onClick={() => nowplayingInitFn()}><FormattedMessage id="settings.settings.spotify.connect" /></Button>
-					<Button appearance="primary" disabled={!spotifyConnected} color="green" onClick={() => { nowplayingDisconnect(); setSpotifyConnected(false) }}><FormattedMessage id="settings.settings.spotify.disconnect" /></Button>
-					{spotifyInitiating && <div style={{ marginTop: '5px' }}>
-						<Input value={spotifyCode} onChange={(e) => setSpotifyCode(e)} placeholder={formatMessage({ id: 'settings.settings.spotify.code_help' })} />
-						<Button appearance="ghost" loading={spotifyConnecting} disabled={!spotifyCode} color="green" onClick={() => nowplayingCodeFn()}><FormattedMessage id="settings.settings.spotify.code" /></Button>
-					</div>}
+					<Button appearance="primary" disabled={spotifyConnected} style={{ marginRight: '5px' }} color="green" onClick={() => nowplayingInitFn()}>
+						<FormattedMessage id="settings.settings.spotify.connect" />
+					</Button>
+					<Button
+						appearance="primary"
+						disabled={!spotifyConnected}
+						color="green"
+						onClick={() => {
+							nowplayingDisconnect()
+							setSpotifyConnected(false)
+						}}
+					>
+						<FormattedMessage id="settings.settings.spotify.disconnect" />
+					</Button>
+					{spotifyInitiating && (
+						<div style={{ marginTop: '5px' }}>
+							<Input value={spotifyCode} onChange={(e) => setSpotifyCode(e)} placeholder={formatMessage({ id: 'settings.settings.spotify.code_help' })} />
+							<Button appearance="ghost" loading={spotifyConnecting} disabled={!spotifyCode} color="green" onClick={() => nowplayingCodeFn()}>
+								<FormattedMessage id="settings.settings.spotify.code" />
+							</Button>
+						</div>
+					)}
 				</Panel>
 				<Form.Group>
 					<ButtonToolbar style={{ justifyContent: 'flex-end' }}>
@@ -237,7 +301,9 @@ export default function Settings(props: Props) {
 						</Button>
 					</ButtonToolbar>
 				</Form.Group>
-				<Button appearance="link" onClick={() => location.reload()}><FormattedMessage id="settings.settings.reload" /></Button>
+				<Button appearance="link" onClick={() => location.reload()}>
+					<FormattedMessage id="settings.settings.reload" />
+				</Button>
 			</Modal.Body>
 		</Modal>
 	)

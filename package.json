@@ -20,7 +20,7 @@
 		"pack:win": "electron-builder --windows --x64",
 		"dist": "npm run build && electron-builder",
 		"type-check": "tsc -p ./renderer/tsconfig.json && tsc -p ./electron-src/tsconfig.json",
-		"lint:fix": "npx @biomejs/biome check --apply ./",
+		"lint:fix": "npx @biomejs/biome check --write ./",
 		"thirdparty": "license-checker --production --json > thirdparty.json && node scripts/thirdparty.js"
 	},
 	"dependencies": {
@@ -73,11 +73,7 @@
 		"productName": "TheDesk",
 		"appId": "next.top.thedesk",
 		"afterSign": "build-tool/notarize.js",
-		"files": [
-			"main-build",
-			"renderer/out",
-			"native"
-		],
+		"files": ["main-build", "renderer/out", "native"],
 		"win": {
 			"target": "msi",
 			"icon": "assets/desk.ico",
@@ -87,10 +83,7 @@
 			"oneClick": false
 		},
 		"linux": {
-			"target": [
-				"zip",
-				"deb"
-			]
+			"target": ["zip", "deb"]
 		},
 		"mac": {
 			"mergeASARs": false,

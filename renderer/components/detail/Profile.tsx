@@ -5,8 +5,8 @@ import emojify from '@/utils/emojify'
 import { open } from '@/utils/openBrowser'
 import { findLink } from '@/utils/statusParser'
 import { getAccount, getServer } from '@/utils/storage'
-import { Icon } from '@rsuite/icons'
 import generator, { type Entity, type MegalodonInterface } from '@cutls/megalodon'
+import { Icon } from '@rsuite/icons'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { type MouseEventHandler, type ReactElement, forwardRef, useCallback, useEffect, useRef, useState } from 'react'
@@ -465,11 +465,7 @@ const FollowButton: React.FC<FollowButtonProps> = (props) => {
 		return <Button appearance="primary">{formatMessage({ id: 'detail.profile.follow_requested' })}</Button>
 	}
 	return (
-		<Button
-			appearance="primary"
-			color="green"
-			onClick={props.follow}
-		>
+		<Button appearance="primary" color="green" onClick={props.follow}>
 			{formatMessage({ id: 'detail.profile.follow' })}
 		</Button>
 	)

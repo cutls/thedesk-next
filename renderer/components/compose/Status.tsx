@@ -1,6 +1,6 @@
+import type { Entity, MegalodonInterface } from '@cutls/megalodon'
 import Picker from '@emoji-mart/react'
 import { Icon } from '@rsuite/icons'
-import type { Entity, MegalodonInterface } from '@cutls/megalodon'
 import { type ChangeEvent, forwardRef, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { BsClock, BsEmojiLaughing, BsEnvelope, BsGlobe, BsLock, BsMenuButtonWide, BsMusicNoteBeamed, BsPaperclip, BsPencil, BsSpotify, BsUnlock, BsX, BsXCircle } from 'react-icons/bs'
 import {
@@ -18,28 +18,28 @@ import {
 	Popover,
 	Radio,
 	Schema,
+	SelectPicker,
 	Toggle,
 	Whisper,
 	useToaster,
-	SelectPicker,
 } from 'rsuite'
 
 import alert from '@/components/utils/alert'
+import { TheDeskContext } from '@/context'
 import type { Account } from '@/entities/account'
 import type { CustomEmojiCategory } from '@/entities/emoji'
 import type { Server } from '@/entities/server'
+import { type Settings, defaultSetting } from '@/entities/settings'
 import { Context } from '@/theme'
 import { data, mapCustomEmojiCategory } from '@/utils/emojiData'
 import languages from '@/utils/languages'
 import { getUnknownAA, nowplaying } from '@/utils/nowplaying'
 import { open } from '@/utils/openBrowser'
+import { privacyColor, privacyIcon } from '@/utils/statusParser'
+import { readSettings } from '@/utils/storage'
 import { FormattedMessage, useIntl } from 'react-intl'
 import AutoCompleteTextarea, { type ArgProps as AutoCompleteTextareaProps } from './AutoCompleteTextarea'
 import EditMedia from './EditMedia'
-import { privacyColor, privacyIcon } from '@/utils/statusParser'
-import { readSettings } from '@/utils/storage'
-import { type Settings, defaultSetting } from '@/entities/settings'
-import { TheDeskContext } from '@/context'
 
 type Props = {
 	server: Server
@@ -93,7 +93,6 @@ const Status: React.FC<Props> = (props) => {
 	const focusAttr = {
 		onFocus: () => setFocused(true),
 		onBlur: () => setFocused(false),
-
 	}
 
 	const [formValue, setFormValue] = useState<FormValue>({
@@ -226,7 +225,7 @@ const Status: React.FC<Props> = (props) => {
 		}
 	}, [maxCharacters, formValue])
 
-	const handleSubmit = async (useVis?: "public" | "unlisted" | "private" | "direct") => {
+	const handleSubmit = async (useVis?: 'public' | 'unlisted' | 'private' | 'direct') => {
 		if (loading) {
 			return
 		}
@@ -445,7 +444,17 @@ const Status: React.FC<Props> = (props) => {
 
 	const EmojiPicker = forwardRef<HTMLDivElement>((props, ref) => (
 		<Popover ref={ref} {...props}>
-			<Picker data={data} onFocus={() => setFocused(true)} onBlur={() => setFocused(false)} custom={customEmojis} onEmojiSelect={onEmojiSelect} previewPosition="none" set="native" perLine="7" theme={theme === 'high-contrast' ? 'dark' : theme} />
+			<Picker
+				data={data}
+				onFocus={() => setFocused(true)}
+				onBlur={() => setFocused(false)}
+				custom={customEmojis}
+				onEmojiSelect={onEmojiSelect}
+				previewPosition="none"
+				set="native"
+				perLine="7"
+				theme={theme === 'high-contrast' ? 'dark' : theme}
+			/>
 		</Popover>
 	))
 
@@ -596,7 +605,23 @@ const Status: React.FC<Props> = (props) => {
 						<Button appearance="subtle" onClick={() => toggleCW()}>
 							<span style={{ fontSize: '0.8em' }}>CW</span>
 						</Button>
-						<SelectPicker data={languages} appearance="subtle" value={language} onChange={setLanguage} onOpen={() => setFocused(true)} onClose={() => setFocused(false)} cleanable={false} style={{ width: '43px' }} renderValue={() => <><span style={{ position: 'absolute', fontSize: '0.9em' }}>{language.toUpperCase()}</span><span style={{ opacity: 0 }}>{language.toUpperCase()}</span></>} caretAs={() => <></>} />
+						<SelectPicker
+							data={languages}
+							appearance="subtle"
+							value={language}
+							onChange={setLanguage}
+							onOpen={() => setFocused(true)}
+							onClose={() => setFocused(false)}
+							cleanable={false}
+							style={{ width: '43px' }}
+							renderValue={() => (
+								<>
+									<span style={{ position: 'absolute', fontSize: '0.9em' }}>{language.toUpperCase()}</span>
+									<span style={{ opacity: 0 }}>{language.toUpperCase()}</span>
+								</>
+							)}
+							caretAs={() => <></>}
+						/>
 						<Button appearance="subtle" onClick={toggleSchedule}>
 							<Icon as={BsClock} style={{ fontSize: '1.1em' }} />
 						</Button>
@@ -658,15 +683,17 @@ const Status: React.FC<Props> = (props) => {
 						<Button appearance="primary" color={props.account.color || 'green'} onClick={() => handleSubmit()} loading={loading} style={{ flexGrow: 1 }}>
 							<FormattedMessage id="compose.post" />
 						</Button>
-						{secondaryToot !== 'no' && <IconButton appearance="primary" color={privacyColor(secondaryToot) || undefined} onClick={() => handleSubmit(secondaryToot)} icon={<Icon as={privacyIcon(secondaryToot)} />} />}
+						{secondaryToot !== 'no' && (
+							<IconButton appearance="primary" color={privacyColor(secondaryToot) || undefined} onClick={() => handleSubmit(secondaryToot)} icon={<Icon as={privacyIcon(secondaryToot)} />} />
+						)}
 					</ButtonToolbar>
 				</Form.Group>
 			</Form>
-			{searchAA !== '' && 
+			{searchAA !== '' && (
 				<Button onClick={() => getUnknownAAFn()} appearance="link">
 					<FormattedMessage id="compose.nowplaying.unkwnown_aa_btn" />
 				</Button>
-			}
+			)}
 			<EditMedia
 				opened={editMediaModal}
 				attachment={editMedia}
@@ -679,8 +706,6 @@ const Status: React.FC<Props> = (props) => {
 		</>
 	)
 }
-
-
 
 const Textarea = forwardRef<HTMLTextAreaElement, AutoCompleteTextareaProps>(AutoCompleteTextarea)
 

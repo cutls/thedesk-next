@@ -5,7 +5,7 @@ import ja from '../locales/ja/translation.json'
 import { flattenMessages } from './utils/flattenMessage'
 
 export const localTypeList = ['en', 'ja'] as const
-export type localeType = typeof localTypeList[number]
+export type localeType = (typeof localTypeList)[number]
 
 type Props = {
 	children: React.ReactNode
@@ -20,7 +20,7 @@ export const Context = createContext<Lang>({} as Lang)
 export const IntlProviderWrapper: React.FC<Props> = (props) => {
 	const langs = [
 		{ locale: 'en', messages: flattenMessages(en) },
-		{ locale: 'ja', messages: flattenMessages(ja) }
+		{ locale: 'ja', messages: flattenMessages(ja) },
 	]
 	const [lang, setLang] = useState(langs[0])
 

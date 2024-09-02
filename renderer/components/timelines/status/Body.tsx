@@ -1,6 +1,6 @@
 import emojify from '@/utils/emojify'
 import type { Entity } from '@cutls/megalodon'
-import { useState, type Dispatch, type HTMLAttributes, type SetStateAction } from 'react'
+import { type Dispatch, type HTMLAttributes, type SetStateAction, useState } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { Button } from 'rsuite'
 import LinkPreview from './LinkPreview'
@@ -22,14 +22,16 @@ const Body: React.FC<Props> = (props) => {
 		if (spoilerText.length > 0) {
 			return (
 				<div>
-					{(spoilered || !isAuto) && <div
-						className="spoiler-text"
-						style={Object.assign({ overflowWrap: 'break-word', wordBreak: 'break-word' }, props.style)}
-						dangerouslySetInnerHTML={{ __html: emojify(spoilerText, props.status.emojis) }}
-						onClick={props.onClick}
-					/>}
+					{(spoilered || !isAuto) && (
+						<div
+							className="spoiler-text"
+							style={Object.assign({ overflowWrap: 'break-word', wordBreak: 'break-word' }, props.style)}
+							dangerouslySetInnerHTML={{ __html: emojify(spoilerText, props.status.emojis) }}
+							onClick={props.onClick}
+						/>
+					)}
 					<Button size="xs" onClick={() => setSpoilered((current) => !current)}>
-						{spoilered ? (isAuto ? <FormattedMessage id="timeline.status.show_more_auto" /> : <FormattedMessage id="timeline.status.show_more" />) : <FormattedMessage id="timeline.status.show_less" />}
+						{spoilered ? isAuto ? <FormattedMessage id="timeline.status.show_more_auto" /> : <FormattedMessage id="timeline.status.show_more" /> : <FormattedMessage id="timeline.status.show_less" />}
 					</Button>
 				</div>
 			)

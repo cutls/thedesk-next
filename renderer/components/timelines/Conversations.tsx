@@ -1,16 +1,16 @@
-import { Icon } from '@rsuite/icons'
 import generator, { type MegalodonInterface, type Entity } from '@cutls/megalodon'
+import { Icon } from '@rsuite/icons'
 import parse from 'parse-link-header'
 import { forwardRef, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { BsChevronLeft, BsChevronRight, BsEnvelope, BsSliders, BsX } from 'react-icons/bs'
 import { Avatar, Button, Container, Content, Divider, Dropdown, FlexboxGrid, Header, List, Loader, Popover, Radio, RadioGroup, Stack, Whisper, useToaster } from 'rsuite'
 
+import { TheDeskContext } from '@/context'
 import { TIMELINE_MAX_STATUSES, TIMELINE_STATUSES_COUNT } from '@/defaults'
 import type { Account } from '@/entities/account'
 import type { Server } from '@/entities/server'
-import { type Timeline, colorList, columnWidth as columnWidthCalc, type ColumnWidth, columnWidthSet } from '@/entities/timeline'
+import { type ColumnWidth, type Timeline, colorList, columnWidth as columnWidthCalc, columnWidthSet } from '@/entities/timeline'
 import type { ReceiveTimelineConversationPayload } from '@/payload'
-import { TheDeskContext } from '@/context'
 import FailoverImg from '@/utils/failoverImg'
 import timelineName from '@/utils/timelineName'
 import { useRouter } from 'next/router'
@@ -140,7 +140,14 @@ const Conversations: React.FC<Props> = (props) => {
 	}
 
 	return (
-		<ResizableBox width={columnWidth} height={0} axis="x" style={{ margin: '0 4px', minHeight: '100%', flexShrink: 0, width: columnWidth }} resizeHandles={['e']} onResizeStop={(_, e) => columnWidthSet(e.size.width)}>
+		<ResizableBox
+			width={columnWidth}
+			height={0}
+			axis="x"
+			style={{ margin: '0 4px', minHeight: '100%', flexShrink: 0, width: columnWidth }}
+			resizeHandles={['e']}
+			onResizeStop={(_, e) => columnWidthSet(e.size.width)}
+		>
 			<Container style={{ height: 'calc(100% - 8px)' }}>
 				<Header style={{ backgroundColor: 'var(--rs-bg-card)' }}>
 					<FlexboxGrid align="middle" justify="space-between">
@@ -275,7 +282,14 @@ const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: ()
 					<Stack wrap spacing={6} style={{ maxWidth: '250px', padding: '5px' }}>
 						<Button style={{ textTransform: 'capitalize', width: '30px', height: '30px' }} className="colorChangeBtn" onClick={() => updateColumnColorFn(props.timeline, 'unset')} />
 						{colorList.map((c) => (
-							<Button appearance="primary" key={c} color={c} className="colorChangeBtn" style={{ textTransform: 'capitalize', width: '30px', height: '30px' }} onClick={() => updateColumnColorFn(props.timeline, c)} />
+							<Button
+								appearance="primary"
+								key={c}
+								color={c}
+								className="colorChangeBtn"
+								style={{ textTransform: 'capitalize', width: '30px', height: '30px' }}
+								onClick={() => updateColumnColorFn(props.timeline, c)}
+							/>
 						))}
 					</Stack>
 				</FlexboxGrid>

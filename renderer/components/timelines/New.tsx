@@ -1,7 +1,7 @@
 import { time } from 'console'
 import { TheDeskContext } from '@/context'
-import { Icon } from '@rsuite/icons'
 import generator, { type Entity } from '@cutls/megalodon'
+import { Icon } from '@rsuite/icons'
 import { useContext, useEffect, useState } from 'react'
 import { BsBell, BsBookmark, BsChevronLeft, BsEnvelope, BsGlobe2, BsHouseDoor, BsListUl, BsPeople, BsPlus, BsStar } from 'react-icons/bs'
 import { FormattedMessage, useIntl } from 'react-intl'

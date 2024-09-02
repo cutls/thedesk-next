@@ -1,5 +1,5 @@
-import { Icon } from '@rsuite/icons'
 import generator, { type MegalodonInterface } from '@cutls/megalodon'
+import { Icon } from '@rsuite/icons'
 import { useEffect, useState } from 'react'
 import { BsX } from 'react-icons/bs'
 import { Avatar, Button, Container, Content, Dropdown, FlexboxGrid, Header } from 'rsuite'

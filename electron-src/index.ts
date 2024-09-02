@@ -18,7 +18,7 @@ app.on('ready', async () => {
 	const windowState = stateKeeper({
 		defaultWidth: 800,
 		defaultHeight: 600,
-	});
+	})
 
 	mainWindow = new BrowserWindow({
 		x: windowState.x,
@@ -29,22 +29,22 @@ app.on('ready', async () => {
 			nodeIntegration: false,
 			contextIsolation: true,
 			preload: join(__dirname, 'preload.js'),
-			webSecurity: isDev ? false : undefined
+			webSecurity: isDev ? false : undefined,
 		},
 	})
 
 	const url = isDev
 		? 'http://localhost:8000/'
 		: format({
-			pathname: join(__dirname, '../renderer/out/index.html'),
-			protocol: 'file:',
-			slashes: true,
-		})
+				pathname: join(__dirname, '../renderer/out/index.html'),
+				protocol: 'file:',
+				slashes: true,
+			})
 
 	mainWindow.loadURL(url)
 	windowState.manage(mainWindow)
 	ipcMain.on('requestInitialInfo', (_event) => {
-		mainWindow?.webContents.send('initialInfo', { 
+		mainWindow?.webContents.send('initialInfo', {
 			os: process.platform,
 			lang: app.getPreferredSystemLanguages(),
 			version: app.getVersion(),

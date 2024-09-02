@@ -4,10 +4,10 @@ import type { CustomEmojiCategory } from '@/entities/emoji'
 import type { Server } from '@/entities/server'
 import { Context } from '@/theme'
 import { data } from '@/utils/emojiData'
-import { writeText, open } from '@/utils/openBrowser'
+import { open, writeText } from '@/utils/openBrowser'
+import type { Entity, MegalodonInterface, Response } from '@cutls/megalodon'
 import Picker from '@emoji-mart/react'
 import { Icon } from '@rsuite/icons'
-import type { Entity, MegalodonInterface, Response } from '@cutls/megalodon'
 import { type Dispatch, type ReactElement, type SetStateAction, forwardRef, useContext, useRef, useState } from 'react'
 import { BsBookmark, BsEmojiSmile, BsEnvelope, BsFillBookmarkFill, BsLock, BsRepeat, BsReply, BsStar, BsStarFill, BsThreeDots } from 'react-icons/bs'
 import { FormattedMessage, useIntl } from 'react-intl'
@@ -16,15 +16,15 @@ import ActionButton from './ActionButton'
 
 type Props = {
 	disabled:
-	| boolean
-	| {
-		reply: boolean
-		reblog: boolean
-		favourite: boolean
-		bookmark: boolean
-		emoji: boolean
-		detail: boolean
-	}
+		| boolean
+		| {
+				reply: boolean
+				reblog: boolean
+				favourite: boolean
+				bookmark: boolean
+				emoji: boolean
+				detail: boolean
+		  }
 	server: Server
 	account: Account | null
 	status: Entity.Status

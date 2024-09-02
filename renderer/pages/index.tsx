@@ -1,9 +1,10 @@
 import dayjs from 'dayjs'
 import { type CSSProperties, useCallback, useContext, useEffect, useReducer, useRef, useState } from 'react'
-import { Animation, Container, Content, useToaster, DOMHelper } from 'rsuite'
+import { Animation, Container, Content, DOMHelper, useToaster } from 'rsuite'
 
 import Media from '@/components/Media'
 import Navigator from '@/components/Navigator'
+import Update from '@/components/Update'
 import AddListMember from '@/components/addListMember/AddListMember'
 import Announcements from '@/components/announcements/Announcements'
 import Compose from '@/components/compose/Compose'
@@ -18,6 +19,7 @@ import Thirdparty from '@/components/settings/Thirdparty'
 import NewTimeline from '@/components/timelines/New'
 import ShowTimeline from '@/components/timelines/Show'
 import alert from '@/components/utils/alert'
+import { TheDeskContext } from '@/context'
 import type { Account } from '@/entities/account'
 import type { Server, ServerSet } from '@/entities/server'
 import { Settings } from '@/entities/settings'
@@ -25,17 +27,15 @@ import type { Timeline } from '@/entities/timeline'
 import type { Unread } from '@/entities/unread'
 import { Context as i18nContext } from '@/i18n'
 import { ReceiveNotificationPayload } from '@/payload'
-import { TheDeskContext } from '@/context'
+import { ContextLoadTheme } from '@/theme'
 import generateNotification from '@/utils/notification'
 import { useWindowSize } from '@/utils/useWindowSize'
 import type { Entity, MegalodonInterface } from '@cutls/megalodon'
+import Head from 'next/head'
 import Draggable from 'react-draggable'
 import { useIntl } from 'react-intl'
 import { set } from 'rsuite/esm/utils/dateUtils'
 import { listServers, listTimelines, readSettings } from 'utils/storage'
-import { ContextLoadTheme } from '@/theme'
-import Head from 'next/head'
-import Update from '@/components/Update'
 
 const { scrollLeft } = DOMHelper
 
@@ -156,13 +156,13 @@ function App() {
 		}
 	}, [highlighted])
 
-	const handleKeyPress = useCallback(async (event: KeyboardEvent) => { }, [])
+	const handleKeyPress = useCallback(async (event: KeyboardEvent) => {}, [])
 
 	const loadAppearance = () => {
 		const lang = localStorage.getItem('lang') || window.navigator.language
 		readSettings(lang).then((res) => {
 			setStyle({
-				fontSize: res.appearance.font_size
+				fontSize: res.appearance.font_size,
 			})
 			switchLang(res.appearance.language)
 			dayjs.locale(res.appearance.language)

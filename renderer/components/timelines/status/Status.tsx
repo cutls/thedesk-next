@@ -1,15 +1,17 @@
 import Reply from '@/components/compose/Status'
 import Time from '@/components/utils/Time'
+import { TheDeskContext } from '@/context'
+import { TIMELINE_STATUSES_COUNT } from '@/defaults'
 import type { Account } from '@/entities/account'
 import type { CustomEmojiCategory } from '@/entities/emoji'
 import type { Server } from '@/entities/server'
 import type { ColumnWidth } from '@/entities/timeline'
 import emojify from '@/utils/emojify'
 import { open } from '@/utils/openBrowser'
-import { type ParsedAccount, accountMatch, findAccount, findLink, findTag, privacyIcon, privacyColor } from '@/utils/statusParser'
-import { Icon } from '@rsuite/icons'
+import { type ParsedAccount, accountMatch, findAccount, findLink, findTag, privacyColor, privacyIcon } from '@/utils/statusParser'
 import type { Entity, MegalodonInterface } from '@cutls/megalodon'
-import { type HTMLAttributes, type MouseEventHandler, useEffect, useState, useContext } from 'react'
+import { Icon } from '@rsuite/icons'
+import { type HTMLAttributes, type MouseEventHandler, useContext, useEffect, useState } from 'react'
 import { BsArrowRepeat, BsPin } from 'react-icons/bs'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Avatar, Button, FlexboxGrid, Notification, useToaster } from 'rsuite'
@@ -17,8 +19,6 @@ import Actions from './Actions'
 import Attachments from './Attachments'
 import Body from './Body'
 import Poll from './Poll'
-import { TheDeskContext } from '@/context'
-import { TIMELINE_STATUSES_COUNT } from '@/defaults'
 
 type Props = {
 	status: Entity.Status
@@ -39,9 +39,9 @@ type Props = {
 	filters?: Array<Entity.Filter>
 } & HTMLAttributes<HTMLElement>
 const stripForSpoil = (html: string) => {
-	const div = document.createElement("div")
+	const div = document.createElement('div')
 	div.innerHTML = html
-	const text = div.textContent || div.innerText || ""
+	const text = div.textContent || div.innerText || ''
 	const protomatch = /(https?|ftp):\/\//g
 	const b = text.replace(protomatch, '').replace(/:[a-zA-Z0-9_]:/g, '')
 	return b
@@ -174,10 +174,7 @@ const Status: React.FC<Props> = (props) => {
 					<div className="metadata">
 						<FlexboxGrid>
 							{/** account name **/}
-							<FlexboxGrid.Item
-								colspan={18}
-								style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
-							>
+							<FlexboxGrid.Item colspan={18} style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
 								<span dangerouslySetInnerHTML={{ __html: emojify(status.account.display_name, status.account.emojis) }} />
 								<span style={{ color: 'var(--rs-text-tertiary)' }}>@{status.account.acct}</span>
 							</FlexboxGrid.Item>

@@ -1,14 +1,11 @@
-import { Icon } from '@rsuite/icons'
 import type { Entity } from '@cutls/megalodon'
+import { Icon } from '@rsuite/icons'
+import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import { type ReactElement, useCallback, useEffect, useState } from 'react'
 import { BsChevronLeft, BsChevronRight } from 'react-icons/bs'
 import { Button, FlexboxGrid, Modal } from 'rsuite'
-import dynamic from 'next/dynamic'
-const Viewer = dynamic(
-	() => import('react-viewer'),
-	{ ssr: false }
-)
+const Viewer = dynamic(() => import('react-viewer'), { ssr: false })
 
 type Props = {
 	index: number
@@ -24,12 +21,7 @@ const Media: React.FC<Props> = (props) => {
 		const srcs = media.map((m) => {
 			return { src: m.url }
 		})
-		return <Viewer
-			onClose={() => props.close()}
-			onMaskClick={() => props.close()}
-			visible={true}
-			images={srcs}
-		/>
+		return <Viewer onClose={() => props.close()} onMaskClick={() => props.close()} visible={true} images={srcs} />
 	}
 	const [index, setIndex] = useState<number>(0)
 

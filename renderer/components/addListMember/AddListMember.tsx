@@ -1,7 +1,7 @@
 import { TheDeskContext } from '@/context'
 import emojify from '@/utils/emojify'
-import { Icon } from '@rsuite/icons'
 import type { Entity, MegalodonInterface } from '@cutls/megalodon'
+import { Icon } from '@rsuite/icons'
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { BsListUl, BsPlusLg, BsXLg } from 'react-icons/bs'
 import { Avatar, Button, FlexboxGrid, List, Modal } from 'rsuite'

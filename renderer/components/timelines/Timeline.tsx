@@ -1,5 +1,5 @@
-import { Icon } from '@rsuite/icons'
 import generator, { type Entity, type MegalodonInterface } from '@cutls/megalodon'
+import { Icon } from '@rsuite/icons'
 import parse from 'parse-link-header'
 import { type CSSProperties, forwardRef, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { BsArrowClockwise, BsBookmark, BsChevronLeft, BsChevronRight, BsGlobe2, BsHash, BsHouseDoor, BsListUl, BsPeople, BsSliders, BsStar, BsX } from 'react-icons/bs'
@@ -7,13 +7,13 @@ import { Virtuoso } from 'react-virtuoso'
 import { Avatar, Button, Container, Content, Divider, Dropdown, FlexboxGrid, Header, List, Loader, Popover, Radio, RadioGroup, Stack, Whisper, useToaster } from 'rsuite'
 
 import alert from '@/components/utils/alert'
+import { TheDeskContext } from '@/context'
 import { TIMELINE_MAX_STATUSES, TIMELINE_STATUSES_COUNT } from '@/defaults'
 import type { Account } from '@/entities/account'
 import type { CustomEmojiCategory } from '@/entities/emoji'
 import { Instruction } from '@/entities/instruction'
 import type { Server } from '@/entities/server'
-import { Color, type Timeline, type TimelineKind, colorList, columnWidth as columnWidthCalc, type ColumnWidth, columnWidthSet } from '@/entities/timeline'
-import { ResizableBox } from 'react-resizable'
+import { Color, type ColumnWidth, type Timeline, type TimelineKind, colorList, columnWidth as columnWidthCalc, columnWidthSet } from '@/entities/timeline'
 import type {
 	DeleteHomeStatusPayload,
 	DeleteTimelineStatusPayload,
@@ -22,12 +22,12 @@ import type {
 	ReceiveTimelineStatusPayload,
 	ReceiveTimelineStatusUpdatePayload,
 } from '@/payload'
-import { TheDeskContext } from '@/context'
 import { mapCustomEmojiCategory } from '@/utils/emojiData'
 import FailoverImg from '@/utils/failoverImg'
 import timelineName from '@/utils/timelineName'
 import { useRouter } from 'next/router'
 import { FormattedMessage, useIntl } from 'react-intl'
+import { ResizableBox } from 'react-resizable'
 import { getAccount, removeTimeline, updateColumnColor, updateColumnMediaOnly, updateColumnOrder, updateColumnTts, updateColumnWidth } from 'utils/storage'
 import Status from './status/Status'
 
@@ -98,19 +98,23 @@ export default function TimelineColumn(props: Props) {
 		setColumnWidth(columnWidthCalc(props.timeline.column_width))
 
 		if (props.timeline.kind === 'home') {
-			listen<ReceiveHomeStatusPayload>('receive-home-status', (ev) => {
-				console.log(ev.payload.server_id, props.server.id)
-				if (ev.payload.server_id !== props.server.id) {
-					return
-				}
+			listen<ReceiveHomeStatusPayload>(
+				'receive-home-status',
+				(ev) => {
+					console.log(ev.payload.server_id, props.server.id)
+					if (ev.payload.server_id !== props.server.id) {
+						return
+					}
 
-				if (replyOpened.current || (scrollerRef.current && scrollerRef.current.scrollTop > 10)) {
-					setUnreadStatuses((last) => prependStatus(last, ev.payload.status))
-					return
-				}
+					if (replyOpened.current || (scrollerRef.current && scrollerRef.current.scrollTop > 10)) {
+						setUnreadStatuses((last) => prependStatus(last, ev.payload.status))
+						return
+					}
 
-				setStatuses((last) => appendStatus(last, ev.payload.status))
-			}, props.timeline.tts)
+					setStatuses((last) => appendStatus(last, ev.payload.status))
+				},
+				props.timeline.tts,
+			)
 
 			listen<ReceiveHomeStatusUpdatePayload>('receive-home-status-update', (ev) => {
 				console.log('receive-home-status-update', ev.payload.server_id, props.server.id)
@@ -130,18 +134,22 @@ export default function TimelineColumn(props: Props) {
 				setStatuses((last) => deleteStatus(last, ev.payload.status_id))
 			})
 		} else {
-			listen<ReceiveTimelineStatusPayload>('receive-timeline-status', (ev) => {
-				if (ev.payload.timeline_id !== props.timeline.id) {
-					return
-				}
+			listen<ReceiveTimelineStatusPayload>(
+				'receive-timeline-status',
+				(ev) => {
+					if (ev.payload.timeline_id !== props.timeline.id) {
+						return
+					}
 
-				if (replyOpened.current || (scrollerRef.current && scrollerRef.current.scrollTop > 10)) {
-					setUnreadStatuses((last) => prependStatus(last, ev.payload.status))
-					return
-				}
+					if (replyOpened.current || (scrollerRef.current && scrollerRef.current.scrollTop > 10)) {
+						setUnreadStatuses((last) => prependStatus(last, ev.payload.status))
+						return
+					}
 
-				setStatuses((last) => appendStatus(last, ev.payload.status))
-			}, props.timeline.tts)
+					setStatuses((last) => appendStatus(last, ev.payload.status))
+				},
+				props.timeline.tts,
+			)
 
 			listen<ReceiveTimelineStatusUpdatePayload>('receive-timeline-status-update', (ev) => {
 				if (ev.payload.timeline_id !== props.timeline.id) {
@@ -279,7 +287,8 @@ export default function TimelineColumn(props: Props) {
 		const renew = current.map((s) => {
 			if (s.id === status.id) {
 				return status
-			} if (s.reblog && s.reblog.id === status.id) {
+			}
+			if (s.reblog && s.reblog.id === status.id) {
 				return Object.assign({}, s, { reblog: status })
 			}
 			if (status.reblog && s.id === status.reblog.id) {
@@ -377,7 +386,14 @@ export default function TimelineColumn(props: Props) {
 	}
 
 	return (
-		<ResizableBox width={columnWidth} height={0} axis="x" style={{ margin: '0 4px', minHeight: '100%', flexShrink: 0, width: columnWidth }} resizeHandles={['e']} onResizeStop={(_, e) => columnWidthSet(e.size.width)}>
+		<ResizableBox
+			width={columnWidth}
+			height={0}
+			axis="x"
+			style={{ margin: '0 4px', minHeight: '100%', flexShrink: 0, width: columnWidth }}
+			resizeHandles={['e']}
+			onResizeStop={(_, e) => columnWidthSet(e.size.width)}
+		>
 			<Container style={{ height: '100%' }}>
 				<Header style={headerStyle}>
 					<FlexboxGrid align="middle" justify="space-between">
@@ -487,26 +503,35 @@ export default function TimelineColumn(props: Props) {
 								defaultItemHeight={44}
 								itemContent={(_, status) => {
 									if (props.timeline.mediaOnly && status.media_attachments.length === 0) return null
-									if (filters?.map((f) => [f.phrase, f.irreversible] as [string, boolean]).findIndex(([keyword, irreversible]) => irreversible ? status.content.toLowerCase().includes(keyword.toLowerCase()) : false) > 0) return null
-									return <List.Item key={status.id} style={{ paddingTop: '2px', paddingBottom: '2px', backgroundColor: 'var(--rs-bg-well)' }}>
-										<Status
-											status={status}
-											client={client}
-											server={props.server}
-											account={account}
-											columnWidth={columnWidth}
-											updateStatus={(status) => setStatuses((current) => updateStatus(current, status))}
-											openMedia={props.openMedia}
-											setReplyOpened={(opened) => { replyOpened.current = opened }}
-											setStatusDetail={setStatusDetail}
-											setAccountDetail={setAccountDetail}
-											setTagDetail={setTagDetail}
-											openReport={props.openReport}
-											openFromOtherAccount={props.openFromOtherAccount}
-											customEmojis={customEmojis}
-											filters={filters}
-										/>
-									</List.Item>
+									if (
+										filters
+											?.map((f) => [f.phrase, f.irreversible] as [string, boolean])
+											.findIndex(([keyword, irreversible]) => (irreversible ? status.content.toLowerCase().includes(keyword.toLowerCase()) : false)) > 0
+									)
+										return null
+									return (
+										<List.Item key={status.id} style={{ paddingTop: '2px', paddingBottom: '2px', backgroundColor: 'var(--rs-bg-well)' }}>
+											<Status
+												status={status}
+												client={client}
+												server={props.server}
+												account={account}
+												columnWidth={columnWidth}
+												updateStatus={(status) => setStatuses((current) => updateStatus(current, status))}
+												openMedia={props.openMedia}
+												setReplyOpened={(opened) => {
+													replyOpened.current = opened
+												}}
+												setStatusDetail={setStatusDetail}
+												setAccountDetail={setAccountDetail}
+												setTagDetail={setTagDetail}
+												openReport={props.openReport}
+												openFromOtherAccount={props.openFromOtherAccount}
+												customEmojis={customEmojis}
+												filters={filters}
+											/>
+										</List.Item>
+									)
 								}}
 							/>
 						</List>
@@ -580,7 +605,14 @@ const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: ()
 					<Stack wrap spacing={6} style={{ maxWidth: '250px', padding: '5px' }}>
 						<Button style={{ textTransform: 'capitalize', width: '30px', height: '30px' }} className="colorChangeBtn" onClick={() => updateColumnColorFn(props.timeline, 'unset')} />
 						{colorList.map((c) => (
-							<Button appearance="primary" className="colorChangeBtn" key={c} color={c} style={{ textTransform: 'capitalize', width: '30px', height: '30px' }} onClick={() => updateColumnColorFn(props.timeline, c)} />
+							<Button
+								appearance="primary"
+								className="colorChangeBtn"
+								key={c}
+								color={c}
+								style={{ textTransform: 'capitalize', width: '30px', height: '30px' }}
+								onClick={() => updateColumnColorFn(props.timeline, c)}
+							/>
 						))}
 					</Stack>
 				</FlexboxGrid>
@@ -589,16 +621,24 @@ const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: ()
 					<FormattedMessage id="timeline.settings.media_only" />
 				</label>
 				<RadioGroup inline value={props.timeline?.mediaOnly?.toString() || 'false'} onChange={(value) => updateColumnMediaOnlyFn(props.timeline, value === 'true')}>
-					<Radio value="false"><FormattedMessage id="timeline.settings.not_do" /></Radio>
-					<Radio value="true"><FormattedMessage id="timeline.settings.do" /></Radio>
+					<Radio value="false">
+						<FormattedMessage id="timeline.settings.not_do" />
+					</Radio>
+					<Radio value="true">
+						<FormattedMessage id="timeline.settings.do" />
+					</Radio>
 				</RadioGroup>
 				<Divider style={{ margin: '8px 0' }} />
 				<label>
 					<FormattedMessage id="timeline.settings.tts" />
 				</label>
 				<RadioGroup inline value={props.timeline?.tts?.toString() || 'false'} onChange={(value) => updateColumnTtsFn(props.timeline, value === 'true')}>
-					<Radio value="false"><FormattedMessage id="timeline.settings.not_do" /></Radio>
-					<Radio value="true"><FormattedMessage id="timeline.settings.do" /></Radio>
+					<Radio value="false">
+						<FormattedMessage id="timeline.settings.not_do" />
+					</Radio>
+					<Radio value="true">
+						<FormattedMessage id="timeline.settings.do" />
+					</Radio>
 				</RadioGroup>
 				<Divider style={{ margin: '8px 0' }} />
 				<FlexboxGrid justify="space-between">

@@ -1,20 +1,20 @@
-import { Icon } from '@rsuite/icons'
 import generator, { type MegalodonInterface, type Entity } from '@cutls/megalodon'
-import { type Dispatch, type SetStateAction, forwardRef, useCallback, useContext, useEffect, useRef, useState, type CSSProperties } from 'react'
+import { Icon } from '@rsuite/icons'
+import { type CSSProperties, type Dispatch, type SetStateAction, forwardRef, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { BsArrowClockwise, BsBell, BsCheck2, BsChevronLeft, BsChevronRight, BsSliders, BsX } from 'react-icons/bs'
 import { Virtuoso } from 'react-virtuoso'
 import { Avatar, Button, Container, Content, Divider, Dropdown, FlexboxGrid, Header, List, Loader, Popover, Radio, RadioGroup, Stack, Whisper, useToaster } from 'rsuite'
 
 import alert from '@/components/utils/alert'
+import { TheDeskContext } from '@/context'
 import { TIMELINE_MAX_STATUSES, TIMELINE_STATUSES_COUNT } from '@/defaults'
 import type { Account } from '@/entities/account'
 import type { CustomEmojiCategory } from '@/entities/emoji'
 import type { Marker } from '@/entities/marker'
 import type { Server } from '@/entities/server'
-import { type Timeline, colorList, columnWidth as columnWidthCalc, type ColumnWidth, columnWidthSet } from '@/entities/timeline'
+import { type ColumnWidth, type Timeline, colorList, columnWidth as columnWidthCalc, columnWidthSet } from '@/entities/timeline'
 import type { Unread } from '@/entities/unread'
 import type { ReceiveNotificationPayload } from '@/payload'
-import { TheDeskContext } from '@/context'
 import { mapCustomEmojiCategory } from '@/utils/emojiData'
 import FailoverImg from '@/utils/failoverImg'
 import timelineName from '@/utils/timelineName'
@@ -54,31 +54,30 @@ const Notifications: React.FC<Props> = (props) => {
 	const toast = useToaster()
 	const router = useRouter()
 
-
-const actionText = (notification: Entity.Notification) => {
-	const useName = notification.account.display_name || notification.account.username
-	switch (notification.type) {
-		case 'favourite':
-			return formatMessage({ id: 'timeline.notification.favourite.body' }, { user: useName })
-		case 'reblog':
-			return formatMessage({ id: 'timeline.notification.reblog.body' }, { user: useName })
-		case 'poll_expired':
-			return formatMessage({ id: 'timeline.notification.poll_expired.body' }, { user: useName })
-		case 'poll_vote':
-			return formatMessage({ id: 'timeline.notification.poll_vote.body' }, { user: useName })
-		case 'quote':
-			return formatMessage({ id: 'timeline.notification.quote.body' }, { user: useName })
-		case 'status':
-			return formatMessage({ id: 'timeline.notification.status.body' }, { user: useName })
-		case 'update':
-			return formatMessage({ id: 'timeline.notification.update.body' }, { user: useName })
-		case 'emoji_reaction':
-		case 'reaction':
-			return formatMessage({ id: 'timeline.notification.emoji_reaction.body' }, { user: useName })
-		default:
-			return null
+	const actionText = (notification: Entity.Notification) => {
+		const useName = notification.account.display_name || notification.account.username
+		switch (notification.type) {
+			case 'favourite':
+				return formatMessage({ id: 'timeline.notification.favourite.body' }, { user: useName })
+			case 'reblog':
+				return formatMessage({ id: 'timeline.notification.reblog.body' }, { user: useName })
+			case 'poll_expired':
+				return formatMessage({ id: 'timeline.notification.poll_expired.body' }, { user: useName })
+			case 'poll_vote':
+				return formatMessage({ id: 'timeline.notification.poll_vote.body' }, { user: useName })
+			case 'quote':
+				return formatMessage({ id: 'timeline.notification.quote.body' }, { user: useName })
+			case 'status':
+				return formatMessage({ id: 'timeline.notification.status.body' }, { user: useName })
+			case 'update':
+				return formatMessage({ id: 'timeline.notification.update.body' }, { user: useName })
+			case 'emoji_reaction':
+			case 'reaction':
+				return formatMessage({ id: 'timeline.notification.emoji_reaction.body' }, { user: useName })
+			default:
+				return null
+		}
 	}
-}
 
 	useEffect(() => {
 		const f = async () => {
@@ -108,7 +107,7 @@ const actionText = (notification: Entity.Notification) => {
 				updateMarker(cli)
 				if (timelineConfig.notification !== 'no') {
 					new window.Notification(`TheDesk: ${account.username}@${props.server.domain}`, {
-						body: actionText(ev.payload.notification)
+						body: actionText(ev.payload.notification),
 					})
 				}
 				if (replyOpened.current || (scrollerRef.current && scrollerRef.current.scrollTop > 10)) {
@@ -298,8 +297,15 @@ const actionText = (notification: Entity.Notification) => {
 	}
 
 	return (
-
-		<ResizableBox width={columnWidth} height={0} axis="x" style={{ margin: '0 4px', minHeight: '100%', flexShrink: 0, width: columnWidth }} resizeHandles={['e']} onResizeStop={(_, e) => columnWidthSet(e.size.width)} className={`timeline notifications notification${props.timeline.id}`}>
+		<ResizableBox
+			width={columnWidth}
+			height={0}
+			axis="x"
+			style={{ margin: '0 4px', minHeight: '100%', flexShrink: 0, width: columnWidth }}
+			resizeHandles={['e']}
+			onResizeStop={(_, e) => columnWidthSet(e.size.width)}
+			className={`timeline notifications notification${props.timeline.id}`}
+		>
 			<Container style={{ height: '100%' }}>
 				<Header style={headerStyle}>
 					<FlexboxGrid align="middle" justify="space-between">
@@ -414,7 +420,9 @@ const actionText = (notification: Entity.Notification) => {
 												columnWidth={columnWidth}
 												updateStatus={updateStatus}
 												openMedia={props.openMedia}
-												setReplyOpened={(opened) => {replyOpened.current = opened}}
+												setReplyOpened={(opened) => {
+													replyOpened.current = opened
+												}}
 												setStatusDetail={setStatusDetail}
 												setAccountDetail={setAccountDetail}
 												setTagDetail={setTagDetail}
@@ -488,7 +496,14 @@ const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: ()
 					<Stack wrap spacing={6} style={{ maxWidth: '250px', padding: '5px' }}>
 						<Button style={{ textTransform: 'capitalize', width: '30px', height: '30px' }} className="colorChangeBtn" onClick={() => updateColumnColorFn(props.timeline, 'unset')} />
 						{colorList.map((c) => (
-							<Button appearance="primary" key={c} color={c} className="colorChangeBtn" style={{ textTransform: 'capitalize', width: '30px', height: '30px' }} onClick={() => updateColumnColorFn(props.timeline, c)} />
+							<Button
+								appearance="primary"
+								key={c}
+								color={c}
+								className="colorChangeBtn"
+								style={{ textTransform: 'capitalize', width: '30px', height: '30px' }}
+								onClick={() => updateColumnColorFn(props.timeline, c)}
+							/>
 						))}
 					</Stack>
 				</FlexboxGrid>

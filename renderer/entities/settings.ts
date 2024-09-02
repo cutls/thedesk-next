@@ -5,17 +5,17 @@ export type Settings = {
 		font_size: number
 		language: localeType
 		color_theme: ThemeType
-	},
+	}
 	timeline: {
 		time: 'relative' | 'absolute' | '12h'
 		animation: FormBoolean
 		max_length: number
 		notification: FormBoolean
-	},
+	}
 	compose: {
-		btnPosition: 'left' | 'right',
-		afterPost: 'close' | 'stay',
-		secondaryToot: 'no' | "public" | "unlisted" | "private" | "direct"
+		btnPosition: 'left' | 'right'
+		afterPost: 'close' | 'stay'
+		secondaryToot: 'no' | 'public' | 'unlisted' | 'private' | 'direct'
 	}
 }
 
@@ -31,11 +31,11 @@ export const defaultSetting: Settings = {
 		time: 'relative',
 		animation: 'yes',
 		max_length: 0,
-		notification: 'yes'
+		notification: 'yes',
 	},
 	compose: {
 		btnPosition: 'right',
 		afterPost: 'close',
-		secondaryToot: 'no'
-	}
+		secondaryToot: 'no',
+	},
 }

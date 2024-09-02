@@ -1,8 +1,8 @@
 import Time from '@/components/utils/Time'
 import { TheDeskContext } from '@/context'
 import emojify from '@/utils/emojify'
-import { Icon } from '@rsuite/icons'
 import type { Entity } from '@cutls/megalodon'
+import { Icon } from '@rsuite/icons'
 import { useContext } from 'react'
 import { BsBag } from 'react-icons/bs'
 import { useIntl } from 'react-intl'
@@ -36,12 +36,7 @@ export default function Move(props: Props) {
 			<div style={{ display: 'flex' }}>
 				<div style={{ width: '56px' }}>
 					<div style={{ margin: '6px' }}>
-						<Avatar
-							src={avatar}
-							onClick={() => props.setAccountDetail(props.notification.target)}
-							title={props.notification.target.acct}
-							alt={props.notification.target.acct}
-						/>
+						<Avatar src={avatar} onClick={() => props.setAccountDetail(props.notification.target)} title={props.notification.target.acct} alt={props.notification.target.acct} />
 					</div>
 				</div>
 				<div style={{ paddingRight: '8px', overflowWrap: 'break-word' }}>

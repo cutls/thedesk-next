@@ -1,8 +1,8 @@
 import Time from '@/components/utils/Time'
 import { TheDeskContext } from '@/context'
 import emojify from '@/utils/emojify'
-import { Icon } from '@rsuite/icons'
 import type { Entity } from '@cutls/megalodon'
+import { Icon } from '@rsuite/icons'
 import { useContext } from 'react'
 import { BsPersonPlus } from 'react-icons/bs'
 import { useIntl } from 'react-intl'
@@ -63,12 +63,7 @@ const Follow: React.FC<Props> = (props) => {
 			<div style={{ display: 'flex' }}>
 				<div style={{ width: '56px' }}>
 					<div style={{ margin: '6px' }}>
-						<Avatar
-							src={avatar}
-							onClick={() => props.setAccountDetail(props.notification.account)}
-							title={props.notification.account.acct}
-							alt={props.notification.account.acct}
-						/>
+						<Avatar src={avatar} onClick={() => props.setAccountDetail(props.notification.account)} title={props.notification.account.acct} alt={props.notification.account.acct} />
 					</div>
 				</div>
 				<div style={{ paddingRight: '8px', overflowWrap: 'break-word' }}>

@@ -1,10 +1,11 @@
-import { Icon } from '@rsuite/icons'
 import generator, { type Entity, type MegalodonInterface } from '@cutls/megalodon'
+import { Icon } from '@rsuite/icons'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useState } from 'react'
 import { BsChevronLeft, BsX } from 'react-icons/bs'
 import { Button, Content, FlexboxGrid, Header, List } from 'rsuite'
 
+import { TIMELINE_STATUSES_COUNT } from '@/defaults'
 import type { Account } from '@/entities/account'
 import type { CustomEmojiCategory } from '@/entities/emoji'
 import type { Server } from '@/entities/server'
@@ -12,7 +13,6 @@ import { mapCustomEmojiCategory } from '@/utils/emojiData'
 import { getAccount, getServer } from '@/utils/storage'
 import { FormattedMessage, useIntl } from 'react-intl'
 import Status from '../timelines/status/Status'
-import { TIMELINE_STATUSES_COUNT } from '@/defaults'
 
 type Props = {
 	openMedia: (media: Array<Entity.Attachment>, index: number) => void
@@ -58,7 +58,7 @@ const StatusDetail: React.FC<Props> = (props) => {
 				setDescendants([])
 				const res = await cli.getStatus(router.query.status_id.toString())
 				setStatus(res.data)
-				const c = await cli.getStatusContext(router.query.status_id as string, { limit: TIMELINE_STATUSES_COUNT})
+				const c = await cli.getStatusContext(router.query.status_id as string, { limit: TIMELINE_STATUSES_COUNT })
 				setAncestors(c.data.ancestors)
 				setDescendants(c.data.descendants)
 			} else {

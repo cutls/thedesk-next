@@ -1,13 +1,14 @@
 import Reply from '@/components/compose/Status'
 import Time from '@/components/utils/Time'
+import { TIMELINE_STATUSES_COUNT } from '@/defaults'
 import type { Account } from '@/entities/account'
 import type { CustomEmojiCategory } from '@/entities/emoji'
 import type { Server } from '@/entities/server'
 import emojify from '@/utils/emojify'
 import { open } from '@/utils/openBrowser'
 import { type ParsedAccount, accountMatch, findAccount, findLink, findTag } from '@/utils/statusParser'
-import { Icon } from '@rsuite/icons'
 import type { Entity, MegalodonInterface } from '@cutls/megalodon'
+import { Icon } from '@rsuite/icons'
 import { type MouseEventHandler, useState } from 'react'
 import { BsArrowRepeat, BsHouseDoor, BsMenuUp, BsPaperclip, BsPencil, BsStar } from 'react-icons/bs'
 import { useIntl } from 'react-intl'
@@ -15,7 +16,6 @@ import { Avatar, Button, FlexboxGrid, Notification, toaster } from 'rsuite'
 import Actions from '../status/Actions'
 import Body from '../status/Body'
 import Poll from '../status/Poll'
-import { TIMELINE_STATUSES_COUNT } from '@/defaults'
 
 type Props = {
 	server: Server
@@ -306,7 +306,7 @@ async function searchAccount(account: ParsedAccount, status: Entity.Status, clie
 		}
 	}
 	if (status.in_reply_to_id) {
-		const res = await client.getStatusContext(status.id, { limit: TIMELINE_STATUSES_COUNT})
+		const res = await client.getStatusContext(status.id, { limit: TIMELINE_STATUSES_COUNT })
 		if (res.status === 200) {
 			const accounts: Array<Entity.Account> = res.data.ancestors.map((s) => s.account).concat(res.data.descendants.map((s) => s.account))
 			const user = accountMatch(accounts, account, server.domain)
