@@ -23,18 +23,21 @@ let mainWindow: BrowserWindow | null = null
 const appDataPath = join(app.getPath('appData'), app.getName())
 const configPath = join(appDataPath, 'config.json')
 let config: SystemConfig = defaultConfig
-if (!fs.existsSync(configPath)) {
-	fs.writeFileSync(configPath, JSON.stringify(defaultConfig))
-} else {
-	try  {
-		const data = fs.readFileSync(configPath)
-		config = JSON.parse(data.toString())
-		if (!config.hardwareAcceleration) app.disableHardwareAcceleration()
-	} catch {
-		console.error('config.json is corrupted')
+try {
+	if (!fs.existsSync(appDataPath) || !fs.existsSync(configPath)) {
+		fs.writeFileSync(configPath, JSON.stringify(defaultConfig))
+	} else {
+		try {
+			const data = fs.readFileSync(configPath)
+			config = JSON.parse(data.toString())
+			if (!config.hardwareAcceleration) app.disableHardwareAcceleration()
+		} catch {
+			console.error('config.json is corrupted')
+		}
 	}
+} catch {
+	console.error('Failed to read config.json')
 }
-
 app.on('ready', async () => {
 	console.log('start')
 	await prepareNext('./renderer')
@@ -60,10 +63,10 @@ app.on('ready', async () => {
 	const url = isDev
 		? 'http://localhost:8000/'
 		: format({
-				pathname: join(__dirname, '../renderer/out/index.html'),
-				protocol: 'file:',
-				slashes: true,
-			})
+			pathname: join(__dirname, '../renderer/out/index.html'),
+			protocol: 'file:',
+			slashes: true,
+		})
 
 	mainWindow.loadURL(url)
 	windowState.manage(mainWindow)
