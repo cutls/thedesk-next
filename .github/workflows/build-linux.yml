@@ -20,12 +20,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/setup-node@v2
+    - run: corepack enable
+    - uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
-    - uses: pnpm/action-setup@v2.2.2
-      with:
-        version: 8.6.10
+        cache: "pnpm"
     - run: pnpm install --shamefully-hoist --no-frozen-lockfile
     - run: pnpm run build
     - run: pnpm run pack:linux
