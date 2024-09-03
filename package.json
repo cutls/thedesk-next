@@ -1,14 +1,15 @@
 {
 	"private": true,
-	"main": "main-build/electron-src/index.js",
+	"main": "main-build/index.js",
 	"name": "thedesk-next",
 	"author": {
 		"name": "cutls",
 		"email": "p@cutls.dev",
 		"url": "https://cutls.dev"
 	},
-	"version": "25.0.6",
+	"version": "25.0.7",
 	"codename": "Aiko",
+	 "packageManager": "pnpm@9.9.0",
 	"scripts": {
 		"clean": "rimraf dist main renderer/out renderer/.next",
 		"dev": "npm run build-electron && electron .",
