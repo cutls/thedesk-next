@@ -4,6 +4,7 @@
 name: Linux build
 
 on:
+  workflow_dispatch:
   release:
     types:
       - created
