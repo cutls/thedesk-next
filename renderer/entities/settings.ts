@@ -11,6 +11,8 @@ export type Settings = {
 		animation: FormBoolean
 		max_length: number
 		notification: FormBoolean
+		ttsProvider: 'system' | 'bouyomi'
+		ttsPort: number
 	}
 	compose: {
 		btnPosition: 'left' | 'right'
@@ -32,6 +34,8 @@ export const defaultSetting: Settings = {
 		animation: 'yes',
 		max_length: 0,
 		notification: 'yes',
+		ttsProvider: 'system',
+		ttsPort: 50080,
 	},
 	compose: {
 		btnPosition: 'right',

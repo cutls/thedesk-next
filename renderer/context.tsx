@@ -86,12 +86,17 @@ export const TheDeskProviderWrapper: React.FC = (props) => {
 				const streaming = useStreaming[i][1]
 				if (!streaming) continue
 				streaming.on('update', (status) => {
+					const isBouyomi = timelineConfig.ttsProvider === 'bouyomi'
 					if (tts) {
 						const html = status.content
 						const b = stripForVoice(html)
-						const synthApi = window.speechSynthesis
-						const utter = new SpeechSynthesisUtterance(b)
-						synthApi.speak(utter)
+						if (isBouyomi) {
+							fetch(`http://localhost:${timelineConfig.ttsPort}/Talk?text=${encodeURIComponent(b)}`)
+						} else {
+							const synthApi = window.speechSynthesis
+							const utter = new SpeechSynthesisUtterance(b)
+							synthApi.speak(utter)
+						}
 					}
 					callback({ payload: { status: status, timeline_id: useStreaming[i][0] } })
 				})

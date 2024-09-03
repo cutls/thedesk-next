@@ -124,7 +124,14 @@
 				"max_length": "表示する最大文字数",
 				"max_length_hint": "0 で制限なし。設定した以上の長さの投稿は自動的に隠されます。",
 				"max_length_unit": "字",
-				"notification": "デスクトップ通知"
+				"notification": "デスクトップ通知",
+				"ttsProvider": {
+					"title": "TTSのプロバイダ",
+					"hint": "棒読みちゃん連携を利用する場合はHTTP連携を利用します",
+					"system": "システム標準",
+					"bouyomi": "棒読みちゃん"
+				},
+				"ttsPort": "棒読みちゃん HTTPポート"
 			},
 			"compose": {
 				"title": "投稿",

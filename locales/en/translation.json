@@ -124,7 +124,14 @@
 				"max_length": "Max length of post to show",
 				"max_length_hint": "Unlimit: 0 Posts longer than the set length will be automatically hidden.",
 				"max_length_unit": "Letters",
-				"notification": "Desktop notification"
+				"notification": "Desktop notification",
+				"ttsProvider": {
+					"title": "TTS Provider",
+					"hint": "If you want to use Bouyomi-chan, please install Bouyomi-chan and set up HTTP server.",
+					"system": "System",
+					"bouyomi": "Bouyomi-chan"
+				},
+				"ttsPort": " HTTP Port"
 			},
 			"compose": {
 				"title": "Compose",

@@ -16,6 +16,7 @@ import { Icon } from '@rsuite/icons'
 import { BsCheck2, BsChevronLeft } from 'react-icons/bs'
 import { useRouter } from 'next/router'
 import { nowplayingDisconnect } from '@/utils/nowplaying'
+import RadioForm from '@/components/settings/form/RadioForm'
 const languages = [
     {
         label: 'English',
@@ -136,6 +137,8 @@ function App() {
                     <RadioBoolean label={formatMessage({ id: 'settings.settings.timeline.animation' })} value={timelineConfig.animation} onChange={(value) => updateTimeline('animation', value)} />
                     <NumberForm label={formatMessage({ id: 'settings.settings.timeline.max_length' })} hint={formatMessage({ id: 'settings.settings.timeline.max_length_hint' })} value={timelineConfig.max_length} onChange={(value) => updateTimeline('max_length', value)} min={0} max={100} step={1} unit={formatMessage({ id: 'settings.settings.timeline.max_length_unit' })} />
                     <RadioBoolean label={formatMessage({ id: 'settings.settings.timeline.notification' })} value={timelineConfig.notification} onChange={(value) => updateTimeline('notification', value)} />
+                    <RadioForm label={formatMessage({ id: 'settings.settings.timeline.ttsProvider.title' })} hint={formatMessage({ id: 'settings.settings.timeline.ttsProvider.hint' })} value={timelineConfig.ttsProvider} onChange={(value) => updateTimeline('ttsProvider', value)} data={labelValueBuilder('timeline.ttsProvider', ['system', 'bouyomi'])} />
+                    {timelineConfig.ttsProvider === 'bouyomi' && <NumberForm label={formatMessage({ id: 'settings.settings.timeline.ttsPort' })} value={timelineConfig.ttsPort} onChange={(value) => updateTimeline('ttsPort', value)} min={5000} max={65535} step={1} unit="" />}
                     <Divider />
                     <Text style={{ fontSize: 24, marginTop: 12, fontWeight: 'bold' }}><FormattedMessage id="settings.settings.compose.title" /></Text>
                     <SelectForm label={formatMessage({ id: 'settings.settings.compose.btnPosition.title' })} value={compose.btnPosition} onChange={(value) => updateCompose('btnPosition', value)} data={labelValueBuilder('compose.btnPosition', btnPosition)} searchable={false} style={{ width: '100%' }} />
