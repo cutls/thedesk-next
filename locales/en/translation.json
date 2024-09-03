@@ -127,6 +127,7 @@
 				"max_length_hint": "Unlimit: 0 Posts longer than the set length will be automatically hidden.",
 				"max_length_unit": "Letters",
 				"notification": "Desktop notification",
+				"notification_hint": "Notifications are only displayed when there is a notification column for that account.",
 				"ttsProvider": {
 					"title": "TTS Provider",
 					"hint": "If you want to use Bouyomi-chan, please install Bouyomi-chan and set up HTTP server.",

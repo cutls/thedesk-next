@@ -127,6 +127,7 @@
 				"max_length_hint": "0 で制限なし。設定した以上の長さの投稿は自動的に隠されます。",
 				"max_length_unit": "字",
 				"notification": "デスクトップ通知",
+				"notification_hint": "通知はそのアカウントの通知カラムがある時のみ表示されます。",
 				"ttsProvider": {
 					"title": "TTSのプロバイダ",
 					"hint": "棒読みちゃん連携を利用する場合はHTTP連携を利用します",
