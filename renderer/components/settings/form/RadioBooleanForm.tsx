@@ -1,5 +1,5 @@
 import { FormattedMessage } from 'react-intl'
-import { Radio, Text } from 'rsuite'
+import { Radio } from 'rsuite'
 
 type FormBoolean = 'yes' | 'no'
 type Props = {
@@ -12,8 +12,8 @@ function RadioBoolean(props: Props) {
 	return (
 		<>
 			
-		<Text style={{ marginTop: 15, marginBottom: 5, fontSize: 20 }}>{props.label}</Text>
-		{props.hint && <Text style={{ marginBottom: 10 }}>{props.hint}</Text>}
+		<p style={{ marginTop: 15, marginBottom: 5, fontSize: 20 }}>{props.label}</p>
+		{props.hint && <p style={{ marginBottom: 10 }}>{props.hint}</p>}
 		<Radio checked={props.value === 'yes'} onChange={() => props.onChange('yes')}>
 				<FormattedMessage id="timeline.settings.do" />
 			</Radio>

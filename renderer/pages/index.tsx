@@ -108,6 +108,7 @@ function App() {
 			localStorage.setItem('os', data.os)
 			localStorage.setItem('lang', data.lang)
 			localStorage.setItem('version', data.version)
+			localStorage.setItem('fonts', JSON.stringify(data.fonts))
 			setVersion(data.version)
 			loadAppearance()
 		})
@@ -161,6 +162,7 @@ function App() {
 		readSettings(lang).then((res) => {
 			setStyle({
 				fontSize: res.appearance.font_size,
+                fontFamily: res.appearance.font
 			})
 			switchLang(res.appearance.language)
 			dayjs.locale(res.appearance.language)

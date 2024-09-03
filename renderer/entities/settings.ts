@@ -5,6 +5,7 @@ export type Settings = {
 		font_size: number
 		language: localeType
 		color_theme: ThemeType
+		font: string
 	}
 	timeline: {
 		time: 'relative' | 'absolute' | '12h'
@@ -28,6 +29,7 @@ export const defaultSetting: Settings = {
 		font_size: 14,
 		language: 'en',
 		color_theme: 'dark',
+		font: 'sans-serif'
 	},
 	timeline: {
 		time: 'relative',

@@ -1,5 +1,5 @@
 import { FormattedMessage } from 'react-intl'
-import { Radio, Text } from 'rsuite'
+import { Radio } from 'rsuite'
 
 type Props = {
 	label: string
@@ -11,8 +11,8 @@ type Props = {
 function RadioForm({ value, onChange, data, label, hint }: Props) {
 	return (
 		<>
-			<Text style={{ marginTop: 15, marginBottom: 5, fontSize: 20 }}>{label}</Text>
-			{hint && <Text style={{ marginBottom: 10 }}>{hint}</Text>}
+			<p style={{ marginTop: 15, marginBottom: 5, fontSize: 20 }}>{label}</p>
+			{hint && <p style={{ marginBottom: 10 }}>{hint}</p>}
 			{data.map((item) => (
 				<Radio key={item.value} checked={value === item.value} onChange={() => onChange(item.value)}>
 					<FormattedMessage id={item.label} />

@@ -110,7 +110,9 @@
 				"title": "外観",
 				"font_size": "フォントサイズ",
 				"language": "言語",
-				"color_theme": "カラーテーマ"
+				"color_theme": "カラーテーマ",
+				"font": "フォント",
+				"systemFont": "標準フォント"
 			},
 			"timeline": {
 				"title": "タイムライン",

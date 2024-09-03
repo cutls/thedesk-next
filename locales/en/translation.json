@@ -110,7 +110,9 @@
 				"title": "Appearance",
 				"font_size": "Font size",
 				"language": "Language",
-				"color_theme": "Color theme"
+				"color_theme": "Color theme",
+				"font": "Font",
+				"systemFont": "Default"
 			},
 			"timeline": {
 				"title": "Timelines",

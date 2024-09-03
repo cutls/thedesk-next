@@ -7,7 +7,7 @@ import dayjs from 'dayjs'
 import Head from 'next/head'
 import { type CSSProperties, useContext, useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { Heading, useToaster, Text, Content, Stack, Divider, Button, Input } from 'rsuite'
+import { Heading, useToaster, Content, Stack, Divider, Button, Input, SelectPicker } from 'rsuite'
 import alert from '@/components/utils/alert'
 import NumberForm from '@/components/settings/form/NumberForm'
 import SelectForm from '@/components/settings/form/SelectForm'
@@ -53,6 +53,7 @@ function App() {
     const { switchLang } = useContext(i18nContext)
     const { start, latestTimelineRefreshed, allClose, saveTimelineConfig } = useContext(TheDeskContext)
     const [style, setStyle] = useState<CSSProperties>({})
+    const [fonts, setFonts] = useState<string[]>([])
     const [appearance, setAppearance] = useState<SettingsType['appearance']>(defaultSetting.appearance)
     const [timelineConfig, setTimelineConfig] = useState<SettingsType['timeline']>(defaultSetting.timeline)
     const [compose, setCompose] = useState<SettingsType['compose']>(defaultSetting.compose)
@@ -71,6 +72,7 @@ function App() {
         readSettings(lang).then((res) => {
             setStyle({
                 fontSize: res.appearance.font_size,
+                fontFamily: res.appearance.font,
             })
             switchLang(res.appearance.language)
             dayjs.locale(res.appearance.language)
@@ -80,6 +82,7 @@ function App() {
         })
     }
     useEffect(() => {
+        setFonts(['sans-serif', ...JSON.parse(localStorage.getItem('fonts') || '[]')])
         loadAppearance()
         const f = async () => {
             const settings = await readSettings()
@@ -127,12 +130,21 @@ function App() {
             </Stack>
             <Stack style={{ justifyContent: 'center', display: 'flex' }}>
                 <Content style={{ width: 600, maxWidth: '100%', padding: 10, marginTop: 50, marginBottom: 50 }}>
-                    <Text style={{ fontSize: 24, marginTop: 12, fontWeight: 'bold' }}><FormattedMessage id="settings.settings.appearance.title" /></Text>
+                    <p style={{ fontSize: 24, marginTop: 12, fontWeight: 'bold' }}><FormattedMessage id="settings.settings.appearance.title" /></p>
                     <NumberForm label={formatMessage({ id: 'settings.settings.appearance.font_size' })} value={appearance.font_size} onChange={(value) => updateAppearance('font_size', value)} min={12} max={24} step={1} unit="px" />
                     <SelectForm label={formatMessage({ id: 'settings.settings.appearance.language' })} value={appearance.language} onChange={(value) => updateAppearance('language', value)} data={languages} style={{ width: '100%' }} />
                     <SelectForm label={formatMessage({ id: 'settings.settings.appearance.color_theme' })} value={appearance.color_theme} onChange={(value) => updateAppearance('color_theme', value)} data={themes} searchable={false} style={{ width: '100%' }} />
+                    <p style={{ marginTop: 15, marginBottom: 5, fontSize: 20 }}><FormattedMessage id="settings.settings.appearance.font" /></p>
+                    <SelectPicker
+                        value={appearance.font}
+                        data={fonts.map((value) => ({ label: value === 'sans-serif' ? formatMessage({ id: 'settings.settings.appearance.systemFont' }) : value, value }))}
+                        searchable={true}
+                        style={{ width: '100%' }}
+                        onChange={(value) => updateAppearance('font', value)}
+                        renderMenuItem={(label, item) => <p style={{ fontFamily: item.label.toString()}}>{item.label}</p>}
+                    />
                     <Divider />
-                    <Text style={{ fontSize: 24, marginTop: 12, fontWeight: 'bold' }}><FormattedMessage id="settings.settings.timeline.title" /></Text>
+                    <p style={{ fontSize: 24, marginTop: 12, fontWeight: 'bold' }}><FormattedMessage id="settings.settings.timeline.title" /></p>
                     <SelectForm label={formatMessage({ id: 'settings.settings.timeline.time.title' })} value={timelineConfig.time} onChange={(value) => updateTimeline('time', value)} data={labelValueBuilder('timeline.time', time)} searchable={false} style={{ width: '100%' }} />
                     <RadioBoolean label={formatMessage({ id: 'settings.settings.timeline.animation' })} value={timelineConfig.animation} onChange={(value) => updateTimeline('animation', value)} />
                     <NumberForm label={formatMessage({ id: 'settings.settings.timeline.max_length' })} hint={formatMessage({ id: 'settings.settings.timeline.max_length_hint' })} value={timelineConfig.max_length} onChange={(value) => updateTimeline('max_length', value)} min={0} max={100} step={1} unit={formatMessage({ id: 'settings.settings.timeline.max_length_unit' })} />
@@ -140,12 +152,12 @@ function App() {
                     <RadioForm label={formatMessage({ id: 'settings.settings.timeline.ttsProvider.title' })} hint={formatMessage({ id: 'settings.settings.timeline.ttsProvider.hint' })} value={timelineConfig.ttsProvider} onChange={(value) => updateTimeline('ttsProvider', value)} data={labelValueBuilder('timeline.ttsProvider', ['system', 'bouyomi'])} />
                     {timelineConfig.ttsProvider === 'bouyomi' && <NumberForm label={formatMessage({ id: 'settings.settings.timeline.ttsPort' })} value={timelineConfig.ttsPort} onChange={(value) => updateTimeline('ttsPort', value)} min={5000} max={65535} step={1} unit="" />}
                     <Divider />
-                    <Text style={{ fontSize: 24, marginTop: 12, fontWeight: 'bold' }}><FormattedMessage id="settings.settings.compose.title" /></Text>
+                    <p style={{ fontSize: 24, marginTop: 12, fontWeight: 'bold' }}><FormattedMessage id="settings.settings.compose.title" /></p>
                     <SelectForm label={formatMessage({ id: 'settings.settings.compose.btnPosition.title' })} value={compose.btnPosition} onChange={(value) => updateCompose('btnPosition', value)} data={labelValueBuilder('compose.btnPosition', btnPosition)} searchable={false} style={{ width: '100%' }} />
                     <SelectForm label={formatMessage({ id: 'settings.settings.compose.afterPost.title' })} value={compose.afterPost} onChange={(value) => updateCompose('afterPost', value)} data={labelValueBuilder('compose.afterPost', afterPost)} searchable={false} style={{ width: '100%' }} />
                     <SelectForm label={formatMessage({ id: 'settings.settings.compose.secondaryToot' })} hint={formatMessage({ id: 'settings.settings.compose.secondaryToot_hint' })} value={compose.secondaryToot} onChange={(value) => updateCompose('secondaryToot', value)} data={visLabel} searchable={false} style={{ width: '100%' }} />
                     <Divider />
-                    <Text style={{ fontSize: 24, marginTop: 12, fontWeight: 'bold', marginBottom: 10 }}><FormattedMessage id="settings.settings.spotify.title" /></Text>
+                    <p style={{ fontSize: 24, marginTop: 12, fontWeight: 'bold', marginBottom: 10 }}><FormattedMessage id="settings.settings.spotify.title" /></p>
                     <Button appearance="primary" disabled={spotifyConnected} style={{ marginRight: '5px' }} color="green" onClick={() => nowplayingInitFn()}>
 						<FormattedMessage id="settings.settings.spotify.connect" />
 					</Button>
@@ -170,9 +182,9 @@ function App() {
 					)}
                     <Divider />
                     <Button appearance="ghost" onClick={() =>  window.electronAPI.openAppDataFolder()}><FormattedMessage id="settings.settings.open_appData_folder" /></Button>
-                    <Text style={{ fontSize: 10, margin: 10 }}>
+                    <p style={{ fontSize: 10, margin: 10 }}>
                     <FormattedMessage id="settings.settings.appData_hint" />
-                    </Text>
+                    </p>
                 </Content>
             </Stack>
         </div>

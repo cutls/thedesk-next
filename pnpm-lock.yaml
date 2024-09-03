@@ -10,8 +10,8 @@ overrides:
 
 dependencies:
   '@cutls/megalodon':
-    specifier: 6.0.13
-    version: 6.0.13
+    specifier: 6.0.14
+    version: 6.0.14
   '@emoji-mart/react':
     specifier: ^1.1.1
     version: 1.1.1(emoji-mart@5.6.0)(react@18.2.0)
@@ -36,6 +36,9 @@ dependencies:
   emoji-mart:
     specifier: ^5.6.0
     version: 5.6.0
+  font-list:
+    specifier: ^1.5.1
+    version: 1.5.1
   parse-link-header:
     specifier: ^2.0.0
     version: 2.0.0
@@ -229,8 +232,8 @@ packages:
     dev: true
     optional: true
 
-  /@cutls/megalodon@6.0.13:
-    resolution: {integrity: sha512-LNLX7ruxh4fScIvsB+eWiLwgKvz4lsEyFNkmo0TGOL3WVemC498NP3WG84gzb834rTx1JFVsWIJztii0LAIF3g==}
+  /@cutls/megalodon@6.0.14:
+    resolution: {integrity: sha512-Hcpl1Pr4/wDLX+F13U3qZV+DLj+ZKEjZTJRd0ELNAQbEPMOgfFstuan8XRKB95oIjnbqxx2ZdBNboZK+tkpAdw==}
     engines: {node: '>=20.12.2'}
     dependencies:
       '@badgateway/oauth2-client': 2.3.0
@@ -1644,6 +1647,10 @@ packages:
     peerDependenciesMeta:
       debug:
         optional: true
+    dev: false
+
+  /font-list@1.5.1:
+    resolution: {integrity: sha512-Hr5V0dsSv91wH3FgirXd7qh1PydqA/vMQyWjFFWn+lUPJtC+3i2tzgVqbLRcvQh87TGdbTGbAR3mEo4VlwC1jw==}
     dev: false
 
   /foreground-child@3.1.1:

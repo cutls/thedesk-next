@@ -2,6 +2,7 @@
 import { join } from 'path'
 import { format } from 'url'
 import fs from 'fs'
+import { getFonts } from 'font-list'
 
 import { execFile } from 'child_process'
 import { promisify } from 'util'
@@ -66,11 +67,12 @@ app.on('ready', async () => {
 
 	mainWindow.loadURL(url)
 	windowState.manage(mainWindow)
-	ipcMain.on('requestInitialInfo', (_event) => {
+	ipcMain.on('requestInitialInfo', async (_event) => {
 		mainWindow?.webContents.send('initialInfo', {
 			os: process.platform,
 			lang: app.getPreferredSystemLanguages(),
 			version: app.getVersion(),
+			fonts: await getFonts({ disableQuoting: true })
 		})
 	})
 	ipcMain.on('requestAppleMusic', async (_event: IpcMainEvent, _message: any) => {
