@@ -17,7 +17,7 @@ const promisifyExecFile = promisify(execFile)
 import { BrowserWindow, type IpcMainEvent, app, clipboard, ipcMain, shell } from 'electron'
 import isDev from 'electron-is-dev'
 import prepareNext from 'electron-next'
-import defaultConfig from '../defaultConfig.json'
+import defaultConfig from './defaultConfig.json'
 // Prepare the renderer once the app is ready
 let mainWindow: BrowserWindow | null = null
 const appDataPath = join(app.getPath('appData'), app.getName())
