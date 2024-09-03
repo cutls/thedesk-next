@@ -19,7 +19,7 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps: 
-    env:
+    - env:
       GH_TOKEN: ${{ secrets.GH_TOKEN }} 
     - uses: actions/checkout@v2
     - run: corepack enable
