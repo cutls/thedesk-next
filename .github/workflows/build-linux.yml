@@ -17,11 +17,8 @@ jobs:
       matrix:
         node-version: [20.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
+ 
     steps: 
-    - name: Set Context
-      env:
-        GH_TOKEN: ${{ secrets.GH_TOKEN }} 
     - uses: actions/checkout@v2
     - run: corepack enable
     - uses: actions/setup-node@v4
@@ -31,6 +28,8 @@ jobs:
     - run: pnpm install --shamefully-hoist --no-frozen-lockfile
     - run: pnpm run build
     - run: pnpm run pack:linux
+      env:
+        GH_TOKEN: ${{ secrets.GH_TOKEN }} 
     - uses: shogo82148/actions-upload-release-asset@v1
       with:
           upload_url: ${{ github.event.release.upload_url }}
