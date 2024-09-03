@@ -14,7 +14,6 @@ import ListMemberships from '@/components/listMemberships/ListMemberships'
 import Report from '@/components/report/Report'
 import Search from '@/components/search/Search'
 import NewServer from '@/components/servers/New'
-import SettingsPage from '@/components/settings/Settings'
 import Thirdparty from '@/components/settings/Thirdparty'
 import NewTimeline from '@/components/timelines/New'
 import ShowTimeline from '@/components/timelines/Show'
@@ -202,7 +201,6 @@ function App() {
 			<NewServer open={modalState.newServer.opened} onClose={() => dispatch({ target: 'newServer', value: false, object: null })} initialServer={modalState.newServer.object} />
 			<Media index={modalState.media.index} media={modalState.media.object} opened={modalState.media.opened} close={() => dispatch({ target: 'media', value: false, object: [], index: -1 })} />
 			<Thirdparty open={modalState.thirdparty.opened} onClose={() => dispatch({ target: 'thirdparty', value: false })} />
-			<SettingsPage open={modalState.settings.opened} onClose={() => dispatch({ target: 'settings', value: false })} reloadAppearance={loadAppearance} />
 			<Report
 				opened={modalState.report.opened}
 				status={modalState.report.object}
