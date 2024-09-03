@@ -33,8 +33,8 @@ jobs:
     - uses: shogo82148/actions-upload-release-asset@v1
       with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: "build/*.zip"
+          asset_path: "dist/*.zip"
     - uses: shogo82148/actions-upload-release-asset@v1
       with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: "build/*.deb"
+          asset_path: "dist/*.deb"
