@@ -119,7 +119,7 @@ function App() {
             <Head>
                 <title>TheDesk</title>
             </Head>
-            <Stack justifyContent="space-between" style={{ position: 'fixed', padding: 10, backgroundColor: 'var(--rs-bg-overlay)', width: '100%' }}>
+            <Stack justifyContent="space-between" style={{ position: 'fixed', padding: 10, backgroundColor: 'var(--rs-bg-overlay)', width: '100%', zIndex: 999 }}>
                 <Button onClick={() => router.push('/')}>
                     <Icon as={BsChevronLeft} style={{ fontSize: '1.4em' }} />
                 </Button>
