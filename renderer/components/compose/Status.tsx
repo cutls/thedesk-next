@@ -184,7 +184,7 @@ const Status: React.FC<Props> = (props) => {
 			}
 			f()
 		} else {
-			clear(false)
+			clear(true)
 		}
 	}, [props.in_reply_to, props.edit_target, props.account, props.client])
 
@@ -676,7 +676,7 @@ const Status: React.FC<Props> = (props) => {
 				<Form.Group>
 					<ButtonToolbar style={{ justifyContent: 'flex-end' }}>
 						{(props.in_reply_to || props.edit_target) && (
-							<Button onClick={() => clear(false)}>
+							<Button onClick={() => clear(true)}>
 								<FormattedMessage id="compose.cancel" />
 							</Button>
 						)}
