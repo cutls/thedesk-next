@@ -41,9 +41,12 @@ export async function addTimeline(server: Server, timeline: AddTimeline): Promis
 }
 async function removeTimelineCore(timelines: Timeline[][], id: number): Promise<Timeline[][]> {
 	const newTimelines = timelines.map((timeline) => timeline.filter((tl) => tl.id !== id))
+	return reorderTimelineCore(newTimelines)
+}
+async function reorderTimelineCore(timelines: Timeline[][]): Promise<Timeline[][]> {
 	const newOrderTimelines: Timeline[][] = []
 	let newId = 0
-	for (const tls of newTimelines) {
+	for (const tls of timelines) {
 		const subTl: Timeline[] = []
 		for (const tl of tls) {
 			newId = newId + 1
@@ -162,38 +165,45 @@ export async function getUsualAccount(): Promise<number> {
 	localStorage.getItem('usualAccount')
 	return Number.parseInt(localStorage.getItem('usualAccount') || '0')
 }
+async function updateColumnSettingCore(timelines: Timeline[][], id: number, key: keyof Timeline, value: any) {
+	const newTimelines: Timeline[][] = []
+	for (const tls of timelines) {
+		const subTls: Timeline[] = []
+		for (const tl of tls) {
+			if (tl.id === id) {
+				subTls.push({ ...tl, [key]: value })
+			}
+		}
+		newTimelines.push(subTls)
+	}
+	return newTimelines
+}
 export async function updateColumnWidth({ id, columnWidth }: { id: number; columnWidth: number }) {
 	const timelinesStr = localStorage.getItem('timelinesV2')
 	const timelines: Timeline[][] = JSON.parse(timelinesStr || '[]')
-	const timeline = timelines.find((timeline) => timeline.id === id)
-	timeline.column_width = columnWidth
-	localStorage.setItem('timelinesV2', JSON.stringify(timelines))
+	const newTimelines = await updateColumnSettingCore(timelines, id, 'column_width', columnWidth)
+	localStorage.setItem('timelinesV2', JSON.stringify(newTimelines))
 	return
 }
 const isColorGuard = (value: string): value is Color => colorList.includes(value as any)
 export async function updateColumnColor({ id, color }: { id: number; color: string }) {
 	const timelinesStr = localStorage.getItem('timelinesV2')
-	const timelines: Timeline[] = JSON.parse(timelinesStr || '[]')
-	const timeline = timelines.find((timeline) => timeline.id === id)
-	if (!timeline) return
-	if (!isColorGuard(color)) {
-		timeline.color = undefined
-	} else {
-		timeline.color = color
-	}
-	localStorage.setItem('timelinesV2', JSON.stringify(timelines))
+	const timelines: Timeline[][] = JSON.parse(timelinesStr || '[]')
+	const useColor = isColorGuard(color) ? color : undefined
+	const newTimelines = await updateColumnSettingCore(timelines, id, 'color', useColor)
+	localStorage.setItem('timelinesV2', JSON.stringify(newTimelines))
 	return
 }
 export async function updateColumnOrder({ id, direction }: { id: number; direction: 'left' | 'right' }) {
 	const timelinesStr = localStorage.getItem('timelinesV2')
-	const timelines: Timeline[] = JSON.parse(timelinesStr || '[]')
-	const timelineIndex = timelines.findIndex((timeline) => timeline.id === id)
+	const timelines: Timeline[][] = JSON.parse(timelinesStr || '[]')
+	const timelineIndex = timelines.findIndex((timeline) => timeline[0].id === id)
 	const nextIndex = direction === 'left' ? timelineIndex - 1 : timelineIndex + 1
 	if (nextIndex < 0 || nextIndex >= timelines.length) return
 	const tmp = structuredClone(timelines[nextIndex])
 	timelines[nextIndex] = timelines[timelineIndex]
 	timelines[timelineIndex] = tmp
-	const newTimelines = timelines.map((timeline, index) => ({ ...timeline, id: index + 1 }))
+	const newTimelines = reorderTimelineCore(timelines)
 	localStorage.setItem('timelinesV2', JSON.stringify(newTimelines))
 	return
 }
@@ -213,19 +223,15 @@ export async function updateAccountColor({ id, color }: { id: number; color: str
 }
 export async function updateColumnTts({ id, toggle }: { id: number; toggle: boolean }) {
 	const timelinesStr = localStorage.getItem('timelinesV2')
-	const timelines: Timeline[] = JSON.parse(timelinesStr || '[]')
-	const timeline = timelines.find((timeline) => timeline.id === id)
-	if (!timeline) return
-	timeline.tts = toggle
-	localStorage.setItem('timelinesV2', JSON.stringify(timelines))
+	const timelines: Timeline[][] = JSON.parse(timelinesStr || '[]')
+	const newTimelines = await updateColumnSettingCore(timelines, id, 'tts', toggle)
+	localStorage.setItem('timelinesV2', JSON.stringify(newTimelines))
 	return
 }
 export async function updateColumnMediaOnly({ id, toggle }: { id: number; toggle: boolean }) {
 	const timelinesStr = localStorage.getItem('timelinesV2')
-	const timelines: Timeline[] = JSON.parse(timelinesStr || '[]')
-	const timeline = timelines.find((timeline) => timeline.id === id)
-	if (!timeline) return
-	timeline.mediaOnly = toggle
-	localStorage.setItem('timelinesV2', JSON.stringify(timelines))
+	const timelines: Timeline[][] = JSON.parse(timelinesStr || '[]')
+	const newTimelines = await updateColumnSettingCore(timelines, id, 'mediaOnly', toggle)
+	localStorage.setItem('timelinesV2', JSON.stringify(newTimelines))
 	return
 }
