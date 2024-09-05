@@ -1,7 +1,7 @@
 import generator, { type MegalodonInterface, type Entity } from '@cutls/megalodon'
 import { Icon } from '@rsuite/icons'
 import { type CSSProperties, type Dispatch, type SetStateAction, forwardRef, useCallback, useContext, useEffect, useRef, useState } from 'react'
-import { BsArrowClockwise, BsBell, BsCheck2, BsChevronLeft, BsChevronRight, BsSliders, BsX } from 'react-icons/bs'
+import { BsArrowClockwise, BsBell, BsCheck2, BsChevronLeft, BsChevronRight, BsSliders, BsSquare, BsViewStacked, BsX } from 'react-icons/bs'
 import { Virtuoso } from 'react-virtuoso'
 import { Avatar, Button, Container, Content, Divider, Dropdown, FlexboxGrid, Header, List, Loader, Popover, Radio, RadioGroup, Stack, Whisper, useToaster } from 'rsuite'
 
@@ -21,7 +21,7 @@ import timelineName from '@/utils/timelineName'
 import { useRouter } from 'next/router'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { ResizableBox } from 'react-resizable'
-import { getAccount, removeTimeline, updateColumnColor, updateColumnOrder, updateColumnWidth } from 'utils/storage'
+import { getAccount, removeTimeline, updateColumnColor, updateColumnOrder, updateColumnStack, updateColumnWidth } from 'utils/storage'
 import Notification from './notification/Notification'
 
 type Props = {
@@ -444,6 +444,7 @@ const Notifications: React.FC<Props> = (props) => {
 }
 const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: () => void }>((props, ref) => {
 	const { timelineRefresh } = useContext(TheDeskContext)
+	const { formatMessage } = useIntl()
 	const newRef = useRef()
 	const removeTimelineFn = async (timeline: Timeline) => {
 		removeTimeline(timeline)
@@ -459,6 +460,12 @@ const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: ()
 
 	const switchRightTimeline = async (timeline: Timeline) => {
 		await updateColumnOrder({ id: timeline.id, direction: 'left' })
+		timelineRefresh()
+		props.close()
+	}
+	const stackTimeline = async (timeline: Timeline) => {
+		const res = await updateColumnStack({ id: timeline.id, stack: !timeline.stacked })
+		if (!res) return
 		timelineRefresh()
 		props.close()
 	}
@@ -520,6 +527,9 @@ const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: ()
 					<FlexboxGrid.Item>
 						<Button appearance="link" size="xs" onClick={() => switchLeftTimeline(props.timeline)}>
 							<Icon as={BsChevronLeft} />
+						</Button>
+						<Button appearance="link" size="xs" onClick={() => stackTimeline(props.timeline)} title={formatMessage({ id: props.timeline.stacked ? 'timeline.settings.unstack' : 'timeline.settings.stack'})}>
+							<Icon as={props.timeline.stacked ? BsSquare : BsViewStacked} />
 						</Button>
 						<Button appearance="link" size="xs" onClick={() => switchRightTimeline(props.timeline)}>
 							<Icon as={BsChevronRight} />

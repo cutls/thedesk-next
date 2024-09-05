@@ -30,7 +30,7 @@ import type { Entity, MegalodonInterface } from '@cutls/megalodon'
 import Head from 'next/head'
 import Draggable from 'react-draggable'
 import { useIntl } from 'react-intl'
-import { listServers, listTimelines, readSettings, updateColumnWidth } from 'utils/storage'
+import { listServers, listTimelines, migrateTimelineV1toV2, readSettings, updateColumnWidth } from 'utils/storage'
 import { useRouter } from 'next/router'
 import { ResizableBox } from 'react-resizable'
 
@@ -70,6 +70,7 @@ function App() {
 	}
 
 	useEffect(() => {
+		migrateTimelineV1toV2()
 		loadAppearance()
 		document.addEventListener('keydown', handleKeyPress)
 		const positionStr = localStorage.getItem('composePosition') || '0,0'
@@ -257,7 +258,7 @@ function App() {
 							width={columnWidths[i]}
 							height={0}
 							axis="x"
-							style={{ margin: '0 4px', minHeight: '100%', flexShrink: 0, width: columnWidths[i] }}
+							style={{ margin: '0 4px', minHeight: '100%', flexShrink: 0, width: columnWidths[i], display: 'flex', flexDirection: 'column' }}
 							resizeHandles={['e']}
 							onResizeStop={(_, e) => columnWidthSet(i, e.size.width)}
 						>

@@ -4,7 +4,16 @@ import { type Settings, defaultSetting } from '@/entities/settings'
 import { type AddTimeline, type Color, type Timeline, colorList, columnWidth as columnWidthCalc } from '@/entities/timeline'
 import { localTypeList } from '@/i18n'
 import { detector } from '@cutls/megalodon'
-
+export function migrateTimelineV1toV2() {
+	const timelinesV2Str = localStorage.getItem('timelinesV2')
+	if (!timelinesV2Str) {
+		const timelinesStr = localStorage.getItem('timelines')
+		const timeline: Timeline[] = JSON.parse(timelinesStr || '[]')
+		localStorage.removeItem('timelines')
+		const newTimeline = timeline.map((tl) => [tl])
+		localStorage.setItem('timelinesV2', JSON.stringify(newTimeline))
+	}
+}
 export async function listTimelines(): Promise<[Timeline, Server][][]> {
 	const timelinesStr = localStorage.getItem('timelinesV2')
 	const timelines: Timeline[][] = JSON.parse(timelinesStr || '[]')
@@ -48,9 +57,11 @@ async function reorderTimelineCore(timelines: Timeline[][]): Promise<Timeline[][
 	let newId = 0
 	for (const tls of timelines) {
 		const subTl: Timeline[] = []
+		let stackChecker = 0
 		for (const tl of tls) {
 			newId = newId + 1
-			subTl.push({ ...tl, id: newId })
+			subTl.push({ ...tl, id: newId, stacked: stackChecker > 0 })
+			stackChecker = stackChecker + 1
 		}
 		if (subTl.length > 0) newOrderTimelines.push(subTl)
 	}
@@ -206,6 +217,31 @@ export async function updateColumnOrder({ id, direction }: { id: number; directi
 	const newTimelines = reorderTimelineCore(timelines)
 	localStorage.setItem('timelinesV2', JSON.stringify(newTimelines))
 	return
+}
+export async function updateColumnStack({ id, stack }: { id: number; stack: boolean }) {
+	const timelinesStr = localStorage.getItem('timelinesV2')
+	const timelines: Timeline[][] = JSON.parse(timelinesStr || '[]')
+	const wrapperIndex = timelines.findIndex((timeline) => timeline.findIndex((t) => t.id === id) >= 0)
+	const target = timelines[wrapperIndex].find((t) => t.id === id)
+	if (wrapperIndex < 0) return false
+	if (stack) {
+		if (wrapperIndex === 0) return false
+		const columnTo: Timeline[] = [...timelines[wrapperIndex - 1], target]
+		const columnFrom: Timeline[] = timelines[wrapperIndex].filter((t) => t.id !== id)
+		timelines[wrapperIndex - 1] = columnTo
+		timelines[wrapperIndex] = columnFrom
+		const orderedTimelines = await reorderTimelineCore(timelines)
+		localStorage.setItem('timelinesV2', JSON.stringify(orderedTimelines))
+	} else {
+		const columnFrom: Timeline[] = timelines[wrapperIndex].filter((t) => t.id !== id)
+		const isLast = wrapperIndex === timelines.length - 1
+		const editedTL = isLast ? [...timelines, [target]] : timelines.splice(wrapperIndex + 1, 0, [target])
+		const splicedTimelines = isLast ? editedTL : timelines
+		splicedTimelines[wrapperIndex] = columnFrom
+		const orderedTimelines = await reorderTimelineCore(splicedTimelines)
+		localStorage.setItem('timelinesV2', JSON.stringify(orderedTimelines))
+	}
+	return true
 }
 export async function updateAccountColor({ id, color }: { id: number; color: string }) {
 	const accountsStr = localStorage.getItem('accounts')

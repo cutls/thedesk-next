@@ -2,7 +2,7 @@ import generator, { type Entity, type MegalodonInterface } from '@cutls/megalodo
 import { Icon } from '@rsuite/icons'
 import parse from 'parse-link-header'
 import { type CSSProperties, forwardRef, useCallback, useContext, useEffect, useRef, useState } from 'react'
-import { BsArrowClockwise, BsBookmark, BsChevronLeft, BsChevronRight, BsGlobe2, BsHash, BsHouseDoor, BsListUl, BsPeople, BsSliders, BsStar, BsX } from 'react-icons/bs'
+import { BsArrowClockwise, BsBookmark, BsChevronLeft, BsChevronRight, BsGlobe2, BsHash, BsHouseDoor, BsListUl, BsPeople, BsSliders, BsSquare, BsStar, BsViewStacked, BsX } from 'react-icons/bs'
 import { Virtuoso } from 'react-virtuoso'
 import { Avatar, Button, Container, Content, Divider, FlexboxGrid, Header, List, Loader, Popover, Radio, RadioGroup, Stack, Whisper, useToaster } from 'rsuite'
 
@@ -26,7 +26,7 @@ import FailoverImg from '@/utils/failoverImg'
 import timelineName from '@/utils/timelineName'
 import { useRouter } from 'next/router'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { getAccount, removeTimeline, updateColumnColor, updateColumnMediaOnly, updateColumnOrder, updateColumnTts, updateColumnWidth } from 'utils/storage'
+import { getAccount, removeTimeline, updateColumnColor, updateColumnMediaOnly, updateColumnOrder, updateColumnStack, updateColumnTts, updateColumnWidth } from 'utils/storage'
 import Status from './status/Status'
 
 type Props = {
@@ -527,6 +527,7 @@ export default function TimelineColumn(props: Props) {
 }
 const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: () => void }>((props, ref) => {
 	const { timelineRefresh } = useContext(TheDeskContext)
+	const { formatMessage } = useIntl()
 	const removeTimelineFn = async (timeline: Timeline) => {
 		removeTimeline(timeline)
 		timelineRefresh()
@@ -541,6 +542,12 @@ const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: ()
 
 	const switchRightTimeline = async (timeline: Timeline) => {
 		await updateColumnOrder({ id: timeline.id, direction: 'right' })
+		timelineRefresh()
+		props.close()
+	}
+	const stackTimeline = async (timeline: Timeline) => {
+		const res = await updateColumnStack({ id: timeline.id, stack: !timeline.stacked })
+		if (!res) return
 		timelineRefresh()
 		props.close()
 	}
@@ -637,6 +644,9 @@ const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: ()
 					<FlexboxGrid.Item>
 						<Button appearance="link" size="xs" onClick={() => switchLeftTimeline(props.timeline)}>
 							<Icon as={BsChevronLeft} />
+						</Button>
+						<Button appearance="link" size="xs" onClick={() => stackTimeline(props.timeline)} title={formatMessage({ id: props.timeline.stacked ? 'timeline.settings.unstack' : 'timeline.settings.stack'})}>
+							<Icon as={props.timeline.stacked ? BsSquare : BsViewStacked} />
 						</Button>
 						<Button appearance="link" size="xs" onClick={() => switchRightTimeline(props.timeline)}>
 							<Icon as={BsChevronRight} />
