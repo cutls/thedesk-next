@@ -1,7 +1,7 @@
 import type { Account } from '@/entities/account'
 import type { Server } from '@/entities/server'
 import { type Settings, defaultSetting } from '@/entities/settings'
-import { type AddTimeline, type Color, type Timeline, colorList } from '@/entities/timeline'
+import { type AddTimeline, type Color, type Timeline, colorList, columnWidth as columnWidthCalc } from '@/entities/timeline'
 import { localTypeList } from '@/i18n'
 import { detector } from '@cutls/megalodon'
 
@@ -183,7 +183,7 @@ export async function updateColumnWidth({ id, columnWidth }: { id: number; colum
 	const timelines: Timeline[][] = JSON.parse(timelinesStr || '[]')
 	const newTimelines = await updateColumnSettingCore(timelines, id, 'column_width', columnWidth)
 	localStorage.setItem('timelinesV2', JSON.stringify(newTimelines))
-	return
+	return newTimelines.map((timeline) => columnWidthCalc(timeline[0].column_width))
 }
 const isColorGuard = (value: string): value is Color => colorList.includes(value as any)
 export async function updateColumnColor({ id, color }: { id: number; color: string }) {

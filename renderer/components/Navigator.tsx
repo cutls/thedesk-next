@@ -121,11 +121,11 @@ const Navigator: React.FC<NavigatorProps> = (props): ReactElement => {
 
 	const openNotification = async (set: ServerSet) => {
 		//if (!props.unreads.find((u) => u.server_id === set.server.id && u.count > 0)) return
-		const timelines = await listTimelines()
+		const timelines = (await listTimelines()).flat()
 		let target = timelines.find((t) => t[1].id === set.server.id && t[0].kind === 'notifications')
 		if (target === undefined || target === null) {
 			await addTimeline(set.server, { kind: 'notifications', name: 'Notifications', columnWidth: 'sm' })
-			const timelines = await listTimelines()
+			const timelines =( await listTimelines()).flat()
 			timelineRefresh()
 			target = timelines.find((t) => t[1].id === set.server.id && t[0].kind === 'notifications')
 			if (target === undefined || target === null) {
