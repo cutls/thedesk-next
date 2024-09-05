@@ -156,7 +156,8 @@
 				"connect": "Connect",
 				"disconnect": "Disconnect",
 				"code_help": "Please enter the code displayed on the Spotify app.",
-				"code": "Complete"
+				"code": "Complete",
+				"template": "Template"
 			},
 			"save": "Save",
 			"close": "Close",

@@ -156,7 +156,8 @@
 				"connect": "接続",
 				"disconnect": "接続解除",
 				"code_help": "表示されたコードを入力",
-				"code": "完了"
+				"code": "完了",
+				"template": "テンプレート"
 			},
 			"save": "保存",
 			"close": "閉じる",

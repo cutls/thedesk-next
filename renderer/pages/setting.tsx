@@ -51,7 +51,7 @@ function App() {
     const { formatMessage } = useIntl()
     const { loadTheme } = useContext(ContextLoadTheme)
     const { switchLang } = useContext(i18nContext)
-    const { start, latestTimelineRefreshed, allClose, saveTimelineConfig } = useContext(TheDeskContext)
+    const { saveTimelineConfig } = useContext(TheDeskContext)
     const [style, setStyle] = useState<CSSProperties>({})
     const [fonts, setFonts] = useState<string[]>([])
     const [appearance, setAppearance] = useState<SettingsType['appearance']>(defaultSetting.appearance)
@@ -65,6 +65,7 @@ function App() {
     const [spotifyInitiating, setSpotifyInitiating] = useState(false)
     const [spotifyConnecting, setSpotifyConnecting] = useState(false)
     const [spotifyCode, setSpotifyCode] = useState('')
+    const [spotifyTemp, setSpotifyTemp] = useState('')
     const visLabel = [{ label: formatMessage({ id: 'timeline.settings.not_do' }), value: 'no' }, ...vis.map((value) => ({ label: formatMessage({ id: `compose.visibility.${value}` }), value }))]
 
     const loadAppearance = () => {
@@ -84,6 +85,7 @@ function App() {
     useEffect(() => {
         setFonts(['sans-serif', ...JSON.parse(localStorage.getItem('fonts') || '[]')])
         loadAppearance()
+        setSpotifyTemp(localStorage.getItem('spotifyTemplate') || '#NowPlaying {song} / {album} / {artist}\n{url} #SpotifyWithTheDesk')
         const f = async () => {
             const settings = await readSettings()
             setAppearance((current) => Object.assign({}, current, settings.appearance))
@@ -98,6 +100,7 @@ function App() {
             appearance, timeline: timelineConfig, compose
         }
         await saveSetting({ obj: settings })
+        localStorage.setItem('spotifyTemplate', spotifyTemp)
         showToaster(formatMessage({ id: 'settings.settings.saved' }))
         loadAppearance()
     }
@@ -141,7 +144,7 @@ function App() {
                         searchable={true}
                         style={{ width: '100%' }}
                         onChange={(value) => updateAppearance('font', value)}
-                        renderMenuItem={(label, item) => <p style={{ fontFamily: item.label.toString()}}>{item.label}</p>}
+                        renderMenuItem={(label, item) => <p style={{ fontFamily: item.label.toString() }}>{item.label}</p>}
                     />
                     <Divider />
                     <p style={{ fontSize: 24, marginTop: 12, fontWeight: 'bold' }}><FormattedMessage id="settings.settings.timeline.title" /></p>
@@ -159,31 +162,34 @@ function App() {
                     <Divider />
                     <p style={{ fontSize: 24, marginTop: 12, fontWeight: 'bold', marginBottom: 10 }}><FormattedMessage id="settings.settings.spotify.title" /></p>
                     <Button appearance="primary" disabled={spotifyConnected} style={{ marginRight: '5px' }} color="green" onClick={() => nowplayingInitFn()}>
-						<FormattedMessage id="settings.settings.spotify.connect" />
-					</Button>
-					<Button
-						appearance="primary"
-						disabled={!spotifyConnected}
-						color="green"
-						onClick={() => {
-							nowplayingDisconnect()
-							setSpotifyConnected(false)
-						}}
-					>
-						<FormattedMessage id="settings.settings.spotify.disconnect" />
-					</Button>
-					{spotifyInitiating && (
-						<div style={{ marginTop: '5px' }}>
-							<Input value={spotifyCode} onChange={(e) => setSpotifyCode(e)} placeholder={formatMessage({ id: 'settings.settings.spotify.code_help' })} />
-							<Button appearance="ghost" loading={spotifyConnecting} disabled={!spotifyCode} color="green" onClick={() => nowplayingCodeFn()}>
-								<FormattedMessage id="settings.settings.spotify.code" />
-							</Button>
-						</div>
-					)}
+                        <FormattedMessage id="settings.settings.spotify.connect" />
+                    </Button>
+                    <Button
+                        appearance="primary"
+                        disabled={!spotifyConnected}
+                        color="green"
+                        onClick={() => {
+                            nowplayingDisconnect()
+                            setSpotifyConnected(false)
+                        }}
+                    >
+                        <FormattedMessage id="settings.settings.spotify.disconnect" />
+                    </Button>
+                    {spotifyInitiating && (
+                        <div style={{ marginTop: '5px' }}>
+                            <Input value={spotifyCode} onChange={(e) => setSpotifyCode(e)} placeholder={formatMessage({ id: 'settings.settings.spotify.code_help' })} />
+                            <Button appearance="ghost" loading={spotifyConnecting} disabled={!spotifyCode} color="green" onClick={() => nowplayingCodeFn()}>
+                                <FormattedMessage id="settings.settings.spotify.code" />
+                            </Button>
+                        </div>
+                    )}
+                    <p style={{ fontSize: 24, marginTop: 12, fontWeight: 'bold' }}><FormattedMessage id="settings.settings.spotify.template" /></p>
+                    <Input as="textarea" rows={3} value={spotifyTemp} onChange={(e) => setSpotifyTemp(e)} />
+                    <p style={{ fontSize: 10, margin: 10 }}>Tag: {'{song} {album} {artist} {url} {composer} {hz} {bitRate} {lyricist} {bpm} {genre}'}</p>
                     <Divider />
-                    <Button appearance="ghost" onClick={() =>  window.electronAPI.openAppDataFolder()}><FormattedMessage id="settings.settings.open_appData_folder" /></Button>
+                    <Button appearance="ghost" onClick={() => window.electronAPI.openAppDataFolder()}><FormattedMessage id="settings.settings.open_appData_folder" /></Button>
                     <p style={{ fontSize: 10, margin: 10 }}>
-                    <FormattedMessage id="settings.settings.appData_hint" />
+                        <FormattedMessage id="settings.settings.appData_hint" />
                     </p>
                 </Content>
             </Stack>
