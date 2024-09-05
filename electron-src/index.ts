@@ -14,7 +14,7 @@ type SystemConfig = {
 
 const promisifyExecFile = promisify(execFile)
 // Packages
-import { BrowserWindow, type IpcMainEvent, app, clipboard, ipcMain, shell } from 'electron'
+import { BrowserWindow, type IpcMainEvent, app, clipboard, ipcMain, shell, Menu } from 'electron'
 import isDev from 'electron-is-dev'
 import prepareNext from 'electron-next'
 import defaultConfig from './defaultConfig.json'
@@ -38,6 +38,24 @@ try {
 } catch {
 	console.error('Failed to read config.json')
 }
+const selectionMenu = Menu.buildFromTemplate([
+	{ role: 'copy' },
+	{ type: 'separator' },
+	{ role: 'selectAll' }
+])
+
+const inputMenu = Menu.buildFromTemplate([
+	{ role: 'undo' },
+	{ role: 'redo' },
+	{ type: 'separator' },
+	{ role: 'cut' },
+	{ role: 'copy' },
+	{ role: 'paste' },
+	{ type: 'separator' },
+	{ role: 'selectAll' },
+])
+
+
 app.on('ready', async () => {
 	console.log('start')
 	await prepareNext('./renderer')
@@ -91,6 +109,14 @@ app.on('ready', async () => {
 			mainWindow?.webContents.send('appleMusic', song)
 		} catch {
 			mainWindow?.webContents.send('appleMusic', song)
+		}
+	})
+	mainWindow.webContents.on('context-menu', (_e, props) => {
+		const { selectionText, isEditable } = props
+		if (isEditable) {
+			inputMenu.popup()
+		} else if (selectionText && selectionText.trim() !== '') {
+			selectionMenu.popup()
 		}
 	})
 })
