@@ -183,6 +183,8 @@ async function updateColumnSettingCore(timelines: Timeline[][], id: number, key:
 		for (const tl of tls) {
 			if (tl.id === id) {
 				subTls.push({ ...tl, [key]: value })
+			} else {
+				subTls.push(tl)
 			}
 		}
 		newTimelines.push(subTls)
