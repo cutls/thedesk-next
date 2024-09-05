@@ -18,13 +18,17 @@ export default ({ version }: { version: string }) => {
 		if (hideRule && !isNext && Number.parseInt(hide, 10) > new Date().getTime()) return
 		const fn = async () => {
 			if (!version) return
-			const url = 'https://thedesk.top/ver.next.json'
-			const api = await fetch(url)
-			const json = await api.json()
-			const { semanticVersion, version: newVersion } = json
-			setNewV(newVersion)
-			if (hideRule && isNext && newVersion === hide) return
-			if (semanticVersion !== version) handleOpen()
+			try {
+				const url = 'https://thedesk.top/ver.next.json'
+				const api = await fetch(url)
+				const json = await api.json()
+				const { semanticVersion, version: newVersion } = json
+				setNewV(newVersion)
+				if (hideRule && isNext && newVersion === hide) return
+				if (semanticVersion !== version) handleOpen()
+			} catch {
+				console.error('Failed to check for updates')
+			}
 		}
 		fn()
 	}, [version])
