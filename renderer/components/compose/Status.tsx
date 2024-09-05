@@ -126,22 +126,18 @@ const Status: React.FC<Props> = (props) => {
 
 	// Update instance custom emoji
 	useEffect(() => {
-		if (!props.client || !props.server) {
-			return
-		}
-
+		if (!props.client || !props.server) return
 		const f = async () => {
 			const config = await readSettings()
 			setConfig(config.compose || defaultSetting.compose)
 			const instance = await props.client.getInstance()
-			if (instance.data.configuration.statuses.max_characters) {
-				setMaxCharacters(instance.data.configuration.statuses.max_characters)
-			}
+			const maxChars = instance.data.configuration.statuses.max_characters
+			if (maxChars) setMaxCharacters(maxChars)
 			const emojis = await props.client.getInstanceCustomEmojis()
 			setCustomEmojis(mapCustomEmojiCategory(props.server.domain, emojis.data))
 		}
 		f()
-	}, [props.server, props.client])
+	}, [props.client])
 
 	// Set replyTo or edit target
 	useEffect(() => {
@@ -181,10 +177,11 @@ const Status: React.FC<Props> = (props) => {
 				if (target.language) {
 					setLanguage(target.language)
 				}
+				clear(true)
 			}
 			f()
 		} else {
-			clear(true)
+			clear(false)
 		}
 	}, [props.in_reply_to, props.edit_target, props.account, props.client])
 
