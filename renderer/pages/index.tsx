@@ -251,7 +251,7 @@ function App() {
 						</div>
 					)}
 				</Animation.Transition>
-				<Content className="timeline-space" style={{ display: 'flex', position: 'relative' }} ref={spaceRef}>
+				<Content className="timeline-space" style={{ display: 'flex', position: 'relative', borderTop: '3px solid var(--rs-divider-border)' }} ref={spaceRef}>
 					{timelines.map((tls, i) => (
 						<ResizableBox
 							key={tls[0][0].id}
