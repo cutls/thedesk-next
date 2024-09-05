@@ -9,6 +9,7 @@ export type Timeline = {
 	color?: Color
 	tts?: boolean
 	mediaOnly?: boolean
+	stacked?: boolean
 }
 export type AddTimeline = {
 	kind: TimelineKind

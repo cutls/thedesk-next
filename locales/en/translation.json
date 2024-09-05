@@ -234,7 +234,9 @@
 		"reload": "Reload",
 		"settings": {
 			"title": "Settings",
-			"unpin": "Unpin",
+			"unpin": "Remove",
+			"stack": "Stack to left",
+			"unstack": "Destack",
 			"column_width": "Column width",
 			"color": "Column Color",
 			"color_default": "Default",
@@ -336,7 +338,7 @@
 	"detail": {
 		"back": "Back",
 		"close": "Close",
-		"pin": "Pin",
+		"pin": "Add as a column",
 		"follow_tag": "Follow hashtag",
 		"unfollow_tag": "Unfollow hashtag",
 		"profile": {

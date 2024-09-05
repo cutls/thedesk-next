@@ -2,18 +2,17 @@ import generator, { type Entity, type MegalodonInterface } from '@cutls/megalodo
 import { Icon } from '@rsuite/icons'
 import parse from 'parse-link-header'
 import { type CSSProperties, forwardRef, useCallback, useContext, useEffect, useRef, useState } from 'react'
-import { BsArrowClockwise, BsBookmark, BsChevronLeft, BsChevronRight, BsGlobe2, BsHash, BsHouseDoor, BsListUl, BsPeople, BsSliders, BsStar, BsX } from 'react-icons/bs'
+import { BsArrowClockwise, BsBookmark, BsChevronLeft, BsChevronRight, BsGlobe2, BsHash, BsHouseDoor, BsListUl, BsPeople, BsSliders, BsSquare, BsStar, BsViewStacked, BsX } from 'react-icons/bs'
 import { Virtuoso } from 'react-virtuoso'
-import { Avatar, Button, Container, Content, Divider, Dropdown, FlexboxGrid, Header, List, Loader, Popover, Radio, RadioGroup, Stack, Whisper, useToaster } from 'rsuite'
+import { Avatar, Button, Container, Content, Divider, FlexboxGrid, Header, List, Loader, Popover, Radio, RadioGroup, Stack, Whisper, useToaster } from 'rsuite'
 
 import alert from '@/components/utils/alert'
 import { TheDeskContext } from '@/context'
 import { TIMELINE_MAX_STATUSES, TIMELINE_STATUSES_COUNT } from '@/defaults'
 import type { Account } from '@/entities/account'
 import type { CustomEmojiCategory } from '@/entities/emoji'
-import { Instruction } from '@/entities/instruction'
 import type { Server } from '@/entities/server'
-import { Color, type ColumnWidth, type Timeline, type TimelineKind, colorList, columnWidth as columnWidthCalc, columnWidthSet } from '@/entities/timeline'
+import { type ColumnWidth, type Timeline, type TimelineKind, colorList, columnWidth as columnWidthCalc, columnWidthSet } from '@/entities/timeline'
 import type {
 	DeleteHomeStatusPayload,
 	DeleteTimelineStatusPayload,
@@ -27,8 +26,7 @@ import FailoverImg from '@/utils/failoverImg'
 import timelineName from '@/utils/timelineName'
 import { useRouter } from 'next/router'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { ResizableBox } from 'react-resizable'
-import { getAccount, removeTimeline, updateColumnColor, updateColumnMediaOnly, updateColumnOrder, updateColumnTts, updateColumnWidth } from 'utils/storage'
+import { getAccount, removeTimeline, updateColumnColor, updateColumnMediaOnly, updateColumnOrder, updateColumnStack, updateColumnTts, updateColumnWidth } from 'utils/storage'
 import Status from './status/Status'
 
 type Props = {
@@ -373,11 +371,6 @@ export default function TimelineColumn(props: Props) {
 			behavior: 'smooth',
 		})
 	}
-	const columnWidthSet = (widthRaw: number) => {
-		const width = Math.round(widthRaw / 50) * 50
-		updateColumnWidth({ id: props.timeline.id, columnWidth: width })
-		setColumnWidth(width)
-	}
 	const headerStyle: CSSProperties = {
 		backgroundColor: props.timeline.color ? `var(--rs-color-${props.timeline.color})` : 'var(--rs-color-card)',
 		borderBottomWidth: '3px',
@@ -386,163 +379,155 @@ export default function TimelineColumn(props: Props) {
 	}
 
 	return (
-		<ResizableBox
-			width={columnWidth}
-			height={0}
-			axis="x"
-			style={{ margin: '0 4px', minHeight: '100%', flexShrink: 0, width: columnWidth }}
-			resizeHandles={['e']}
-			onResizeStop={(_, e) => columnWidthSet(e.size.width)}
-		>
-			<Container style={{ height: '100%' }}>
-				<Header style={headerStyle}>
-					<FlexboxGrid align="middle" justify="space-between">
-						<FlexboxGrid.Item style={{ width: 'calc(100% - 80px)' }}>
-							<FlexboxGrid align="middle" onClick={backToTop} style={{ cursor: 'pointer' }}>
-								{/** icon **/}
-								<FlexboxGrid.Item
-									style={{
-										lineHeight: '48px',
-										fontSize: '18px',
-										paddingRight: '8px',
-										paddingLeft: '8px',
-										paddingBottom: '6px',
-										width: '42px',
-									}}
+		<Container style={{ height: '100%' }}>
+			<Header style={headerStyle}>
+				<FlexboxGrid align="middle" justify="space-between">
+					<FlexboxGrid.Item style={{ width: 'calc(100% - 80px)' }}>
+						<FlexboxGrid align="middle" onClick={backToTop} style={{ cursor: 'pointer' }}>
+							{/** icon **/}
+							<FlexboxGrid.Item
+								style={{
+									lineHeight: '48px',
+									fontSize: '18px',
+									paddingRight: '8px',
+									paddingLeft: '8px',
+									paddingBottom: '6px',
+									width: '42px',
+								}}
+							>
+								{timelineIcon(props.timeline.kind)}
+							</FlexboxGrid.Item>
+							{/** name **/}
+							<FlexboxGrid.Item
+								style={{
+									lineHeight: '48px',
+									fontSize: '18px',
+									verticalAlign: 'middle',
+									overflow: 'hidden',
+									textOverflow: 'ellipsis',
+									whiteSpace: 'nowrap',
+									width: 'calc(100% - 42px)',
+								}}
+								title={`${timelineName(props.timeline.kind, props.timeline.name, formatMessage)}@${props.server.domain}`}
+							>
+								{timelineName(props.timeline.kind, props.timeline.name, formatMessage)}
+								<span style={{ fontSize: '14px' }}>@{props.server.domain}</span>
+							</FlexboxGrid.Item>
+						</FlexboxGrid>
+					</FlexboxGrid.Item>
+					<FlexboxGrid.Item style={{ width: '80px' }}>
+						<FlexboxGrid align="middle" justify="end">
+							<FlexboxGrid.Item>
+								<Button appearance="subtle" onClick={reload} style={{ padding: '4px' }} title={formatMessage({ id: 'timeline.reload' })}>
+									<Icon as={BsArrowClockwise} />
+								</Button>
+							</FlexboxGrid.Item>
+
+							<FlexboxGrid.Item>
+								{walkthrough && (
+									<div style={{ position: 'relative' }}>
+										<Popover arrow={false} visible={walkthrough} style={{ left: 0, top: 30 }}>
+											<div style={{ width: '120px' }}>
+												<h4 style={{ fontSize: '1.2em' }}>
+													<FormattedMessage id="walkthrough.timeline.settings.title" />
+												</h4>
+												<p>
+													<FormattedMessage id="walkthrough.timeline.settings.description" />
+												</p>
+											</div>
+											<FlexboxGrid justify="end">
+												<Button appearance="default" size="xs" onClick={closeWalkthrough}>
+													<FormattedMessage id="walkthrough.timeline.settings.ok" />
+												</Button>
+											</FlexboxGrid>
+										</Popover>
+									</div>
+								)}
+								<Whisper
+									trigger="click"
+									placement="bottomEnd"
+									controlId="option-popover"
+									ref={triggerRef}
+									onOpen={closeWalkthrough}
+									speaker={<OptionPopover timeline={props.timeline} close={closeOptionPopover} />}
 								>
-									{timelineIcon(props.timeline.kind)}
-								</FlexboxGrid.Item>
-								{/** name **/}
-								<FlexboxGrid.Item
-									style={{
-										lineHeight: '48px',
-										fontSize: '18px',
-										verticalAlign: 'middle',
-										overflow: 'hidden',
-										textOverflow: 'ellipsis',
-										whiteSpace: 'nowrap',
-										width: 'calc(100% - 42px)',
-									}}
-									title={`${timelineName(props.timeline.kind, props.timeline.name, formatMessage)}@${props.server.domain}`}
-								>
-									{timelineName(props.timeline.kind, props.timeline.name, formatMessage)}
-									<span style={{ fontSize: '14px' }}>@{props.server.domain}</span>
-								</FlexboxGrid.Item>
-							</FlexboxGrid>
-						</FlexboxGrid.Item>
-						<FlexboxGrid.Item style={{ width: '80px' }}>
-							<FlexboxGrid align="middle" justify="end">
-								<FlexboxGrid.Item>
-									<Button appearance="subtle" onClick={reload} style={{ padding: '4px' }} title={formatMessage({ id: 'timeline.reload' })}>
-										<Icon as={BsArrowClockwise} />
+									<Button appearance="subtle" style={{ padding: '4px 8px 4px 4px' }} title={formatMessage({ id: 'timeline.settings.title' })}>
+										<Icon as={BsSliders} />
 									</Button>
-								</FlexboxGrid.Item>
+								</Whisper>
+							</FlexboxGrid.Item>
+							<FlexboxGrid.Item style={{ paddingRight: '8px', height: '20px' }}>
+								<Avatar circle src={FailoverImg(account ? account.avatar : null)} size="xs" title={account ? account.username : ''} />
+							</FlexboxGrid.Item>
+						</FlexboxGrid>
+					</FlexboxGrid.Item>
+				</FlexboxGrid>
+			</Header>
 
-								<FlexboxGrid.Item>
-									{walkthrough && (
-										<div style={{ position: 'relative' }}>
-											<Popover arrow={false} visible={walkthrough} style={{ left: 0, top: 30 }}>
-												<div style={{ width: '120px' }}>
-													<h4 style={{ fontSize: '1.2em' }}>
-														<FormattedMessage id="walkthrough.timeline.settings.title" />
-													</h4>
-													<p>
-														<FormattedMessage id="walkthrough.timeline.settings.description" />
-													</p>
-												</div>
-												<FlexboxGrid justify="end">
-													<Button appearance="default" size="xs" onClick={closeWalkthrough}>
-														<FormattedMessage id="walkthrough.timeline.settings.ok" />
-													</Button>
-												</FlexboxGrid>
-											</Popover>
-										</div>
-									)}
-									<Whisper
-										trigger="click"
-										placement="bottomEnd"
-										controlId="option-popover"
-										ref={triggerRef}
-										onOpen={closeWalkthrough}
-										speaker={<OptionPopover timeline={props.timeline} close={closeOptionPopover} />}
-									>
-										<Button appearance="subtle" style={{ padding: '4px 8px 4px 4px' }} title={formatMessage({ id: 'timeline.settings.title' })}>
-											<Icon as={BsSliders} />
-										</Button>
-									</Whisper>
-								</FlexboxGrid.Item>
-								<FlexboxGrid.Item style={{ paddingRight: '8px', height: '20px' }}>
-									<Avatar circle src={FailoverImg(account ? account.avatar : null)} size="xs" title={account ? account.username : ''} />
-								</FlexboxGrid.Item>
-							</FlexboxGrid>
-						</FlexboxGrid.Item>
-					</FlexboxGrid>
-				</Header>
-
-				{loading ? (
-					<Loader style={{ margin: '10em auto' }} />
-				) : (
-					<Content style={{ height: 'calc(100% - 54px)' }}>
-						<List
-							style={{
-								width: '100%',
-								height: '100%',
+			{loading ? (
+				<Loader style={{ margin: '10em auto' }} />
+			) : (
+				<Content style={{ height: 'calc(100% - 54px)' }}>
+					<List
+						style={{
+							width: '100%',
+							height: '100%',
+						}}
+					>
+						<Virtuoso
+							style={{ height: '100%' }}
+							data={statuses}
+							scrollerRef={(ref) => {
+								scrollerRef.current = ref as HTMLElement
 							}}
-						>
-							<Virtuoso
-								style={{ height: '100%' }}
-								data={statuses}
-								scrollerRef={(ref) => {
-									scrollerRef.current = ref as HTMLElement
-								}}
-								className="timeline-scrollable"
-								firstItemIndex={firstItemIndex}
-								atTopStateChange={prependUnreads}
-								endReached={loadMore}
-								overscan={TIMELINE_STATUSES_COUNT}
-								defaultItemHeight={44}
-								itemContent={(_, status) => {
-									if (props.timeline.mediaOnly && status.media_attachments.length === 0) return null
-									if (
-										filters
-											?.map((f) => [f.phrase, f.irreversible] as [string, boolean])
-											.findIndex(([keyword, irreversible]) => (irreversible ? status.content.toLowerCase().includes(keyword.toLowerCase()) : false)) > 0
-									)
-										return null
-									return (
-										<List.Item key={status.id} style={{ paddingTop: '2px', paddingBottom: '2px', backgroundColor: 'var(--rs-bg-well)' }}>
-											<Status
-												status={status}
-												client={client}
-												server={props.server}
-												account={account}
-												columnWidth={columnWidth}
-												updateStatus={(status) => setStatuses((current) => updateStatus(current, status))}
-												openMedia={props.openMedia}
-												setReplyOpened={(opened) => {
-													replyOpened.current = opened
-												}}
-												setStatusDetail={setStatusDetail}
-												setAccountDetail={setAccountDetail}
-												setTagDetail={setTagDetail}
-												openReport={props.openReport}
-												openFromOtherAccount={props.openFromOtherAccount}
-												customEmojis={customEmojis}
-												filters={filters}
-											/>
-										</List.Item>
-									)
-								}}
-							/>
-						</List>
-					</Content>
-				)}
-			</Container>
-		</ResizableBox>
+							className="timeline-scrollable"
+							firstItemIndex={firstItemIndex}
+							atTopStateChange={prependUnreads}
+							endReached={loadMore}
+							overscan={TIMELINE_STATUSES_COUNT}
+							defaultItemHeight={44}
+							itemContent={(_, status) => {
+								if (props.timeline.mediaOnly && status.media_attachments.length === 0) return null
+								if (
+									filters
+										?.map((f) => [f.phrase, f.irreversible] as [string, boolean])
+										.findIndex(([keyword, irreversible]) => (irreversible ? status.content.toLowerCase().includes(keyword.toLowerCase()) : false)) > 0
+								)
+									return null
+								return (
+									<List.Item key={status.id} style={{ paddingTop: '2px', paddingBottom: '2px', backgroundColor: 'var(--rs-bg-well)' }}>
+										<Status
+											status={status}
+											client={client}
+											server={props.server}
+											account={account}
+											columnWidth={columnWidth}
+											updateStatus={(status) => setStatuses((current) => updateStatus(current, status))}
+											openMedia={props.openMedia}
+											setReplyOpened={(opened) => {
+												replyOpened.current = opened
+											}}
+											setStatusDetail={setStatusDetail}
+											setAccountDetail={setAccountDetail}
+											setTagDetail={setTagDetail}
+											openReport={props.openReport}
+											openFromOtherAccount={props.openFromOtherAccount}
+											customEmojis={customEmojis}
+											filters={filters}
+										/>
+									</List.Item>
+								)
+							}}
+						/>
+					</List>
+				</Content>
+			)}
+		</Container>
 	)
 }
 const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: () => void }>((props, ref) => {
 	const { timelineRefresh } = useContext(TheDeskContext)
+	const { formatMessage } = useIntl()
 	const removeTimelineFn = async (timeline: Timeline) => {
 		removeTimeline(timeline)
 		timelineRefresh()
@@ -557,6 +542,12 @@ const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: ()
 
 	const switchRightTimeline = async (timeline: Timeline) => {
 		await updateColumnOrder({ id: timeline.id, direction: 'right' })
+		timelineRefresh()
+		props.close()
+	}
+	const stackTimeline = async (timeline: Timeline) => {
+		const res = await updateColumnStack({ id: timeline.id, stack: !timeline.stacked })
+		if (!res) return
 		timelineRefresh()
 		props.close()
 	}
@@ -653,6 +644,9 @@ const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: ()
 					<FlexboxGrid.Item>
 						<Button appearance="link" size="xs" onClick={() => switchLeftTimeline(props.timeline)}>
 							<Icon as={BsChevronLeft} />
+						</Button>
+						<Button appearance="link" size="xs" onClick={() => stackTimeline(props.timeline)} title={formatMessage({ id: props.timeline.stacked ? 'timeline.settings.unstack' : 'timeline.settings.stack'})}>
+							<Icon as={props.timeline.stacked ? BsSquare : BsViewStacked} />
 						</Button>
 						<Button appearance="link" size="xs" onClick={() => switchRightTimeline(props.timeline)}>
 							<Icon as={BsChevronRight} />

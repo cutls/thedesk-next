@@ -21,7 +21,7 @@ import alert from '@/components/utils/alert'
 import { TheDeskContext } from '@/context'
 import type { Account } from '@/entities/account'
 import type { Server, ServerSet } from '@/entities/server'
-import type { Timeline } from '@/entities/timeline'
+import { type Timeline, columnWidth as columnWidthCalc } from '@/entities/timeline'
 import type { Unread } from '@/entities/unread'
 import { Context as i18nContext } from '@/i18n'
 import { ContextLoadTheme } from '@/theme'
@@ -30,8 +30,9 @@ import type { Entity, MegalodonInterface } from '@cutls/megalodon'
 import Head from 'next/head'
 import Draggable from 'react-draggable'
 import { useIntl } from 'react-intl'
-import { listServers, listTimelines, readSettings } from 'utils/storage'
+import { listServers, listTimelines, migrateTimelineV1toV2, readSettings, updateColumnWidth } from 'utils/storage'
 import { useRouter } from 'next/router'
+import { ResizableBox } from 'react-resizable'
 
 const { scrollLeft } = DOMHelper
 
@@ -41,10 +42,10 @@ function App() {
 	const [width, height] = useWindowSize()
 	const { start, latestTimelineRefreshed, allClose, saveTimelineConfig } = useContext(TheDeskContext)
 	const { loadTheme } = useContext(ContextLoadTheme)
-
-	const [servers, setServers] = useState<Array<ServerSet>>([])
-	const [timelines, setTimelines] = useState<Array<[Timeline, Server]>>([])
-	const [unreads, setUnreads] = useState<Array<Unread>>([])
+	const [servers, setServers] = useState<ServerSet[]>([])
+	const [timelines, setTimelines] = useState<[Timeline, Server][][]>([])
+	const [columnWidths, setColumnWidths] = useState<number[]>([])
+	const [unreads, setUnreads] = useState<Unread[]>([])
 	const [composeOpened, setComposeOpened] = useState<boolean>(false)
 	const [searchOpened, setSearchOpened] = useState<boolean>(false)
 	const [style, setStyle] = useState<CSSProperties>({})
@@ -62,11 +63,14 @@ function App() {
 		if (latestTimelineRefreshed > 0) allClose()
 		const timelines = await listTimelines()
 		console.log('start')
-		const streamings = await start(timelines)
+		await start(timelines.flat())
+		const widths = timelines.map((tl) => columnWidthCalc(tl[0][0].column_width))
+		setColumnWidths(widths)
 		setTimelines(timelines)
 	}
 
 	useEffect(() => {
+		migrateTimelineV1toV2()
 		loadAppearance()
 		document.addEventListener('keydown', handleKeyPress)
 		const positionStr = localStorage.getItem('composePosition') || '0,0'
@@ -88,17 +92,7 @@ function App() {
 			}
 		})
 
-		/*
-	listen('updated-servers', async () => {
-	  const res = await invoke<Array<[Server, Account | null]>>('list_servers')
-	  setServers(
-		res.map(r => ({
-		  server: r[0],
-		  account: r[1]
-		}))
-	  )
-	})
-	*/
+
 
 		// Push Notification
 		const isInit = !localStorage.getItem('servers')
@@ -154,14 +148,19 @@ function App() {
 		}
 	}, [highlighted])
 
-	const handleKeyPress = useCallback(async (event: KeyboardEvent) => {}, [])
+	const handleKeyPress = useCallback(async (event: KeyboardEvent) => { }, [])
+	const columnWidthSet = async (i: number, widthRaw: number) => {
+		const width = Math.round(widthRaw / 50) * 50
+		const newWidths = await updateColumnWidth({ id: timelines[i][0][0].id, columnWidth: width })
+		setColumnWidths(newWidths)
+	}
 
 	const loadAppearance = () => {
 		const lang = localStorage.getItem('lang') || window.navigator.language
 		readSettings(lang).then((res) => {
 			setStyle({
 				fontSize: res.appearance.font_size,
-                fontFamily: res.appearance.font
+				fontFamily: res.appearance.font
 			})
 			switchLang(res.appearance.language)
 			dayjs.locale(res.appearance.language)
@@ -245,7 +244,7 @@ function App() {
 							<Search
 								setOpened={setSearchOpened}
 								servers={servers}
-								openMedia={(media: Array<Entity.Attachment>, index: number) => dispatch({ target: 'media', value: true, object: media, index: index })}
+								openMedia={(media: Entity.Attachment[], index: number) => dispatch({ target: 'media', value: true, object: media, index: index })}
 								openReport={(status: Entity.Status, client: MegalodonInterface) => dispatch({ target: 'report', value: true, object: status, client: client })}
 								openFromOtherAccount={(status: Entity.Status) => dispatch({ target: 'fromOtherAccount', value: true, object: status })}
 							/>
@@ -253,23 +252,33 @@ function App() {
 					)}
 				</Animation.Transition>
 				<Content className="timeline-space" style={{ display: 'flex', position: 'relative' }} ref={spaceRef}>
-					{timelines.map((timeline) => (
-						<ShowTimeline
-							timeline={timeline[0]}
-							server={timeline[1]}
-							unreads={unreads}
-							setUnreads={setUnreads}
-							key={timeline[0].id}
-							openMedia={(media: Array<Entity.Attachment>, index: number) => dispatch({ target: 'media', value: true, object: media, index: index })}
-							openReport={(status: Entity.Status, client: MegalodonInterface) => dispatch({ target: 'report', value: true, object: status, client: client })}
-							openFromOtherAccount={(status: Entity.Status) => dispatch({ target: 'fromOtherAccount', value: true, object: status })}
-						/>
+					{timelines.map((tls, i) => (
+						<ResizableBox
+							key={tls[0][0].id}
+							width={columnWidths[i]}
+							height={0}
+							axis="x"
+							style={{ margin: '0 4px', minHeight: '100%', flexShrink: 0, width: columnWidths[i], display: 'flex', flexDirection: 'column' }}
+							resizeHandles={['e']}
+							onResizeStop={(_, e) => columnWidthSet(i, e.size.width)}
+						>
+							{tls.map((timeline) => <ShowTimeline
+								timeline={timeline[0]}
+								server={timeline[1]}
+								unreads={unreads}
+								setUnreads={setUnreads}
+								key={timeline[0].id}
+								openMedia={(media: Entity.Attachment[], index: number) => dispatch({ target: 'media', value: true, object: media, index: index })}
+								openReport={(status: Entity.Status, client: MegalodonInterface) => dispatch({ target: 'report', value: true, object: status, client: client })}
+								openFromOtherAccount={(status: Entity.Status) => dispatch({ target: 'fromOtherAccount', value: true, object: status })}
+							/>)}
+						</ResizableBox>
 					))}
 					<NewTimeline servers={servers} />
 				</Content>
 				<Detail
 					dispatch={dispatch}
-					openMedia={(media: Array<Entity.Attachment>, index: number) => dispatch({ target: 'media', value: true, object: media, index: index })}
+					openMedia={(media: Entity.Attachment[], index: number) => dispatch({ target: 'media', value: true, object: media, index: index })}
 					openReport={(status: Entity.Status, client: MegalodonInterface) => dispatch({ target: 'report', value: true, object: status, client: client })}
 					openFromOtherAccount={(status: Entity.Status) => dispatch({ target: 'fromOtherAccount', value: true, object: status })}
 					openListMemberships={(list: Entity.List, client: MegalodonInterface) => dispatch({ target: 'listMemberships', value: true, object: list, client: client })}
@@ -286,7 +295,7 @@ function App() {
 				openAuthorize={(server: Server) => dispatch({ target: 'newServer', value: true, object: server })}
 				openAnnouncements={(server: Server, account: Account) => dispatch({ target: 'announcements', value: true, object: { server, account } })}
 				openThirdparty={() => dispatch({ target: 'thirdparty', value: true })}
-				openSettings={() => router.push('/setting') }
+				openSettings={() => router.push('/setting')}
 				toggleCompose={toggleCompose}
 				toggleSearch={toggleSearch}
 				setHighlighted={setHighlighted}
@@ -303,7 +312,7 @@ type ModalState = {
 	}
 	media: {
 		opened: boolean
-		object: Array<Entity.Attachment>
+		object: Entity.Attachment[]
 		index: number
 	}
 	thirdparty: {

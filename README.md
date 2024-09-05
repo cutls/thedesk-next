@@ -21,6 +21,7 @@ Mastodon(and Misskey) client for PC, based on [Fedistar](https://github.com/h3po
   * Apple Music/iTunes NowPlaying(macOS only)
   * Text-to-speech of timeline posts
   * Media only timeline
+  * Vertical stacking of timeline
 * Others
   * Partial support for Misskey
 

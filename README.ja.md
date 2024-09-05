@@ -21,6 +21,7 @@
   * Apple Music/iTunes NowPlaying(macOS)
   * タイムライン読み上げ
   * メディアだけのタイムライン
+  * タイムラインの縦積み
 * その他
   * Misskeyに部分的に対応
 

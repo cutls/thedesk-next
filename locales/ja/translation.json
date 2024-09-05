@@ -234,7 +234,9 @@
 		"reload": "再読み込み",
 		"settings": {
 			"title": "設定",
-			"unpin": "ピン留め解除",
+			"unpin": "カラム削除",
+			"stack": "左カラムに積む",
+			"unstack": "縦積み解除",
 			"column_width": "カラムの幅",
 			"color": "色変更",
 			"color_default": "デフォルト",
@@ -336,7 +338,7 @@
 	"detail": {
 		"back": "戻る",
 		"close": "閉じる",
-		"pin": "ピン留めする",
+		"pin": "カラムとして追加",
 		"follow_tag": "ハッシュタグをフォローする",
 		"unfollow_tag": "ハッシュタグのフォローを解除",
 		"profile": {
