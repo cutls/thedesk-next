@@ -102,9 +102,7 @@ const Notifications: React.FC<Props> = (props) => {
 			setCustomEmojis(mapCustomEmojiCategory(props.server.domain, emojis.data))
 
 			listen<ReceiveNotificationPayload>('receive-notification', (ev) => {
-				if (ev.payload.server_id !== props.server.id) {
-					return
-				}
+				if (ev.payload.server_id !== props.server.id) return
 				updateMarker(cli)
 				if (timelineConfig.notification !== 'no') {
 					new window.Notification(`TheDesk: ${account.username}@${props.server.domain}`, {
@@ -113,18 +111,14 @@ const Notifications: React.FC<Props> = (props) => {
 				}
 				if (replyOpened.current || (scrollerRef.current && scrollerRef.current.scrollTop > 10)) {
 					setUnreadNotifications((last) => {
-						if (last.find((n) => n.id === ev.payload.notification.id)) {
-							return last
-						}
+						if (last.find((n) => n.id === ev.payload.notification.id)) return last
 						return [ev.payload.notification].concat(last)
 					})
 					return
 				}
 
 				setNotifications((last) => {
-					if (last.find((n) => n.id === ev.payload.notification.id)) {
-						return last
-					}
+					if (last.find((n) => n.id === ev.payload.notification.id)) return last
 					return [ev.payload.notification].concat(last).slice(0, TIMELINE_STATUSES_COUNT)
 				})
 			})
@@ -134,9 +128,7 @@ const Notifications: React.FC<Props> = (props) => {
 	}, [props.timeline])
 
 	useEffect(() => {
-		if (!replyOpened.current) {
-			prependUnreads()
-		}
+		if (!replyOpened.current) prependUnreads()
 	}, [replyOpened.current])
 
 	useEffect(() => {
@@ -160,9 +152,7 @@ const Notifications: React.FC<Props> = (props) => {
 
 	const loadNotifications = async (client: MegalodonInterface, maxId?: string): Promise<Array<Entity.Notification>> => {
 		let options = { limit: TIMELINE_STATUSES_COUNT }
-		if (maxId) {
-			options = Object.assign({}, options, { max_id: maxId })
-		}
+		if (maxId) options = Object.assign({}, options, { max_id: maxId })
 		const res = await client.getNotifications(options)
 		return res.data.filter((n) => !!n.account)
 	}
@@ -171,12 +161,8 @@ const Notifications: React.FC<Props> = (props) => {
 
 	const updateStatus = (status: Entity.Status) => {
 		const renew = notifications.map((n) => {
-			if (n.status === undefined || n.status === null) {
-				return n
-			}
-			if (n.status.id === status.id) {
-				return Object.assign({}, n, { status })
-			}
+			if (n.status === undefined || n.status === null) return n
+			if (n.status.id === status.id) return Object.assign({}, n, { status })
 			if (n.status.reblog && n.status.reblog.id === status.id) {
 				const s = Object.assign({}, n.status, { reblog: status })
 				return Object.assign({}, n, { status: s })
@@ -214,9 +200,7 @@ const Notifications: React.FC<Props> = (props) => {
 		try {
 			const res = await cli.getMarkers(['notifications'])
 			const marker = res.data as Entity.Marker
-			if (marker.notifications) {
-				setMarker(marker.notifications)
-			}
+			if (marker.notifications) setMarker(marker.notifications)
 		} catch (err) {
 			console.error(err)
 		}
@@ -225,9 +209,7 @@ const Notifications: React.FC<Props> = (props) => {
 	const read = async () => {
 		props.setUnreads((current) => {
 			const updated = current.map((u) => {
-				if (u.server_id === props.server.id) {
-					return Object.assign({}, u, { count: 0 })
-				}
+				if (u.server_id === props.server.id) return Object.assign({}, u, { count: 0 })
 				return u
 			})
 
@@ -237,9 +219,7 @@ const Notifications: React.FC<Props> = (props) => {
 		// Update maker for server-side
 		try {
 			await client.saveMarkers({ notifications: { last_read_id: notifications[0].id } })
-			if (props.server.sns === 'pleroma') {
-				await client.readNotifications({ max_id: notifications[0].id })
-			}
+			if (props.server.sns === 'pleroma') await client.readNotifications({ max_id: notifications[0].id })
 			await updateMarker(client)
 		} catch {
 			toast.push(alert('error', formatMessage({ id: 'alert.failed_mark' })), { placement: 'topStart' })
