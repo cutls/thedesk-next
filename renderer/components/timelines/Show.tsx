@@ -14,12 +14,14 @@ type Props = {
 	openMedia: (media: Array<Entity.Attachment>, index: number) => void
 	openReport: (status: Entity.Status, client: MegalodonInterface) => void
 	openFromOtherAccount: (status: Entity.Status) => void
+	wrapIndex: number
 }
 
 const Show: React.FC<Props> = (props) => {
 	if (props.timeline.kind === 'notifications') {
 		return (
 			<ShowNotifications
+				wrapIndex={props.wrapIndex}
 				timeline={props.timeline}
 				server={props.server}
 				unreads={props.unreads}
@@ -31,9 +33,9 @@ const Show: React.FC<Props> = (props) => {
 		)
 	}
 	if (props.timeline.kind === 'direct') {
-		return <ShowConversations server={props.server} timeline={props.timeline} openMedia={props.openMedia} />
+		return <ShowConversations wrapIndex={props.wrapIndex} server={props.server} timeline={props.timeline} openMedia={props.openMedia} />
 	}
-	return <ShowTimeline timeline={props.timeline} server={props.server} openMedia={props.openMedia} openReport={props.openReport} openFromOtherAccount={props.openFromOtherAccount} />
+	return <ShowTimeline wrapIndex={props.wrapIndex} timeline={props.timeline} server={props.server} openMedia={props.openMedia} openReport={props.openReport} openFromOtherAccount={props.openFromOtherAccount} />
 }
 
 export default Show

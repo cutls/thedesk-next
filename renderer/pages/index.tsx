@@ -263,6 +263,7 @@ function App() {
 							onResizeStop={(_, e) => columnWidthSet(i, e.size.width)}
 						>
 							{tls.map((timeline) => <ShowTimeline
+								wrapIndex={i}
 								timeline={timeline[0]}
 								server={timeline[1]}
 								unreads={unreads}

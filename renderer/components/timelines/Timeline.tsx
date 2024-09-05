@@ -35,6 +35,7 @@ type Props = {
 	openMedia: (media: Array<Entity.Attachment>, index: number) => void
 	openReport: (status: Entity.Status, client: MegalodonInterface) => void
 	openFromOtherAccount: (status: Entity.Status) => void
+	wrapIndex: number
 }
 
 export default function TimelineColumn(props: Props) {
@@ -449,7 +450,7 @@ export default function TimelineColumn(props: Props) {
 									controlId="option-popover"
 									ref={triggerRef}
 									onOpen={closeWalkthrough}
-									speaker={<OptionPopover timeline={props.timeline} close={closeOptionPopover} />}
+									speaker={<OptionPopover timeline={props.timeline} close={closeOptionPopover} wrapIndex={props.wrapIndex} />}
 								>
 									<Button appearance="subtle" style={{ padding: '4px 8px 4px 4px' }} title={formatMessage({ id: 'timeline.settings.title' })}>
 										<Icon as={BsSliders} />
@@ -525,9 +526,10 @@ export default function TimelineColumn(props: Props) {
 		</Container>
 	)
 }
-const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: () => void }>((props, ref) => {
+const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: () => void; wrapIndex: number }>((props, ref) => {
 	const { timelineRefresh } = useContext(TheDeskContext)
 	const { formatMessage } = useIntl()
+	const isFirst = props.wrapIndex === 0
 	const removeTimelineFn = async (timeline: Timeline) => {
 		removeTimeline(timeline)
 		timelineRefresh()
@@ -645,7 +647,7 @@ const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: ()
 						<Button appearance="link" size="xs" onClick={() => switchLeftTimeline(props.timeline)}>
 							<Icon as={BsChevronLeft} />
 						</Button>
-						<Button appearance="link" size="xs" onClick={() => stackTimeline(props.timeline)} title={formatMessage({ id: props.timeline.stacked ? 'timeline.settings.unstack' : 'timeline.settings.stack'})}>
+						<Button appearance="link" size="xs" onClick={() => stackTimeline(props.timeline)} title={formatMessage({ id: props.timeline.stacked ? 'timeline.settings.unstack' : 'timeline.settings.stack'})} disabled={isFirst}>
 							<Icon as={props.timeline.stacked ? BsSquare : BsViewStacked} />
 						</Button>
 						<Button appearance="link" size="xs" onClick={() => switchRightTimeline(props.timeline)}>

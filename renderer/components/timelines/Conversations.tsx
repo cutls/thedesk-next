@@ -25,6 +25,7 @@ type Props = {
 	server: Server
 	timeline: Timeline
 	openMedia: (media: Array<Entity.Attachment>, index: number) => void
+	wrapIndex: number
 }
 
 const Conversations: React.FC<Props> = (props) => {
@@ -187,7 +188,7 @@ const Conversations: React.FC<Props> = (props) => {
 						<FlexboxGrid.Item style={{ width: '80px' }}>
 							<FlexboxGrid align="middle" justify="end">
 								<FlexboxGrid.Item>
-									<Whisper trigger="click" placement="bottomEnd" controlId="option-popover" ref={triggerRef} speaker={<OptionPopover timeline={props.timeline} close={closeOptionPopover} />}>
+									<Whisper trigger="click" placement="bottomEnd" controlId="option-popover" ref={triggerRef} speaker={<OptionPopover timeline={props.timeline} close={closeOptionPopover} wrapIndex={props.wrapIndex} />}>
 										<Button appearance="subtle" style={{ padding: '4px 8px 4px 4px' }} title={formatMessage({ id: 'timeline.settings.title' })}>
 											<Icon as={BsSliders} />
 										</Button>
@@ -230,9 +231,10 @@ const Conversations: React.FC<Props> = (props) => {
 		</ResizableBox>
 	)
 }
-const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: () => void }>((props, ref) => {
+const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: () => void; wrapIndex: number }>((props, ref) => {
 	const { timelineRefresh } = useContext(TheDeskContext)
 	const { formatMessage } = useIntl()
+	const isFirst = props.wrapIndex === 0
 	const newRef = useRef()
 	const removeTimelineFn = async (timeline: Timeline) => {
 		await removeTimeline({ id: timeline.id })
@@ -314,7 +316,7 @@ const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: ()
 						<Button appearance="link" size="xs" onClick={() => switchLeftTimeline(props.timeline)}>
 							<Icon as={BsChevronLeft} />
 						</Button>
-						<Button appearance="link" size="xs" onClick={() => stackTimeline(props.timeline)} title={formatMessage({ id: props.timeline.stacked ? 'timeline.settings.unstack' : 'timeline.settings.stack'})}>
+						<Button appearance="link" size="xs" onClick={() => stackTimeline(props.timeline)} title={formatMessage({ id: props.timeline.stacked ? 'timeline.settings.unstack' : 'timeline.settings.stack'})} disabled={isFirst}>
 							<Icon as={props.timeline.stacked ? BsSquare : BsViewStacked} />
 						</Button>
 						<Button appearance="link" size="xs" onClick={() => switchRightTimeline(props.timeline)}>
