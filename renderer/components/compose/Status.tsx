@@ -22,6 +22,7 @@ import {
 	Toggle,
 	Whisper,
 	useToaster,
+	InputProps,
 } from 'rsuite'
 
 import alert from '@/components/utils/alert'
@@ -177,7 +178,6 @@ const Status: React.FC<Props> = (props) => {
 				if (target.language) {
 					setLanguage(target.language)
 				}
-				clear(true)
 			}
 			f()
 		} else {
@@ -354,6 +354,10 @@ const Status: React.FC<Props> = (props) => {
 			uploaderRef.current.click()
 		}
 	}
+	const fileListCoreUploader = async (files: FileList) => {
+		const filesArray = Array.from(files)
+		for (const file of filesArray) await coreUploader(file)
+	}
 	const coreUploader = async (file: File) => {
 		if (file === null || file === undefined) {
 			return
@@ -385,8 +389,8 @@ const Status: React.FC<Props> = (props) => {
 			return
 		}
 
-		const file = event.target.files?.item(0)
-		await coreUploader(file)
+		const file = event.target.files
+		await fileListCoreUploader(file)
 	}
 
 	const removeAttachment = (index: number) => {
@@ -563,6 +567,11 @@ const Status: React.FC<Props> = (props) => {
 						rows={5}
 						name="status"
 						accepter={Textarea}
+						onPaste={async (e) => await fileListCoreUploader(e.clipboardData.files)}
+						onDrop={async (e) =>{
+							await fileListCoreUploader(e.dataTransfer.files)
+							e.preventDefault()
+						}}
 						ref={statusRef}
 						placeholder={formatMessage({ id: 'compose.status.placeholder' })}
 						emojis={customEmojis}
