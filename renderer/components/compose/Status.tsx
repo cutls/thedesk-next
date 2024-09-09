@@ -297,7 +297,11 @@ const Status: React.FC<Props> = (props) => {
 			}
 			if (!focused && event.key === 'n') {
 				props.setOpened(true)
-				statusRef.current?.getElementsByTagName('textarea')[0]?.focus()
+				const f = async () => {
+					await new Promise((resolve) => setTimeout(resolve, 300))
+					statusRef.current?.getElementsByTagName('textarea')[0]?.focus()
+				}
+				f()
 				event.preventDefault()
 			}
 			if (ctrl === true && event.key === 'Enter') {
