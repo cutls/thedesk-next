@@ -6,6 +6,7 @@ export type Timeline = {
 	server_id: number
 	list_id: string | null
 	column_width: ColumnWidth | number
+	column_height?: number
 	color?: Color
 	tts?: boolean
 	mediaOnly?: boolean

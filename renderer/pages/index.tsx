@@ -262,8 +262,10 @@ function App() {
 							resizeHandles={['e']}
 							onResizeStop={(_, e) => columnWidthSet(i, e.size.width)}
 						>
-							{tls.map((timeline) => <ShowTimeline
+							{tls.map((timeline, j) => <ShowTimeline
 								wrapIndex={i}
+								stackLength={tls.length}
+								isLast={j === tls.length - 1}
 								timeline={timeline[0]}
 								server={timeline[1]}
 								unreads={unreads}

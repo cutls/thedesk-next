@@ -510,7 +510,7 @@ const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: ()
 						<Button appearance="link" size="xs" onClick={() => switchLeftTimeline(props.timeline)}>
 							<Icon as={BsChevronLeft} />
 						</Button>
-						<Button appearance="link" size="xs" onClick={() => stackTimeline(props.timeline)} title={formatMessage({ id: props.timeline.stacked ? 'timeline.settings.unstack' : 'timeline.settings.stack'})} disabled={isFirst}>
+						<Button appearance="link" size="xs" onClick={() => stackTimeline(props.timeline)} title={formatMessage({ id: props.timeline.stacked ? 'timeline.settings.unstack' : 'timeline.settings.stack'})} disabled={isFirst && !props.timeline.stacked}>
 							<Icon as={props.timeline.stacked ? BsSquare : BsViewStacked} />
 						</Button>
 						<Button appearance="link" size="xs" onClick={() => switchRightTimeline(props.timeline)}>

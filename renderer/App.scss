@@ -398,10 +398,14 @@
   cursor: ew-resize;
   right: -4px;
   top: 0;
-}
-.react-resizable-handle {
   position: absolute;
   width: 4px;
   height: 100%;
   padding: 0 3px 3px 0;
+}
+.react-resizable-handle-s {
+  cursor: ns-resize;
+  position: absolute;
+  height: 4px;
+  width: 100%;
 }

@@ -4,9 +4,15 @@ import ShowTimeline from '@/components/timelines/Timeline'
 import type { Server } from '@/entities/server'
 import type { Timeline } from '@/entities/timeline'
 import type { Unread } from '@/entities/unread'
+import { updateColumnHeight } from '@/utils/storage'
+import { useWindowSize } from '@/utils/useWindowSize'
 import type { Entity, MegalodonInterface } from '@cutls/megalodon'
+import { useState } from 'react'
+import { ResizableBox } from 'react-resizable'
 
 type Props = {
+	isLast: boolean
+	stackLength: number
 	timeline: Timeline
 	server: Server
 	unreads: Array<Unread>
@@ -16,7 +22,27 @@ type Props = {
 	openFromOtherAccount: (status: Entity.Status) => void
 	wrapIndex: number
 }
-
+const ShowWrapped: React.FC<Props> = (props) => {
+	const [_wWidth, wHeight] = useWindowSize()
+	const [inResizing, setInResizing] = useState(false)
+	const [columnHeight, setColumnHeight] = useState(props.timeline.column_height || 0)
+	const columnHeightSet = async (h: number) => {
+		const height = Math.round(h / 50) * 50
+		setColumnHeight(height)
+		await updateColumnHeight({ id: props.timeline.id, columnHeight: height })
+	}
+	return <ResizableBox
+		width={0}
+		height={columnHeight || wHeight / props.stackLength}
+		axis="y"
+		onResizeStart={() => setInResizing(true)}
+		style={{ margin: '4px 0', flexGrow: !columnHeight && !inResizing ? 1 : 'initial', minWidth: '100%' }}
+		resizeHandles={props.isLast ? [] : ['s']}
+		onResizeStop={(_, e) => columnHeightSet(e.size.height)}
+	>
+		<Show {...props} />
+	</ResizableBox>
+}
 const Show: React.FC<Props> = (props) => {
 	if (props.timeline.kind === 'notifications') {
 		return (
@@ -38,4 +64,4 @@ const Show: React.FC<Props> = (props) => {
 	return <ShowTimeline wrapIndex={props.wrapIndex} timeline={props.timeline} server={props.server} openMedia={props.openMedia} openReport={props.openReport} openFromOtherAccount={props.openFromOtherAccount} />
 }
 
-export default Show
+export default ShowWrapped

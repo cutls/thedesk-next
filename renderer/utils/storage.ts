@@ -198,6 +198,12 @@ export async function updateColumnWidth({ id, columnWidth }: { id: number; colum
 	localStorage.setItem('timelinesV2', JSON.stringify(newTimelines))
 	return newTimelines.map((timeline) => columnWidthCalc(timeline[0].column_width))
 }
+export async function updateColumnHeight({ id, columnHeight }: { id: number; columnHeight: number }) {
+	const timelinesStr = localStorage.getItem('timelinesV2')
+	const timelines: Timeline[][] = JSON.parse(timelinesStr || '[]')
+	const newTimelines = await updateColumnSettingCore(timelines, id, 'column_height', columnHeight)
+	localStorage.setItem('timelinesV2', JSON.stringify(newTimelines))
+}
 const isColorGuard = (value: string): value is Color => colorList.includes(value as any)
 export async function updateColumnColor({ id, color }: { id: number; color: string }) {
 	const timelinesStr = localStorage.getItem('timelinesV2')
@@ -235,7 +241,7 @@ export async function updateColumnStack({ id, stack }: { id: number; stack: bool
 		const orderedTimelines = await reorderTimelineCore(timelines)
 		localStorage.setItem('timelinesV2', JSON.stringify(orderedTimelines))
 	} else {
-		const columnFrom: Timeline[] = timelines[wrapperIndex].filter((t) => t.id !== id)
+		const columnFrom: Timeline[] = timelines[wrapperIndex].filter((t) => t.id !== id).map((t) => ({ ...t, column_height: undefined }))
 		const isLast = wrapperIndex === timelines.length - 1
 		const editedTL = isLast ? [...timelines, [target]] : timelines.splice(wrapperIndex + 1, 0, [target])
 		const splicedTimelines = isLast ? editedTL : timelines
