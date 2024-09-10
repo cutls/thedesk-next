@@ -57,6 +57,7 @@ function App() {
     const [appearance, setAppearance] = useState<SettingsType['appearance']>(defaultSetting.appearance)
     const [timelineConfig, setTimelineConfig] = useState<SettingsType['timeline']>(defaultSetting.timeline)
     const [compose, setCompose] = useState<SettingsType['compose']>(defaultSetting.compose)
+    const [currentPath, setCurrentPath] = useState<string | undefined>(undefined)
 
     const toast = useToaster()
     const showToaster = (message: string) => toast.push(alert('info', formatMessage({ id: message })), { placement: 'topStart' })
@@ -86,6 +87,7 @@ function App() {
     }
     useEffect(() => {
         setFonts(['sans-serif', ...JSON.parse(localStorage.getItem('fonts') || '[]')])
+        if (location.protocol !== 'http:') setCurrentPath(location.href.replace('setting.html', ''))
         loadAppearance()
         setSpotifyTemp(localStorage.getItem('spotifyTemplate') || '#NowPlaying {song} / {album} / {artist}\n{url} #SpotifyWithTheDesk')
         const f = async () => {
@@ -136,7 +138,7 @@ function App() {
                 <title>TheDesk</title>
             </Head>
             <Stack justifyContent="space-between" style={{ position: 'fixed', padding: 10, backgroundColor: 'var(--rs-bg-overlay)', width: '100%', zIndex: 999 }}>
-                <Button onClick={() => router.push('./')}>
+                <Button onClick={() => router.push('./', currentPath ? `${currentPath}index.html` : undefined)}>
                     <Icon as={BsChevronLeft} style={{ fontSize: '1.4em' }} />
                 </Button>
                 <Heading style={{ fontSize: 24, fontWeight: 'bold' }}><FormattedMessage id="settings.settings.title" /></Heading>
@@ -200,9 +202,9 @@ function App() {
                     <p style={{ fontSize: 24, marginTop: 12, fontWeight: 'bold' }}><FormattedMessage id="settings.settings.spotify.template" /></p>
                     <Input as="textarea" rows={3} value={spotifyTemp} onChange={(e) => setSpotifyTemp(e)} onFocus={() => getDemoTrack()} />
                     <p style={{ fontSize: 10, margin: 10 }}><FormattedMessage id="settings.settings.spotify.tag" />: {'{song} {album} {artist} {url} {composer} {hz} {bitRate} {lyricist} {bpm} {genre}'}</p>
-                    {!!demoTrack && <div style={{ padding: 5, backgroundColor: 'var(--rs-input-bg)'}}>
+                    {!!demoTrack && <div style={{ padding: 5, backgroundColor: 'var(--rs-input-bg)' }}>
                         <Badge color="blue" content={formatMessage({ id: 'settings.settings.spotify.demo' })} style={{ marginBottom: 5 }} />
-                        <p>{spotifyTemplateReplace(demoTrack, spotifyTemp)}</p>    
+                        <p>{spotifyTemplateReplace(demoTrack, spotifyTemp)}</p>
                     </div>}
                     <Divider />
                     <Button appearance="ghost" onClick={() => window.electronAPI.openAppDataFolder()}><FormattedMessage id="settings.settings.open_appData_folder" /></Button>

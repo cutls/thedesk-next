@@ -52,6 +52,7 @@ function App() {
 	const [highlighted, setHighlighted] = useState<Timeline | null>(null)
 	const [composePosition, setComposePosition] = useState<[number, number]>([0, 0])
 	const [version, setVersion] = useState<string | null>(null)
+    const [currentPath, setCurrentPath] = useState<string | undefined>(undefined)
 
 	const [modalState, dispatch] = useReducer(modalReducer, initialModalState)
 	const spaceRef = useRef<HTMLDivElement>()
@@ -73,6 +74,7 @@ function App() {
 		migrateTimelineV1toV2()
 		loadAppearance()
 		document.addEventListener('keydown', handleKeyPress)
+		if (location.protocol !== 'http:') setCurrentPath(location.href.replace('index.html', ''))
 		const positionStr = localStorage.getItem('composePosition') || '0,0'
 		const [x, y] = positionStr.split(',').map((p) => Number.parseInt(p, 10))
 		setComposePosition([x, y])
@@ -298,7 +300,7 @@ function App() {
 				openAuthorize={(server: Server) => dispatch({ target: 'newServer', value: true, object: server })}
 				openAnnouncements={(server: Server, account: Account) => dispatch({ target: 'announcements', value: true, object: { server, account } })}
 				openThirdparty={() => dispatch({ target: 'thirdparty', value: true })}
-				openSettings={() => router.push('./setting')}
+				openSettings={() => router.push('./setting', currentPath ? `${currentPath}setting.html` : undefined)}
 				toggleCompose={toggleCompose}
 				toggleSearch={toggleSearch}
 				setHighlighted={setHighlighted}
