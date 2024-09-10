@@ -7,7 +7,7 @@ import dayjs from 'dayjs'
 import Head from 'next/head'
 import { type CSSProperties, useContext, useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { Heading, useToaster, Content, Stack, Divider, Button, Input, SelectPicker } from 'rsuite'
+import { Heading, useToaster, Content, Stack, Divider, Button, Input, SelectPicker, Badge } from 'rsuite'
 import alert from '@/components/utils/alert'
 import NumberForm from '@/components/settings/form/NumberForm'
 import SelectForm from '@/components/settings/form/SelectForm'
@@ -15,7 +15,7 @@ import RadioBoolean from '@/components/settings/form/RadioBooleanForm'
 import { Icon } from '@rsuite/icons'
 import { BsCheck2, BsChevronLeft } from 'react-icons/bs'
 import { useRouter } from 'next/router'
-import { nowplayingDisconnect } from '@/utils/nowplaying'
+import { getSpotifyPlaylist, nowplayingCode, nowplayingDisconnect, nowplayingInit, spotifyTemplateReplace } from '@/utils/nowplaying'
 import RadioForm from '@/components/settings/form/RadioForm'
 const languages = [
     {
@@ -60,10 +60,12 @@ function App() {
 
     const toast = useToaster()
     const showToaster = (message: string) => toast.push(alert('info', formatMessage({ id: message })), { placement: 'topStart' })
-    const [spotifyConnected, setSpotifyConnected] = useState(false)
     const [spotifyDev, setSpotifyDev] = useState(true)
+    const [spotifyConnected, setSpotifyConnected] = useState(false)
     const [spotifyInitiating, setSpotifyInitiating] = useState(false)
     const [spotifyConnecting, setSpotifyConnecting] = useState(false)
+    const [templateFocused, setTemplateFocused] = useState(false)
+    const [demoTrack, setDemoTrack] = useState<any>(null)
     const [spotifyCode, setSpotifyCode] = useState('')
     const [spotifyTemp, setSpotifyTemp] = useState('')
     const visLabel = [{ label: formatMessage({ id: 'timeline.settings.not_do' }), value: 'no' }, ...vis.map((value) => ({ label: formatMessage({ id: `compose.visibility.${value}` }), value }))]
@@ -94,6 +96,7 @@ function App() {
             setSpotifyConnected(!!localStorage.getItem('spotifyV2Token'))
         }
         f()
+        setSpotifyDev(location.protocol !== 'file:')
     }, [])
     const handleSubmit = async () => {
         const settings: SettingsType = {
@@ -109,12 +112,21 @@ function App() {
     const updateTimeline = (key: keyof SettingsType['timeline'], value: any) => setTimelineConfig((current) => Object.assign({}, current, { [key]: value }))
     const updateCompose = (key: keyof SettingsType['compose'], value: any) => setCompose((current) => Object.assign({}, current, { [key]: value }))
     const labelValueBuilder = (prefix: string, values: string[]) => values.map((value) => ({ label: formatMessage({ id: `settings.settings.${prefix}.${value}` }), value }))
-    function nowplayingInitFn(): void {
-        throw new Error('Function not implemented.')
+    const nowplayingInitFn = () => {
+        if (spotifyDev) setSpotifyInitiating(true)
+        nowplayingInit(spotifyDev, showToaster)
     }
-
-    function nowplayingCodeFn(): void {
-        throw new Error('Function not implemented.')
+    const nowplayingCodeFn = async () => {
+        try {
+            await nowplayingCode(spotifyCode, showToaster)
+            setSpotifyConnected(true)
+        } finally {
+            setSpotifyInitiating(false)
+        }
+    }
+    const getDemoTrack = async () => {
+        const track = await getSpotifyPlaylist(appearance.language, showToaster)
+        setDemoTrack(track)
     }
 
     return (
@@ -184,8 +196,12 @@ function App() {
                         </div>
                     )}
                     <p style={{ fontSize: 24, marginTop: 12, fontWeight: 'bold' }}><FormattedMessage id="settings.settings.spotify.template" /></p>
-                    <Input as="textarea" rows={3} value={spotifyTemp} onChange={(e) => setSpotifyTemp(e)} />
-                    <p style={{ fontSize: 10, margin: 10 }}>Tag: {'{song} {album} {artist} {url} {composer} {hz} {bitRate} {lyricist} {bpm} {genre}'}</p>
+                    <Input as="textarea" rows={3} value={spotifyTemp} onChange={(e) => setSpotifyTemp(e)} onFocus={() => getDemoTrack()} />
+                    <p style={{ fontSize: 10, margin: 10 }}><FormattedMessage id="settings.settings.spotify.tag" />: {'{song} {album} {artist} {url} {composer} {hz} {bitRate} {lyricist} {bpm} {genre}'}</p>
+                    {!!demoTrack && <div style={{ padding: 5, backgroundColor: 'var(--rs-input-bg)'}}>
+                        <Badge color="blue" content={formatMessage({ id: 'settings.settings.spotify.demo' })} style={{ marginBottom: 5 }} />
+                        <p>{spotifyTemplateReplace(demoTrack, spotifyTemp)}</p>    
+                    </div>}
                     <Divider />
                     <Button appearance="ghost" onClick={() => window.electronAPI.openAppDataFolder()}><FormattedMessage id="settings.settings.open_appData_folder" /></Button>
                     <p style={{ fontSize: 10, margin: 10 }}>
