@@ -291,18 +291,17 @@ const Status: React.FC<Props> = (props) => {
 	const handleKeyPress = useCallback(
 		(event: KeyboardEvent) => {
 			const ctrl = event.ctrlKey || event.metaKey
+			const globalFocused = Array.from(document.activeElement.classList).includes('rs-input')
 			if (!focused && event.key === 'm') {
-				event.preventDefault()
 				props.setOpened(false)
 			}
-			if (!focused && event.key === 'n') {
+			if (!globalFocused && event.key === 'n') {
 				props.setOpened(true)
 				const f = async () => {
 					await new Promise((resolve) => setTimeout(resolve, 300))
 					statusRef.current?.getElementsByTagName('textarea')[0]?.focus()
 				}
 				f()
-				event.preventDefault()
 			}
 			if (ctrl === true && event.key === 'Enter') {
 				if (document.activeElement === statusRef.current?.firstElementChild || document.activeElement === cwRef.current?.firstElementChild) {
@@ -572,7 +571,7 @@ const Status: React.FC<Props> = (props) => {
 						name="status"
 						accepter={Textarea}
 						onPaste={async (e) => await fileListCoreUploader(e.clipboardData.files)}
-						onDrop={async (e) =>{
+						onDrop={async (e) => {
 							e.preventDefault()
 							await fileListCoreUploader(e.dataTransfer.files)
 						}}
