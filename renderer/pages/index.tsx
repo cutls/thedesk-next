@@ -298,7 +298,7 @@ function App() {
 				openAuthorize={(server: Server) => dispatch({ target: 'newServer', value: true, object: server })}
 				openAnnouncements={(server: Server, account: Account) => dispatch({ target: 'announcements', value: true, object: { server, account } })}
 				openThirdparty={() => dispatch({ target: 'thirdparty', value: true })}
-				openSettings={() => router.push('/setting')}
+				openSettings={() => router.push('./setting')}
 				toggleCompose={toggleCompose}
 				toggleSearch={toggleSearch}
 				setHighlighted={setHighlighted}
