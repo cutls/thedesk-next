@@ -113,7 +113,7 @@ function App() {
     const updateCompose = (key: keyof SettingsType['compose'], value: any) => setCompose((current) => Object.assign({}, current, { [key]: value }))
     const labelValueBuilder = (prefix: string, values: string[]) => values.map((value) => ({ label: formatMessage({ id: `settings.settings.${prefix}.${value}` }), value }))
     const nowplayingInitFn = () => {
-        if (spotifyDev) setSpotifyInitiating(true)
+        setSpotifyInitiating(true)
         nowplayingInit(spotifyDev, showToaster)
     }
     const nowplayingCodeFn = async () => {
@@ -128,6 +128,7 @@ function App() {
         const track = await getSpotifyPlaylist(appearance.language, showToaster)
         setDemoTrack(track)
     }
+    const reloadIsConnected = () => setSpotifyConnected(!!localStorage.getItem('spotifyV2Token'))
 
     return (
         <div style={Object.assign({ backgroundColor: 'var(--rs-bg-well)' }, style)}>
@@ -173,7 +174,7 @@ function App() {
                     <SelectForm label={formatMessage({ id: 'settings.settings.compose.secondaryToot' })} hint={formatMessage({ id: 'settings.settings.compose.secondaryToot_hint' })} value={compose.secondaryToot} onChange={(value) => updateCompose('secondaryToot', value)} data={visLabel} searchable={false} style={{ width: '100%' }} />
                     <Divider />
                     <p style={{ fontSize: 24, marginTop: 12, fontWeight: 'bold', marginBottom: 10 }}><FormattedMessage id="settings.settings.spotify.title" /></p>
-                    <Button appearance="primary" disabled={spotifyConnected} style={{ marginRight: '5px' }} color="green" onClick={() => nowplayingInitFn()}>
+                    <Button appearance="primary" disabled={spotifyConnected || spotifyInitiating} style={{ marginRight: '5px' }} color="green" onClick={() => nowplayingInitFn()}>
                         <FormattedMessage id="settings.settings.spotify.connect" />
                     </Button>
                     <Button
@@ -187,7 +188,8 @@ function App() {
                     >
                         <FormattedMessage id="settings.settings.spotify.disconnect" />
                     </Button>
-                    {spotifyInitiating && (
+                    <Button appearance="link" onClick={() => reloadIsConnected()} style={{ marginLeft: '5px' }}><FormattedMessage id="settings.settings.reload" /></Button>
+                    {spotifyInitiating && spotifyDev && (
                         <div style={{ marginTop: '5px' }}>
                             <Input value={spotifyCode} onChange={(e) => setSpotifyCode(e)} placeholder={formatMessage({ id: 'settings.settings.spotify.code_help' })} />
                             <Button appearance="ghost" loading={spotifyConnecting} disabled={!spotifyCode} color="green" onClick={() => nowplayingCodeFn()}>

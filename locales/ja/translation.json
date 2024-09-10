@@ -105,7 +105,7 @@
 		"settings": {
 			"title": "設定",
 			"saved": "保存しました",
-			"reload": "全体を再読み込み",
+			"reload": "再読み込み",
 			"appearance": {
 				"title": "外観",
 				"font_size": "フォントサイズ",

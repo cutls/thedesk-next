@@ -105,7 +105,7 @@
 		"settings": {
 			"title": "Settings",
 			"saved": "Saved",
-			"reload": "Whole Reload",
+			"reload": "Reload",
 			"appearance": {
 				"title": "Appearance",
 				"font_size": "Font size",
