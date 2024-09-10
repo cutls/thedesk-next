@@ -71,8 +71,8 @@ type Poll = {
 }
 
 const model = Schema.Model({
-	status: Schema.Types.StringType().isRequired('This field is required.'),
-	attachments: Schema.Types.ArrayType().maxLength(4, "Can't attach over 5 files"),
+	status: Schema.Types.StringType(),
+	attachments: Schema.Types.ArrayType(),
 	poll: Schema.Types.ObjectType().shape({
 		options: Schema.Types.ArrayType().of(Schema.Types.StringType().isRequired('Required')).minLength(2, 'Minimum 2 choices required'),
 		expires_in: Schema.Types.NumberType().isRequired('Required'),
@@ -573,8 +573,8 @@ const Status: React.FC<Props> = (props) => {
 						accepter={Textarea}
 						onPaste={async (e) => await fileListCoreUploader(e.clipboardData.files)}
 						onDrop={async (e) =>{
-							await fileListCoreUploader(e.dataTransfer.files)
 							e.preventDefault()
+							await fileListCoreUploader(e.dataTransfer.files)
 						}}
 						ref={statusRef}
 						placeholder={formatMessage({ id: 'compose.status.placeholder' })}
