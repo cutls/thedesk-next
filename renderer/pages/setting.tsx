@@ -7,7 +7,7 @@ import dayjs from 'dayjs'
 import Head from 'next/head'
 import { type CSSProperties, useContext, useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { Heading, useToaster, Content, Stack, Divider, Button, Input, SelectPicker, Badge } from 'rsuite'
+import { Heading, useToaster, Content, Stack, Divider, Button, Input, SelectPicker, Badge, Loader } from 'rsuite'
 import alert from '@/components/utils/alert'
 import NumberForm from '@/components/settings/form/NumberForm'
 import SelectForm from '@/components/settings/form/SelectForm'
@@ -67,6 +67,7 @@ function App() {
     const [spotifyConnecting, setSpotifyConnecting] = useState(false)
     const [templateFocused, setTemplateFocused] = useState(false)
     const [demoTrack, setDemoTrack] = useState<any>(null)
+    const [demoTrackLoading, setDemoTrackLoading] = useState(false)
     const [spotifyCode, setSpotifyCode] = useState('')
     const [spotifyTemp, setSpotifyTemp] = useState('')
     const visLabel = [{ label: formatMessage({ id: 'timeline.settings.not_do' }), value: 'no' }, ...vis.map((value) => ({ label: formatMessage({ id: `compose.visibility.${value}` }), value }))]
@@ -127,8 +128,13 @@ function App() {
         }
     }
     const getDemoTrack = async () => {
-        const track = await getSpotifyPlaylist(appearance.language, showToaster)
-        setDemoTrack(track)
+        setDemoTrackLoading(true)
+        try {
+            const track = await getSpotifyPlaylist(appearance.language, showToaster)
+            setDemoTrack(track)
+        } finally {
+            setDemoTrackLoading(false)
+        }
     }
     const reloadIsConnected = () => setSpotifyConnected(!!localStorage.getItem('spotifyV2Token'))
 
@@ -202,9 +208,9 @@ function App() {
                     <p style={{ fontSize: 24, marginTop: 12, fontWeight: 'bold' }}><FormattedMessage id="settings.settings.spotify.template" /></p>
                     <Input as="textarea" rows={3} value={spotifyTemp} onChange={(e) => setSpotifyTemp(e)} onFocus={() => getDemoTrack()} />
                     <p style={{ fontSize: 10, margin: 10 }}><FormattedMessage id="settings.settings.spotify.tag" />: {'{song} {album} {artist} {url} {composer} {hz} {bitRate} {lyricist} {bpm} {genre}'}</p>
-                    {!!demoTrack && <div style={{ padding: 5, backgroundColor: 'var(--rs-input-bg)' }}>
+                    {(!!demoTrack || demoTrackLoading) && <div style={{ padding: 5, backgroundColor: 'var(--rs-input-bg)' }}>
                         <Badge color="blue" content={formatMessage({ id: 'settings.settings.spotify.demo' })} style={{ marginBottom: 5 }} />
-                        <p>{spotifyTemplateReplace(demoTrack, spotifyTemp)}</p>
+                       {demoTrackLoading ? <p><Loader /></p>: <p>{spotifyTemplateReplace(demoTrack, spotifyTemp)}</p>}
                     </div>}
                     <Divider />
                     <Button appearance="ghost" onClick={() => window.electronAPI.openAppDataFolder()}><FormattedMessage id="settings.settings.open_appData_folder" /></Button>
