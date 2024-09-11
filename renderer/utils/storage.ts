@@ -50,7 +50,7 @@ export async function addTimeline(server: Server, timeline: AddTimeline): Promis
 }
 async function removeTimelineCore(timelines: Timeline[][], id: number): Promise<Timeline[][]> {
 	const newTimelines = timelines.map((timeline) => timeline.filter((tl) => tl.id !== id))
-	return reorderTimelineCore(newTimelines)
+	return await reorderTimelineCore(newTimelines)
 }
 async function reorderTimelineCore(timelines: Timeline[][]): Promise<Timeline[][]> {
 	const newOrderTimelines: Timeline[][] = []
@@ -216,13 +216,16 @@ export async function updateColumnColor({ id, color }: { id: number; color: stri
 export async function updateColumnOrder({ id, direction }: { id: number; direction: 'left' | 'right' }) {
 	const timelinesStr = localStorage.getItem('timelinesV2')
 	const timelines: Timeline[][] = JSON.parse(timelinesStr || '[]')
-	const timelineIndex = timelines.findIndex((timeline) => timeline[0].id === id)
+	const timelineIndex = timelines.findIndex((timeline) => timeline.findIndex((t) => t.id === id) >= 0)
+	console.log(timelineIndex)
 	const nextIndex = direction === 'left' ? timelineIndex - 1 : timelineIndex + 1
 	if (nextIndex < 0 || nextIndex >= timelines.length) return
 	const tmp = structuredClone(timelines[nextIndex])
 	timelines[nextIndex] = timelines[timelineIndex]
 	timelines[timelineIndex] = tmp
-	const newTimelines = reorderTimelineCore(timelines)
+	console.log(timelines)
+	const newTimelines = await reorderTimelineCore(timelines)
+	console.log(newTimelines)
 	localStorage.setItem('timelinesV2', JSON.stringify(newTimelines))
 	return
 }
