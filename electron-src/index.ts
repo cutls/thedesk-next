@@ -38,22 +38,6 @@ try {
 } catch {
 	console.error('Failed to read config.json')
 }
-const selectionMenu = Menu.buildFromTemplate([
-	{ role: 'copy' },
-	{ type: 'separator' },
-	{ role: 'selectAll' }
-])
-
-const inputMenu = Menu.buildFromTemplate([
-	{ role: 'undo' },
-	{ role: 'redo' },
-	{ type: 'separator' },
-	{ role: 'cut' },
-	{ role: 'copy' },
-	{ role: 'paste' },
-	{ type: 'separator' },
-	{ role: 'selectAll' },
-])
 
 
 app.on('ready', async () => {
@@ -114,8 +98,26 @@ app.on('ready', async () => {
 	mainWindow.webContents.on('context-menu', (_e, props) => {
 		const { selectionText, isEditable } = props
 		if (isEditable) {
+
+
+			const inputMenu = Menu.buildFromTemplate([
+				{ role: 'undo' },
+				{ role: 'redo' },
+				{ type: 'separator' },
+				{ role: 'cut' },
+				{ role: 'copy' },
+				{ role: 'paste' },
+				{ type: 'separator' },
+				{ role: 'selectAll' },
+			])
 			inputMenu.popup()
 		} else if (selectionText && selectionText.trim() !== '') {
+			const selectionMenu = Menu.buildFromTemplate([
+				{ role: 'copy' },
+				{ type: 'separator' },
+				{ role: 'selectAll' },
+				{ label: 'Search with Google', click: () => shell.openExternal(`https://www.google.com/search?q=${selectionText}`) },
+			])
 			selectionMenu.popup()
 		}
 	})
