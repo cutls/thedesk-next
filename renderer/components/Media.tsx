@@ -3,7 +3,8 @@ import { Icon } from '@rsuite/icons'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import { type ReactElement, useCallback, useEffect, useState } from 'react'
-import { BsChevronLeft, BsChevronRight } from 'react-icons/bs'
+import { BsChevronLeft, BsChevronRight, BsCopy, BsDownload } from 'react-icons/bs'
+import type { ToolbarConfig } from 'react-viewer/lib/ViewerProps'
 import { Button, FlexboxGrid, Modal } from 'rsuite'
 const Viewer = dynamic(() => import('react-viewer'), { ssr: false })
 
@@ -13,7 +14,15 @@ type Props = {
 	opened: boolean
 	close: () => void
 }
-
+const customToolbar: ToolbarConfig[] = [
+	{
+		key: 'dl', render: <BsDownload />, onClick: ({ src }) => window.electronAPI.imageOperation(src, 'download')
+	},
+	{
+		key: 'copy', render: <BsCopy />, onClick: ({ src }) => window.electronAPI.imageOperation(src, 'copy')
+	},
+	
+]
 const Media: React.FC<Props> = (props) => {
 	const { media } = props
 	const isAllPhoto = media.length && media.every((m) => m && m.type === 'image')
@@ -21,7 +30,7 @@ const Media: React.FC<Props> = (props) => {
 		const srcs = media.map((m) => {
 			return { src: m.url }
 		})
-		return <Viewer onClose={() => props.close()} onMaskClick={() => props.close()} visible={true} images={srcs} />
+		return <Viewer onClose={() => props.close()} onMaskClick={() => props.close()} visible={true} images={srcs} customToolbar={(toolbar) => [...toolbar, ...customToolbar]} />
 	}
 	const [index, setIndex] = useState<number>(0)
 

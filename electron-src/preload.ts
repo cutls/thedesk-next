@@ -16,6 +16,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
 	requestAppleMusic: () => {
 		ipcRenderer.send('requestAppleMusic')
 	},
+	imageOperation: (image: string, operation: 'copy' | 'download') => {
+		ipcRenderer.send('imageOperation', { image, operation })
+	},
 	onInitialInfo: (callback: (event: Electron.IpcRendererEvent, data: any) => void) => {
 		ipcRenderer.on('initialInfo', callback)
 	},
@@ -26,4 +29,5 @@ contextBridge.exposeInMainWorld('electronAPI', {
 		ipcRenderer.on('customUrl', callback)
 	},
 })
-export type {}
+export type { }
+

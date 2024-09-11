@@ -14,7 +14,7 @@ type SystemConfig = {
 
 const promisifyExecFile = promisify(execFile)
 // Packages
-import { BrowserWindow, type IpcMainEvent, app, clipboard, ipcMain, shell, Menu } from 'electron'
+import { BrowserWindow, type IpcMainEvent, app, clipboard, ipcMain, shell, Menu, nativeImage } from 'electron'
 import isDev from 'electron-is-dev'
 import prepareNext from 'electron-next'
 import defaultConfig from './defaultConfig.json'
@@ -95,11 +95,15 @@ app.on('ready', async () => {
 			mainWindow?.webContents.send('appleMusic', song)
 		}
 	})
+
+	ipcMain.on('imageOperation', async (_event: IpcMainEvent, { image, operation }: { image: string, operation: 'copy' | 'download' }) => {
+		if (operation === 'download') return mainWindow?.webContents.downloadURL(image)
+		const blob = await fetch(image).then((r) => r.blob())
+		if (operation === 'copy') clipboard.writeImage(nativeImage.createFromBuffer(Buffer.from(await blob.arrayBuffer())))
+	})
 	mainWindow.webContents.on('context-menu', (_e, props) => {
 		const { selectionText, isEditable } = props
 		if (isEditable) {
-
-
 			const inputMenu = Menu.buildFromTemplate([
 				{ role: 'undo' },
 				{ role: 'redo' },
