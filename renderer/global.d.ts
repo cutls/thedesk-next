@@ -1,3 +1,5 @@
+import type { TimelineKind } from "./entities/timeline"
+
 export type IPCEvent = (ev: { payload: T }) => void
 export interface IElectronAPI {
 	writeText: (text: string) => void
@@ -11,7 +13,7 @@ export interface IElectronAPI {
 	imageOperation: (image: string, operation: 'copy' | 'download') => void
 }
 
-type StreamingArray = [number, WebSocketInterface]
+type StreamingArray = [number, WebSocketInterface, TimelineKind]
 declare global {
 	interface Window {
 		electronAPI: IElectronAPI

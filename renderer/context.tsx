@@ -1,21 +1,20 @@
 import generator, { type WebSocketInterface, detector } from '@cutls/megalodon'
 import { createContext, useEffect, useState } from 'react'
-import { set } from 'rsuite/esm/utils/dateUtils'
 import type { Server } from './entities/server'
 import { type Settings, defaultSetting } from './entities/settings'
-import type { Timeline } from './entities/timeline'
+import type { Timeline, TimelineKind } from './entities/timeline'
 import { getAccount, listServers, listTimelines } from './utils/storage'
 
 export const TheDeskContext = createContext({
 	start: async (timelines: Array<[Timeline, Server]>) => [] as StreamingArray[],
 	listen: ((channel: string, callback: any, tts?: boolean) => null) as <T>(channel: string, callback: (a: { payload: T }) => void, tts?: boolean) => void | null,
-	allClose: () => {},
-	timelineRefresh: () => {},
+	allClose: () => { },
+	timelineRefresh: () => { },
 	latestTimelineRefreshed: new Date().getTime(),
 	timelineConfig: defaultSetting.timeline,
-	saveTimelineConfig: (config: Settings['timeline']) => {},
+	saveTimelineConfig: (config: Settings['timeline']) => { },
 	focused: false,
-	setFocused: (focused: boolean) => {},
+	setFocused: (focused: boolean) => { },
 })
 const stripForVoice = (html: string) => {
 	const div = document.createElement('div')
@@ -25,7 +24,8 @@ const stripForVoice = (html: string) => {
 	const b = text.replace(protomatch, '').replace(/:[a-zA-Z0-9_]:/g, '')
 	return b
 }
-type StreamingArray = [number, WebSocketInterface]
+// 'home' | 'notifications' | 'local' | 'public' | 'favourites' | 'list' | 'bookmarks' | 'direct' | 'tag'
+type StreamingArray = [number, WebSocketInterface, TimelineKind]
 export const TheDeskProviderWrapper: React.FC = (props) => {
 	const [focused, setFocused] = useState(false)
 	const [latestTimelineRefreshed, setLatestTimelineRefreshed] = useState(0)
@@ -34,6 +34,17 @@ export const TheDeskProviderWrapper: React.FC = (props) => {
 	const start = async (timelines: Array<[Timeline, Server]>) =>
 		new Promise<StreamingArray[] | null>((resolve, reject) => {
 			const fn = async () => {
+				const userStreamings: StreamingArray[] = []
+				const servers = await listServers()
+				for (const [server, account] of servers) {
+					const noStreaming = server.no_streaming
+					const sns = await detector(server.base_url)
+					if (!account || !account.access_token) continue
+					const client = generator(sns, server.base_url, account.access_token)
+					const streaming = !noStreaming ? await client.userStreamingSubscription() : undefined
+					userStreamings.push([server.id, streaming, 'home'])
+				}
+
 				const streamings: StreamingArray[] = []
 				let i = 0
 				for (const [timeline, server] of timelines) {
@@ -46,27 +57,17 @@ export const TheDeskProviderWrapper: React.FC = (props) => {
 
 					let streaming: StreamingArray = undefined
 					try {
-						if (!noStreaming && timeline.kind === 'public') streaming = [timeline.id, await client.publicStreaming()]
-						if (!noStreaming && timeline.kind === 'local') streaming = [timeline.id, await client.localStreaming()]
-						if (!noStreaming && timeline.kind === 'direct') streaming = [timeline.id, await client.directStreaming()]
-						if (!noStreaming && timeline.kind === 'list') streaming = [timeline.id, await client.listStreaming(timeline.list_id)]
-						if (!noStreaming && timeline.kind === 'tag') streaming = [timeline.id, await client.tagStreaming(timeline.name)]
+						const targetSocket = userStreamings.find(([id]) => id === server.id)[1]
+						if (!noStreaming && timeline.kind === 'public') streaming = [timeline.id, await client.publicStreamingSubscription(targetSocket), timeline.kind]
+						if (!noStreaming && timeline.kind === 'local') streaming = [timeline.id, await client.localStreamingSubscription(targetSocket), timeline.kind]
+						if (!noStreaming && timeline.kind === 'direct') streaming = [timeline.id, await client.directStreamingSubscription(targetSocket), timeline.kind]
+						if (!noStreaming && timeline.kind === 'list') streaming = [timeline.id, await client.listStreamingSubscription(targetSocket, timeline.list_id), timeline.kind]
+						if (!noStreaming && timeline.kind === 'tag') streaming = [timeline.id, await client.tagStreamingSubscription(targetSocket, timeline.name), timeline.kind]
 					} catch {
 						console.error('skipped')
 					}
-					streamings.push(streaming || [timeline.id, undefined])
+					streamings.push(streaming || [timeline.id, undefined, timeline.kind])
 					i++
-				}
-				const userStreamings: StreamingArray[] = []
-
-				const servers = await listServers()
-				for (const [server, account] of servers) {
-					const noStreaming = server.no_streaming
-					const sns = await detector(server.base_url)
-					if (!account || !account.access_token) continue
-					const client = generator(sns, server.base_url, account.access_token)
-					const streaming = !noStreaming ? await client.userStreaming() : undefined
-					userStreamings.push([server.id, streaming])
 				}
 				window.streamings = streamings
 				window.userStreamings = userStreamings
@@ -84,8 +85,9 @@ export const TheDeskProviderWrapper: React.FC = (props) => {
 		if (channel === 'receive-timeline-status') {
 			for (let i = 0; i < useStreaming.length; i++) {
 				const streaming = useStreaming[i][1]
+				const timelineKind = useStreaming[i][2]
 				if (!streaming) continue
-				streaming.on('update', (status) => {
+				streaming.on('update', (status, ch) => {
 					const isBouyomi = timelineConfig.ttsProvider === 'bouyomi'
 					if (tts) {
 						const html = status.content
@@ -98,25 +100,27 @@ export const TheDeskProviderWrapper: React.FC = (props) => {
 							synthApi.speak(utter)
 						}
 					}
-					callback({ payload: { status: status, timeline_id: useStreaming[i][0] } })
+					if (!ch || ch.includes(timelineKind)) callback({ payload: { status: status, timeline_id: useStreaming[i][0] }, kind: ch })
 				})
 			}
 		}
 		if (channel === 'receive-timeline-conversation') {
 			for (let i = 0; i < useStreaming.length; i++) {
 				const streaming = useStreaming[i][1]
+				const timelineKind = useStreaming[i][2]
 				if (!streaming) continue
-				streaming.on('conversation', (status) => {
-					callback({ payload: { conversation: status, timeline_id: useStreaming[i][0] } })
+				streaming.on('conversation', (status, ch) => {
+					if (!ch || ch.includes(timelineKind)) callback({ payload: { conversation: status, timeline_id: useStreaming[i][0] }, kind: ch })
 				})
 			}
 		}
 		if (channel === 'receive-timeline-status-update') {
 			for (let i = 0; i < useStreaming.length; i++) {
 				const streaming = useStreaming[i][1]
+				const timelineKind = useStreaming[i][2]
 				if (!streaming) continue
-				streaming.on('status.update', (status) => {
-					callback({ payload: { status: status, timeline_id: useStreaming[i][0] } })
+				streaming.on('status.update', (status, ch) => {
+					if (!ch || ch.includes(timelineKind)) callback({ payload: { status: status, timeline_id: useStreaming[i][0] }, kind: ch })
 				})
 			}
 		}
@@ -138,7 +142,7 @@ export const TheDeskProviderWrapper: React.FC = (props) => {
 			for (let i = 0; i < userStreamings.length; i++) {
 				const streaming = userStreamings[i][1]
 				if (!streaming) continue
-				streaming.on('update', (status) => {
+				streaming.on('update', (status, ch) => {
 					if (tts) {
 						const html = status.content
 						const b = stripForVoice(html)
@@ -146,7 +150,7 @@ export const TheDeskProviderWrapper: React.FC = (props) => {
 						const utter = new SpeechSynthesisUtterance(b)
 						synthApi.speak(utter)
 					}
-					callback({ payload: { status: status, server_id: userStreamings[i][0] } })
+					if (!ch || ch.includes('user')) callback({ payload: { status: status, server_id: userStreamings[i][0] } })
 				})
 			}
 		}
@@ -154,8 +158,8 @@ export const TheDeskProviderWrapper: React.FC = (props) => {
 			for (let i = 0; i < userStreamings.length; i++) {
 				const streaming = userStreamings[i][1]
 				if (!streaming) continue
-				streaming.on('status_update', (status) => {
-					callback({ payload: { status: status, server_id: userStreamings[i][0] } })
+				streaming.on('status_update', (status, ch) => {
+					if (!ch || ch.includes('user')) callback({ payload: { status: status, server_id: userStreamings[i][0] } })
 				})
 			}
 		}
@@ -172,7 +176,7 @@ export const TheDeskProviderWrapper: React.FC = (props) => {
 			for (let i = 0; i < userStreamings.length; i++) {
 				const streaming = userStreamings[i][1]
 				if (!streaming) continue
-				streaming.on('notification', (mes) => {
+				streaming.on('notification', (mes, ch) => {
 					callback({ payload: { notification: mes, server_id: userStreamings[i][0] } })
 				})
 			}

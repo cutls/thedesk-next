@@ -79,7 +79,6 @@ export default function TimelineColumn(props: Props) {
 			}
 			try {
 				const res = await loadTimeline(props.timeline, client)
-				console.log(res)
 				setStatuses(res)
 			} catch (err) {
 				console.error(err)
