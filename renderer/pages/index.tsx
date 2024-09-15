@@ -52,7 +52,7 @@ function App() {
 	const [highlighted, setHighlighted] = useState<Timeline | null>(null)
 	const [composePosition, setComposePosition] = useState<[number, number]>([0, 0])
 	const [version, setVersion] = useState<string | null>(null)
-    const [currentPath, setCurrentPath] = useState<string | undefined>(undefined)
+	const [currentPath, setCurrentPath] = useState<string | undefined>(undefined)
 
 	const [modalState, dispatch] = useReducer(modalReducer, initialModalState)
 	const spaceRef = useRef<HTMLDivElement>()
@@ -264,19 +264,21 @@ function App() {
 							resizeHandles={['e']}
 							onResizeStop={(_, e) => columnWidthSet(i, e.size.width)}
 						>
-							{tls.map((timeline, j) => <ShowTimeline
-								wrapIndex={i}
-								stackLength={tls.length}
-								isLast={j === tls.length - 1}
-								timeline={timeline[0]}
-								server={timeline[1]}
-								unreads={unreads}
-								setUnreads={setUnreads}
-								key={timeline[0].id}
-								openMedia={(media: Entity.Attachment[], index: number) => dispatch({ target: 'media', value: true, object: media, index: index })}
-								openReport={(status: Entity.Status, client: MegalodonInterface) => dispatch({ target: 'report', value: true, object: status, client: client })}
-								openFromOtherAccount={(status: Entity.Status) => dispatch({ target: 'fromOtherAccount', value: true, object: status })}
-							/>)}
+							<>
+								{tls.map((timeline, j) => <ShowTimeline
+									wrapIndex={i}
+									stackLength={tls.length}
+									isLast={j === tls.length - 1}
+									timeline={timeline[0]}
+									server={timeline[1]}
+									unreads={unreads}
+									setUnreads={setUnreads}
+									key={timeline[0].id}
+									openMedia={(media: Entity.Attachment[], index: number) => dispatch({ target: 'media', value: true, object: media, index: index })}
+									openReport={(status: Entity.Status, client: MegalodonInterface) => dispatch({ target: 'report', value: true, object: status, client: client })}
+									openFromOtherAccount={(status: Entity.Status) => dispatch({ target: 'fromOtherAccount', value: true, object: status })}
+								/>)}
+							</>
 						</ResizableBox>
 					))}
 					<NewTimeline servers={servers} />
