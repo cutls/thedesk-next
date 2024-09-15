@@ -100,7 +100,6 @@ export const TheDeskProviderWrapper: React.FC = (props) => {
 							synthApi.speak(utter)
 						}
 					}
-					console.log(ch, timelineKind)
 					if (!ch || ch.includes(timelineKind)) callback({ payload: { status: status, timeline_id: useStreaming[i][0] }, kind: ch })
 				})
 			}
@@ -151,7 +150,6 @@ export const TheDeskProviderWrapper: React.FC = (props) => {
 						const utter = new SpeechSynthesisUtterance(b)
 						synthApi.speak(utter)
 					}
-					console.log(ch, 'user', 'used')
 					if (!ch || ch.includes('user')) callback({ payload: { status: status, server_id: userStreamings[i][0] } })
 				})
 			}
