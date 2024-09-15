@@ -329,7 +329,7 @@ const Notifications: React.FC<Props> = (props) => {
 									<Button
 										appearance="subtle"
 										title={formatMessage({ id: 'timeline.mark_as_read' })}
-										disabled={notifications.length && marker && marker.last_read_id === notifications[0].id}
+										disabled={notifications.length > 0 && marker && marker.last_read_id === notifications[0].id}
 										onClick={read}
 										style={{ padding: '4px' }}
 									>
