@@ -123,8 +123,8 @@ export async function removeServer({ id }: { id: number }): Promise<void> {
 	const timelinesStr = localStorage.getItem('timelinesV2')
 	let timelines: Timeline[][] = JSON.parse(timelinesStr || '[]')
 	const flatTls = timelines.flat()
-	const newFlatTimelineIds = flatTls.filter((timeline) => timeline.server_id !== id).map((tl) => tl.id)
-	for (const removeId of newFlatTimelineIds) {
+	const deleteFlatTimelineIds = flatTls.filter((timeline) => timeline.server_id === id).map((tl) => tl.id)
+	for (const removeId of deleteFlatTimelineIds) {
 		timelines = await removeTimelineCore(timelines, removeId)
 	}
 	localStorage.setItem('timelinesV2', JSON.stringify(timelines))
