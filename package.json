@@ -7,7 +7,7 @@
 		"email": "p@cutls.dev",
 		"url": "https://cutls.dev"
 	},
-	"version": "25.0.13",
+	"version": "25.0.14",
 	"codename": "Aiko",
 	 "packageManager": "pnpm@9.9.0",
 	"scripts": {
