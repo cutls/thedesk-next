@@ -531,7 +531,7 @@ const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: ()
 	const { formatMessage } = useIntl()
 	const isFirst = props.wrapIndex === 0
 	const removeTimelineFn = async (timeline: Timeline) => {
-		removeTimeline(timeline)
+		await removeTimeline(timeline)
 		timelineRefresh()
 		//await invoke('remove_timeline', { id: timeline.id })
 	}

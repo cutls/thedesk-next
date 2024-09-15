@@ -63,7 +63,7 @@ function App() {
 	const loadTimelines = async () => {
 		if (latestTimelineRefreshed > 0) allClose()
 		const timelines = await listTimelines()
-		console.log('start')
+		console.log('start', timelines)
 		await start(timelines.flat())
 		const widths = timelines.map((tl) => columnWidthCalc(tl[0][0].column_width))
 		setColumnWidths(widths)
