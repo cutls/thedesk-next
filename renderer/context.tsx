@@ -93,7 +93,11 @@ export const TheDeskProviderWrapper: React.FC = (props) => {
 						const html = status.content
 						const b = stripForVoice(html)
 						if (isBouyomi) {
-							fetch(`http://localhost:${timelineConfig.ttsPort}/Talk?text=${encodeURIComponent(b)}`)
+							try {
+								fetch(`http://localhost:${timelineConfig.ttsPort}/Talk?text=${encodeURIComponent(b)}`)
+							} catch {
+								console.error('Cannot TTS')
+							}
 						} else {
 							const synthApi = window.speechSynthesis
 							const utter = new SpeechSynthesisUtterance(b)
@@ -143,12 +147,21 @@ export const TheDeskProviderWrapper: React.FC = (props) => {
 				const streaming = userStreamings[i][1]
 				if (!streaming) continue
 				streaming.on('update', (status, ch) => {
+					const isBouyomi = timelineConfig.ttsProvider === 'bouyomi'
 					if (tts) {
 						const html = status.content
 						const b = stripForVoice(html)
-						const synthApi = window.speechSynthesis
-						const utter = new SpeechSynthesisUtterance(b)
-						synthApi.speak(utter)
+						if (isBouyomi) {
+							try {
+								fetch(`http://localhost:${timelineConfig.ttsPort}/Talk?text=${encodeURIComponent(b)}`)
+							} catch {
+								console.error('Cannot TTS')
+							}
+						} else {
+							const synthApi = window.speechSynthesis
+							const utter = new SpeechSynthesisUtterance(b)
+							synthApi.speak(utter)
+						}
 					}
 					if (!ch || ch.includes('user')) callback({ payload: { status: status, server_id: userStreamings[i][0] } })
 				})
