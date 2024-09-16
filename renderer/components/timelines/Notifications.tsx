@@ -25,7 +25,7 @@ import { getAccount, removeTimeline, updateColumnColor, updateColumnOrder, updat
 import Notification from './notification/Notification'
 
 type Props = {
-	timeline: Timeline
+	timeline?: Timeline
 	server: Server
 	unreads: Array<Unread>
 	setUnreads: Dispatch<SetStateAction<Array<Unread>>>
@@ -47,7 +47,7 @@ const Notifications: React.FC<Props> = (props) => {
 	const [pleromaUnreads, setPleromaUnreads] = useState<Array<string>>([])
 	const [customEmojis, setCustomEmojis] = useState<Array<CustomEmojiCategory>>([])
 	const [filters, setFilters] = useState<Array<Entity.Filter>>([])
-	const [columnWidth, setColumnWidth] = useState(columnWidthCalc(props.timeline.column_width))
+	const [columnWidth, setColumnWidth] = useState(columnWidthCalc(props.timeline?.column_width || 'sm'))
 
 	const scrollerRef = useRef<HTMLElement | null>(null)
 	const triggerRef = useRef(null)
@@ -94,7 +94,7 @@ const Notifications: React.FC<Props> = (props) => {
 			})
 		}
 		f()
-		setColumnWidth(columnWidthCalc(props.timeline.column_width))
+		setColumnWidth(columnWidthCalc(props.timeline?.column_width || 'sm'))
 	}, [props.timeline])
 
 	useEffect(() => {
@@ -124,6 +124,7 @@ const Notifications: React.FC<Props> = (props) => {
 		let options = { limit: TIMELINE_STATUSES_COUNT }
 		if (maxId) options = Object.assign({}, options, { max_id: maxId })
 		const res = await client.getNotifications(options)
+		if (!props.timeline) read()
 		return res.data.filter((n) => !!n.account)
 	}
 
@@ -241,7 +242,7 @@ const Notifications: React.FC<Props> = (props) => {
 		setColumnWidth(width)
 	}
 	const headerStyle: CSSProperties = {
-		backgroundColor: props.timeline.color ? `var(--rs-color-${props.timeline.color})` : 'var(--rs-color-card)',
+		backgroundColor: props.timeline?.color ? `var(--rs-color-${props.timeline.color})` : 'var(--rs-color-card)',
 		borderBottomWidth: '3px',
 		borderBottomStyle: 'solid',
 		borderBottomColor: account && account.color ? `var(--rs-color-${account.color})` : 'transparent',
@@ -255,10 +256,10 @@ const Notifications: React.FC<Props> = (props) => {
 			style={{ margin: '0 4px', minHeight: '100%', flexShrink: 0, width: columnWidth }}
 			resizeHandles={['e']}
 			onResizeStop={(_, e) => columnWidthSet(e.size.width)}
-			className={`timeline notifications notification${props.timeline.id}`}
+			className={`timeline notifications notification${props.timeline?.id || 'globalNotification'}`}
 		>
 			<Container style={{ height: '100%' }}>
-				<Header style={headerStyle}>
+				{props.timeline && <Header style={headerStyle}>
 					<FlexboxGrid align="middle" justify="space-between">
 						<FlexboxGrid.Item style={{ width: 'calc(100% - 108px)' }}>
 							<FlexboxGrid align="middle" onClick={backToTop} style={{ cursor: 'pointer' }}>
@@ -286,9 +287,9 @@ const Notifications: React.FC<Props> = (props) => {
 										whiteSpace: 'nowrap',
 										width: 'calc(100% - 42px)',
 									}}
-									title={`${timelineName(props.timeline.kind, props.timeline.name, formatMessage)}@${props.server.domain}`}
+									title={`${timelineName('notifications', props.timeline?.name || 'Notifications', formatMessage)}@${props.server.domain}`}
 								>
-									{timelineName(props.timeline.kind, props.timeline.name, formatMessage)}
+									{timelineName('notifications', props.timeline?.name || 'Notifications', formatMessage)}
 									<span style={{ fontSize: '14px' }}>@{props.server.domain}</span>
 								</FlexboxGrid.Item>
 							</FlexboxGrid>
@@ -324,7 +325,7 @@ const Notifications: React.FC<Props> = (props) => {
 							</FlexboxGrid>
 						</FlexboxGrid.Item>
 					</FlexboxGrid>
-				</Header>
+				</Header>}
 
 				{loading ? (
 					<Loader style={{ margin: '10em auto' }} />
@@ -480,7 +481,7 @@ const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: ()
 						<Button appearance="link" size="xs" onClick={() => switchLeftTimeline(props.timeline)}>
 							<Icon as={BsChevronLeft} />
 						</Button>
-						<Button appearance="link" size="xs" onClick={() => stackTimeline(props.timeline)} title={formatMessage({ id: props.timeline.stacked ? 'timeline.settings.unstack' : 'timeline.settings.stack'})} disabled={isFirst && !props.timeline.stacked}>
+						<Button appearance="link" size="xs" onClick={() => stackTimeline(props.timeline)} title={formatMessage({ id: props.timeline.stacked ? 'timeline.settings.unstack' : 'timeline.settings.stack' })} disabled={isFirst && !props.timeline.stacked}>
 							<Icon as={props.timeline.stacked ? BsSquare : BsViewStacked} />
 						</Button>
 						<Button appearance="link" size="xs" onClick={() => switchRightTimeline(props.timeline)}>
