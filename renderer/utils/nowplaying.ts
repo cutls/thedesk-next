@@ -51,7 +51,7 @@ export async function nowplaying(key: 'spotify' | 'appleMusic', showToaster: (me
 			const item = json.item
 			const img = item.album.images[0].url
 			const file = new File([await (await fetch(img)).blob()], 'cover.jpg', { type: 'image/jpeg' })
-			const contentRaw = localStorage.getItem('nowplayingTemplate')
+			const contentRaw = localStorage.getItem('spotifyTemplate')
 			const content = spotifyTemplateReplace(item, contentRaw)
 			return { text: content, file, title: `${item.name} ${item.album.name} ${item.artists[0].name}` }
 		} catch (e: any) {
