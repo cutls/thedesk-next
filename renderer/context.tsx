@@ -1,5 +1,6 @@
-import generator, { type WebSocketInterface, detector } from '@cutls/megalodon'
+import generator, { type WebSocketInterface, detector, type Entity } from '@cutls/megalodon'
 import { createContext, useEffect, useState } from 'react'
+import { useIntl } from 'react-intl'
 import type { Server } from './entities/server'
 import { type Settings, defaultSetting } from './entities/settings'
 import type { Timeline, TimelineKind } from './entities/timeline'
@@ -7,7 +8,8 @@ import { getAccount, listServers, listTimelines } from './utils/storage'
 
 export const TheDeskContext = createContext({
 	start: async (timelines: Array<[Timeline, Server]>) => [] as StreamingArray[],
-	listen: ((channel: string, callback: any, tts?: boolean) => null) as <T>(channel: string, callback: (a: { payload: T }) => void, tts?: boolean) => void | null,
+	listenUser: ((channel: string, callback: any, tts?: boolean) => null) as <T>(channel: string, callback: (a: { payload: T }) => void, tts?: boolean) => void | null,
+	listenTimeline: ((channel: string, callback: any, tts?: boolean) => null) as <T>(channel: string, callback: (a: { payload: T }) => void, tts?: boolean) => void | null,
 	allClose: () => { },
 	timelineRefresh: () => { },
 	latestTimelineRefreshed: new Date().getTime(),
@@ -76,7 +78,7 @@ export const TheDeskProviderWrapper: React.FC = (props) => {
 			}
 			fn()
 		})
-	const listen = async (channel: string, callback: any, tts?: boolean) => {
+	const listenTimeline = async (channel: string, callback: any, tts?: boolean) => {
 		const useStreaming = window.streamings
 		while (!useStreaming || useStreaming.length === 0) {
 			console.log('waiting1')
@@ -137,9 +139,11 @@ export const TheDeskProviderWrapper: React.FC = (props) => {
 				})
 			}
 		}
+	}
+	const listenUser = async (channel: string, callback: any, tts?: boolean) => {
 		const userStreamings = window.userStreamings
 		while (!userStreamings || userStreamings.length === 0) {
-			console.log('waiting2')
+			console.log('waiting2 for', channel)
 			await new Promise((resolve) => setTimeout(resolve, 1000))
 		}
 		if (channel === 'receive-home-status') {
@@ -219,7 +223,7 @@ export const TheDeskProviderWrapper: React.FC = (props) => {
 	}
 
 	return (
-		<TheDeskContext.Provider value={{ listen, start, allClose, timelineRefresh, latestTimelineRefreshed, timelineConfig, saveTimelineConfig, focused, setFocused }}>
+		<TheDeskContext.Provider value={{ listenUser, listenTimeline, start, allClose, timelineRefresh, latestTimelineRefreshed, timelineConfig, saveTimelineConfig, focused, setFocused }}>
 			{props.children}
 		</TheDeskContext.Provider>
 	)

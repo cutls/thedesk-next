@@ -40,7 +40,7 @@ type Props = {
 
 export default function TimelineColumn(props: Props) {
 	const { formatMessage } = useIntl()
-	const { listen } = useContext(TheDeskContext)
+	const { listenTimeline, listenUser } = useContext(TheDeskContext)
 
 	const [statuses, setStatuses] = useState<Array<Entity.Status>>([])
 	const [unreadStatuses, setUnreadStatuses] = useState<Array<Entity.Status>>([])
@@ -96,7 +96,7 @@ export default function TimelineColumn(props: Props) {
 		setColumnWidth(columnWidthCalc(props.timeline.column_width))
 
 		if (props.timeline.kind === 'home') {
-			listen<ReceiveHomeStatusPayload>(
+			listenUser<ReceiveHomeStatusPayload>(
 				'receive-home-status',
 				(ev) => {
 					console.log(ev.payload.server_id, props.server.id)
@@ -114,7 +114,7 @@ export default function TimelineColumn(props: Props) {
 				props.timeline.tts,
 			)
 
-			listen<ReceiveHomeStatusUpdatePayload>('receive-home-status-update', (ev) => {
+			listenUser<ReceiveHomeStatusUpdatePayload>('receive-home-status-update', (ev) => {
 				console.log('receive-home-status-update', ev.payload.server_id, props.server.id)
 				if (ev.payload.server_id !== props.server.id) {
 					return
@@ -124,7 +124,7 @@ export default function TimelineColumn(props: Props) {
 				setStatuses((last) => updateStatus(last, ev.payload.status))
 			})
 
-			listen<DeleteHomeStatusPayload>('delete-home-status', (ev) => {
+			listenUser<DeleteHomeStatusPayload>('delete-home-status', (ev) => {
 				if (ev.payload.server_id !== props.server.id) {
 					return
 				}
@@ -132,7 +132,7 @@ export default function TimelineColumn(props: Props) {
 				setStatuses((last) => deleteStatus(last, ev.payload.status_id))
 			})
 		} else {
-			listen<ReceiveTimelineStatusPayload>(
+			listenTimeline<ReceiveTimelineStatusPayload>(
 				'receive-timeline-status',
 				(ev) => {
 					if (ev.payload.timeline_id !== props.timeline.id) {
@@ -149,7 +149,7 @@ export default function TimelineColumn(props: Props) {
 				props.timeline.tts,
 			)
 
-			listen<ReceiveTimelineStatusUpdatePayload>('receive-timeline-status-update', (ev) => {
+			listenTimeline<ReceiveTimelineStatusUpdatePayload>('receive-timeline-status-update', (ev) => {
 				if (ev.payload.timeline_id !== props.timeline.id) {
 					return
 				}
@@ -158,7 +158,7 @@ export default function TimelineColumn(props: Props) {
 				setStatuses((last) => updateStatus(last, ev.payload.status))
 			})
 
-			listen<DeleteTimelineStatusPayload>('delete-timeline-status', (ev) => {
+			listenTimeline<DeleteTimelineStatusPayload>('delete-timeline-status', (ev) => {
 				if (ev.payload.timeline_id !== props.timeline.id) {
 					return
 				}

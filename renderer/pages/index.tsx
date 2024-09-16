@@ -30,9 +30,10 @@ import type { Entity, MegalodonInterface } from '@cutls/megalodon'
 import Head from 'next/head'
 import Draggable from 'react-draggable'
 import { useIntl } from 'react-intl'
-import { listServers, listTimelines, migrateTimelineV1toV2, readSettings, updateColumnWidth } from 'utils/storage'
+import { listAccounts, listServers, listTimelines, migrateTimelineV1toV2, readSettings, updateColumnWidth } from 'utils/storage'
 import { useRouter } from 'next/router'
 import { ResizableBox } from 'react-resizable'
+import type { ReceiveNotificationPayload } from '@/payload'
 
 const { scrollLeft } = DOMHelper
 
@@ -40,7 +41,7 @@ function App() {
 	const { formatMessage } = useIntl()
 	const router = useRouter()
 	const [width, height] = useWindowSize()
-	const { start, latestTimelineRefreshed, allClose, saveTimelineConfig } = useContext(TheDeskContext)
+	const { start, latestTimelineRefreshed, allClose, saveTimelineConfig, listenUser, timelineConfig } = useContext(TheDeskContext)
 	const { loadTheme } = useContext(ContextLoadTheme)
 	const [servers, setServers] = useState<ServerSet[]>([])
 	const [timelines, setTimelines] = useState<[Timeline, Server][][]>([])
@@ -60,6 +61,31 @@ function App() {
 	const toaster = useToaster()
 	const { switchLang } = useContext(i18nContext)
 
+	const actionText = (notification: Entity.Notification) => {
+		const useName = notification.account.display_name || notification.account.username
+		switch (notification.type) {
+			case 'favourite':
+				return formatMessage({ id: 'timeline.notification.favourite.body' }, { user: useName })
+			case 'reblog':
+				return formatMessage({ id: 'timeline.notification.reblog.body' }, { user: useName })
+			case 'poll_expired':
+				return formatMessage({ id: 'timeline.notification.poll_expired.body' }, { user: useName })
+			case 'poll_vote':
+				return formatMessage({ id: 'timeline.notification.poll_vote.body' }, { user: useName })
+			case 'quote':
+				return formatMessage({ id: 'timeline.notification.quote.body' }, { user: useName })
+			case 'status':
+				return formatMessage({ id: 'timeline.notification.status.body' }, { user: useName })
+			case 'update':
+				return formatMessage({ id: 'timeline.notification.update.body' }, { user: useName })
+			case 'emoji_reaction':
+			case 'reaction':
+				return formatMessage({ id: 'timeline.notification.emoji_reaction.body' }, { user: useName })
+			default:
+				return null
+		}
+	}
+
 	const loadTimelines = async () => {
 		if (latestTimelineRefreshed > 0) allClose()
 		const timelines = await listTimelines()
@@ -68,6 +94,15 @@ function App() {
 		const widths = timelines.map((tl) => columnWidthCalc(tl[0][0].column_width))
 		setColumnWidths(widths)
 		setTimelines(timelines)
+		listenUser<ReceiveNotificationPayload>('receive-notification', async (ev) => {
+			const accounts = await listAccounts()
+			const [account, server] = accounts.find((([_a, s]) => s.id === ev.payload.server_id))
+			if (timelineConfig.notification !== 'no') {
+				new window.Notification(`TheDesk: ${account.username}@${server.domain}`, {
+					body: actionText(ev.payload.notification),
+				})
+			}
+		})
 	}
 
 	useEffect(() => {

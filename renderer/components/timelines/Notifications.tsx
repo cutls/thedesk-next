@@ -36,7 +36,7 @@ type Props = {
 }
 const Notifications: React.FC<Props> = (props) => {
 	const { formatMessage } = useIntl()
-	const { listen, timelineConfig } = useContext(TheDeskContext)
+	const { listenUser, timelineConfig } = useContext(TheDeskContext)
 	const [account, setAccount] = useState<Account>()
 	const [client, setClient] = useState<MegalodonInterface>()
 	const [notifications, setNotifications] = useState<Array<Entity.Notification>>([])
@@ -54,31 +54,6 @@ const Notifications: React.FC<Props> = (props) => {
 	const replyOpened = useRef<boolean>(false)
 	const toast = useToaster()
 	const router = useRouter()
-
-	const actionText = (notification: Entity.Notification) => {
-		const useName = notification.account.display_name || notification.account.username
-		switch (notification.type) {
-			case 'favourite':
-				return formatMessage({ id: 'timeline.notification.favourite.body' }, { user: useName })
-			case 'reblog':
-				return formatMessage({ id: 'timeline.notification.reblog.body' }, { user: useName })
-			case 'poll_expired':
-				return formatMessage({ id: 'timeline.notification.poll_expired.body' }, { user: useName })
-			case 'poll_vote':
-				return formatMessage({ id: 'timeline.notification.poll_vote.body' }, { user: useName })
-			case 'quote':
-				return formatMessage({ id: 'timeline.notification.quote.body' }, { user: useName })
-			case 'status':
-				return formatMessage({ id: 'timeline.notification.status.body' }, { user: useName })
-			case 'update':
-				return formatMessage({ id: 'timeline.notification.update.body' }, { user: useName })
-			case 'emoji_reaction':
-			case 'reaction':
-				return formatMessage({ id: 'timeline.notification.emoji_reaction.body' }, { user: useName })
-			default:
-				return null
-		}
-	}
 
 	useEffect(() => {
 		const f = async () => {
@@ -101,14 +76,9 @@ const Notifications: React.FC<Props> = (props) => {
 			const emojis = await cli.getInstanceCustomEmojis()
 			setCustomEmojis(mapCustomEmojiCategory(props.server.domain, emojis.data))
 
-			listen<ReceiveNotificationPayload>('receive-notification', (ev) => {
+			listenUser<ReceiveNotificationPayload>('receive-notification', (ev) => {
 				if (ev.payload.server_id !== props.server.id) return
 				updateMarker(cli)
-				if (timelineConfig.notification !== 'no') {
-					new window.Notification(`TheDesk: ${account.username}@${props.server.domain}`, {
-						body: actionText(ev.payload.notification),
-					})
-				}
 				if (replyOpened.current || (scrollerRef.current && scrollerRef.current.scrollTop > 10)) {
 					setUnreadNotifications((last) => {
 						if (last.find((n) => n.id === ev.payload.notification.id)) return last

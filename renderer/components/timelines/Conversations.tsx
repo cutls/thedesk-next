@@ -30,7 +30,7 @@ type Props = {
 
 const Conversations: React.FC<Props> = (props) => {
 	const { formatMessage } = useIntl()
-	const { listen } = useContext(TheDeskContext)
+	const { listenTimeline } = useContext(TheDeskContext)
 	const [account, setAccount] = useState<Account | null>(null)
 	const [client, setClient] = useState<MegalodonInterface>()
 	const [conversations, setConversations] = useState<Array<Entity.Conversation>>([])
@@ -68,7 +68,7 @@ const Conversations: React.FC<Props> = (props) => {
 		f()
 		setColumnWidth(columnWidthCalc(props.timeline.column_width))
 
-		listen<ReceiveTimelineConversationPayload>('receive-timeline-conversation', (ev) => {
+		listenTimeline<ReceiveTimelineConversationPayload>('receive-timeline-conversation', (ev) => {
 			if (ev.payload.timeline_id !== props.timeline.id) {
 				return
 			}

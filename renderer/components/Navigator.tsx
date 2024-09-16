@@ -16,7 +16,7 @@ import { type Dispatch, type ReactElement, type SetStateAction, useContext, useE
 import { BsDice1, BsDice2, BsDice3, BsDice4, BsDice5, BsDice6, BsGear, BsPencilSquare, BsPlus, BsSearch } from 'react-icons/bs'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Avatar, Badge, Button, Dropdown, FlexboxGrid, Popover, Sidebar, Sidenav, Stack, Text, Whisper, useToaster } from 'rsuite'
-import { addTimeline, listTimelines, readSettings, removeServer, updateAccountColor } from 'utils/storage'
+import { addTimeline, getServer, listAccounts, listTimelines, readSettings, removeServer, updateAccountColor } from 'utils/storage'
 
 type NavigatorProps = {
 	servers: Array<ServerSet>
@@ -41,12 +41,12 @@ const diceCt = (dice: number) => {
 }
 const Navigator: React.FC<NavigatorProps> = (props): ReactElement => {
 	const { formatMessage } = useIntl()
+	const { timelineRefresh, timelineConfig, listenUser } = useContext(TheDeskContext)
 	const { servers, openAuthorize, openAnnouncements, openThirdparty, openSettings } = props
 	const [awake, setAwake] = useState(0)
 	const [walkthrough, setWalkthrough] = useState(false)
 	const [config, setConfig] = useState<Settings['compose']>(defaultSetting.compose)
 	const toaster = useToaster()
-	const { timelineRefresh, timelineConfig } = useContext(TheDeskContext)
 
 	// Walkthrough instruction
 
@@ -125,7 +125,7 @@ const Navigator: React.FC<NavigatorProps> = (props): ReactElement => {
 		let target = timelines.find((t) => t[1].id === set.server.id && t[0].kind === 'notifications')
 		if (target === undefined || target === null) {
 			await addTimeline(set.server, { kind: 'notifications', name: 'Notifications', columnWidth: 'sm' })
-			const timelines =( await listTimelines()).flat()
+			const timelines = (await listTimelines()).flat()
 			timelineRefresh()
 			target = timelines.find((t) => t[1].id === set.server.id && t[0].kind === 'notifications')
 			if (target === undefined || target === null) {
