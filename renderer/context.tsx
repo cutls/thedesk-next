@@ -27,7 +27,7 @@ const stripForVoice = (html: string) => {
 	return b
 }
 // 'home' | 'notifications' | 'local' | 'public' | 'favourites' | 'list' | 'bookmarks' | 'direct' | 'tag'
-type StreamingArray = [number, WebSocketInterface, TimelineKind]
+type StreamingArray = [number, WebSocketInterface, string]
 export const TheDeskProviderWrapper: React.FC = (props) => {
 	const [focused, setFocused] = useState(false)
 	const [latestTimelineRefreshed, setLatestTimelineRefreshed] = useState(0)
@@ -60,11 +60,11 @@ export const TheDeskProviderWrapper: React.FC = (props) => {
 					let streaming: StreamingArray = undefined
 					try {
 						const targetSocket = userStreamings.find(([id]) => id === server.id)[1]
-						if (!noStreaming && timeline.kind === 'public') streaming = [timeline.id, await client.publicStreamingSubscription(targetSocket), timeline.kind]
-						if (!noStreaming && timeline.kind === 'local') streaming = [timeline.id, await client.localStreamingSubscription(targetSocket), timeline.kind]
-						if (!noStreaming && timeline.kind === 'direct') streaming = [timeline.id, await client.directStreamingSubscription(targetSocket), timeline.kind]
-						if (!noStreaming && timeline.kind === 'list') streaming = [timeline.id, await client.listStreamingSubscription(targetSocket, timeline.list_id), timeline.kind]
-						if (!noStreaming && timeline.kind === 'tag') streaming = [timeline.id, await client.tagStreamingSubscription(targetSocket, timeline.name), timeline.kind]
+						if (!noStreaming && timeline.kind === 'public') streaming = [timeline.id, await client.publicStreamingSubscription(targetSocket), 'public']
+						if (!noStreaming && timeline.kind === 'local') streaming = [timeline.id, await client.localStreamingSubscription(targetSocket), 'public:local']
+						if (!noStreaming && timeline.kind === 'direct') streaming = [timeline.id, await client.directStreamingSubscription(targetSocket), 'direct']
+						if (!noStreaming && timeline.kind === 'list') streaming = [timeline.id, await client.listStreamingSubscription(targetSocket, timeline.list_id), 'list']
+						if (!noStreaming && timeline.kind === 'tag') streaming = [timeline.id, await client.tagStreamingSubscription(targetSocket, timeline.name), 'tag']
 					} catch {
 						console.error('skipped')
 					}

@@ -13,7 +13,7 @@ export interface IElectronAPI {
 	imageOperation: (image: string, operation: 'copy' | 'download') => void
 }
 
-type StreamingArray = [number, WebSocketInterface, TimelineKind]
+type StreamingArray = [number, WebSocketInterface, string]
 declare global {
 	interface Window {
 		electronAPI: IElectronAPI
