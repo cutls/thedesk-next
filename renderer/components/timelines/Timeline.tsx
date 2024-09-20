@@ -487,11 +487,12 @@ export default function TimelineColumn(props: Props) {
 							overscan={TIMELINE_STATUSES_COUNT}
 							defaultItemHeight={44}
 							itemContent={(_, status) => {
-								if (props.timeline.mediaOnly && status.media_attachments.length === 0) return null
+								const statusHasContent = status.reblog ? status.reblog : status
+								if (props.timeline.mediaOnly && statusHasContent.media_attachments.length === 0) return null
 								if (
 									filters
 										?.map((f) => [f.phrase, f.irreversible] as [string, boolean])
-										.findIndex(([keyword, irreversible]) => (irreversible ? status.content.toLowerCase().includes(keyword.toLowerCase()) : false)) > 0
+										.findIndex(([keyword, irreversible]) => (irreversible ? statusHasContent.content.toLowerCase().includes(keyword.toLowerCase()) : false)) >= 0
 								)
 									return null
 								return (

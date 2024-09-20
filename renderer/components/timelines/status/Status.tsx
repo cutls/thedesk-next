@@ -142,7 +142,7 @@ const Status: React.FC<Props> = (props) => {
 		const res = await props.client.getStatus(props.status.id)
 		props.updateStatus(res.data)
 	}
-	if (!ignoreFilter && props.filters?.map((f) => f.phrase).filter((keyword) => props.status.content.toLowerCase().includes(keyword.toLowerCase())).length > 0) {
+	if (!ignoreFilter && props.filters?.map((f) => f.phrase).filter((keyword) => status.content.toLowerCase().includes(keyword.toLowerCase())).length > 0) {
 		return (
 			<div className="status" style={{ textAlign: 'center', paddingTop: '0.5em', paddingBottom: '0.5em' }}>
 				<FormattedMessage id="timeline.status.filtered" />
