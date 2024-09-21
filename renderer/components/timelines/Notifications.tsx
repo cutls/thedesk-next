@@ -124,7 +124,7 @@ const Notifications: React.FC<Props> = (props) => {
 		let options = { limit: TIMELINE_STATUSES_COUNT }
 		if (maxId) options = Object.assign({}, options, { max_id: maxId })
 		const res = await client.getNotifications(options)
-		if (!props.timeline) read()
+		if (!props.timeline) read(true)
 		return res.data.filter((n) => !!n.account)
 	}
 
@@ -177,7 +177,7 @@ const Notifications: React.FC<Props> = (props) => {
 		}
 	}
 
-	const read = async () => {
+	const read = async (ignoreError: boolean) => {
 		props.setUnreads((current) => {
 			const updated = current.map((u) => {
 				if (u.server_id === props.server.id) return Object.assign({}, u, { count: 0 })
@@ -193,7 +193,7 @@ const Notifications: React.FC<Props> = (props) => {
 			if (props.server.sns === 'pleroma') await client.readNotifications({ max_id: notifications[0].id })
 			await updateMarker(client)
 		} catch {
-			toast.push(alert('error', formatMessage({ id: 'alert.failed_mark' })), { placement: 'topStart' })
+			if(!ignoreError) toast.push(alert('error', formatMessage({ id: 'alert.failed_mark' })), { placement: 'topStart' })
 		}
 	}
 
@@ -301,7 +301,7 @@ const Notifications: React.FC<Props> = (props) => {
 										appearance="subtle"
 										title={formatMessage({ id: 'timeline.mark_as_read' })}
 										disabled={notifications.length > 0 && marker && marker.last_read_id === notifications[0].id}
-										onClick={read}
+										onClick={() => read(false)}
 										style={{ padding: '4px' }}
 									>
 										<Icon as={BsCheck2} />
