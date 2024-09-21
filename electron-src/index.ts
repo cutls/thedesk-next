@@ -116,11 +116,12 @@ app.on('ready', async () => {
 			])
 			inputMenu.popup()
 		} else if (selectionText && selectionText.trim() !== '') {
+			const isJa = app.getPreferredSystemLanguages().includes('ja')
 			const selectionMenu = Menu.buildFromTemplate([
 				{ role: 'copy' },
 				{ type: 'separator' },
 				{ role: 'selectAll' },
-				{ label: 'Search with Google', click: () => shell.openExternal(`https://www.google.com/search?q=${selectionText}`) },
+				{ label: isJa ? `Googleで「${selectionText}」を検索` : `Search "${selectionText}" with Google`, click: () => shell.openExternal(`https://www.google.com/search?q=${selectionText}`) },
 			])
 			selectionMenu.popup()
 		}
