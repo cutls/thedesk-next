@@ -1,4 +1,4 @@
 {
-    "hardwareAcceleration": true,
-    "allowDoH": true
+	"hardwareAcceleration": true,
+	"allowDoH": true
 }

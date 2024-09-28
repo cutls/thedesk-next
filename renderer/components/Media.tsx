@@ -16,12 +16,15 @@ type Props = {
 }
 const customToolbar: ToolbarConfig[] = [
 	{
-		key: 'dl', render: <BsDownload />, onClick: ({ src }) => window.electronAPI.imageOperation(src, 'download')
+		key: 'dl',
+		render: <BsDownload />,
+		onClick: ({ src }) => window.electronAPI.imageOperation(src, 'download'),
 	},
 	{
-		key: 'copy', render: <BsCopy />, onClick: ({ src }) => window.electronAPI.imageOperation(src, 'copy')
+		key: 'copy',
+		render: <BsCopy />,
+		onClick: ({ src }) => window.electronAPI.imageOperation(src, 'copy'),
 	},
-	
 ]
 const Media: React.FC<Props> = (props) => {
 	const { media } = props

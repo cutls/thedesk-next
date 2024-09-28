@@ -1,4 +1,4 @@
-import type { TimelineKind } from "./entities/timeline"
+import type { TimelineKind } from './entities/timeline'
 
 export type IPCEvent = (ev: { payload: T }) => void
 export interface IElectronAPI {

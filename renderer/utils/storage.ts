@@ -36,15 +36,17 @@ export async function addTimeline(server: Server, timeline: AddTimeline): Promis
 	const timelinesStr = localStorage.getItem('timelinesV2')
 	const timelines: Timeline[][] = JSON.parse(timelinesStr || '[]')
 	const flatTls = timelines.flat()
-	timelines.push([{
-		id: flatTls.length + 1,
-		kind: timeline.kind,
-		name: timeline.name,
-		sort: flatTls.length + 1,
-		server_id: server.id,
-		list_id: timeline.listId || null,
-		column_width: timeline.columnWidth,
-	}])
+	timelines.push([
+		{
+			id: flatTls.length + 1,
+			kind: timeline.kind,
+			name: timeline.name,
+			sort: flatTls.length + 1,
+			server_id: server.id,
+			list_id: timeline.listId || null,
+			column_width: timeline.columnWidth,
+		},
+	])
 	localStorage.setItem('timelinesV2', JSON.stringify(timelines))
 	return
 }

@@ -13,9 +13,27 @@ import generator, { type Entity } from '@cutls/megalodon'
 import { Icon } from '@rsuite/icons'
 import { useRouter } from 'next/router'
 import { type Dispatch, type ReactElement, type SetStateAction, useContext, useEffect, useState } from 'react'
-import { BsBell, BsBoxArrowInRight, BsBoxArrowRight, BsDice1, BsDice2, BsDice3, BsDice4, BsDice5, BsDice6, BsGear, BsHash, BsList, BsMegaphone, BsPencilSquare, BsPerson, BsPlus, BsSearch } from 'react-icons/bs'
+import {
+	BsBell,
+	BsBoxArrowInRight,
+	BsBoxArrowRight,
+	BsDice1,
+	BsDice2,
+	BsDice3,
+	BsDice4,
+	BsDice5,
+	BsDice6,
+	BsGear,
+	BsHash,
+	BsList,
+	BsMegaphone,
+	BsPencilSquare,
+	BsPerson,
+	BsPlus,
+	BsSearch,
+} from 'react-icons/bs'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { Avatar, Badge, Button, Dropdown, FlexboxGrid, Popover, Sidebar, Sidenav, Stack, Text, Whisper, useToaster, IconButton } from 'rsuite'
+import { Avatar, Badge, Button, Dropdown, FlexboxGrid, IconButton, Popover, Sidebar, Sidenav, Stack, Text, Whisper, useToaster } from 'rsuite'
 import { addTimeline, getServer, listAccounts, listTimelines, readSettings, removeServer, updateAccountColor } from 'utils/storage'
 import Notifications from './timelines/Notifications'
 type ImitateFormattedMessage = ({ id }: { id: string }) => string
@@ -200,7 +218,7 @@ const Navigator: React.FC<NavigatorProps> = (props): ReactElement => {
 											openNotification,
 											unreads: props.unreads,
 											setUnreads: props.setUnreads,
-											formatMessage: formatMessage as ImitateFormattedMessage
+											formatMessage: formatMessage as ImitateFormattedMessage,
 										},
 										ref,
 									)
@@ -278,7 +296,10 @@ type ServerMenuProps = {
 	formatMessage: ImitateFormattedMessage
 }
 
-const serverMenu = ({ className, left, top, onClose, server, openAuthorize, openAnnouncements, openNotification, unreads, setUnreads, formatMessage }: ServerMenuProps, ref: React.RefCallback<HTMLElement>): ReactElement => {
+const serverMenu = (
+	{ className, left, top, onClose, server, openAuthorize, openAnnouncements, openNotification, unreads, setUnreads, formatMessage }: ServerMenuProps,
+	ref: React.RefCallback<HTMLElement>,
+): ReactElement => {
 	const router = useRouter()
 	const { timelineRefresh } = useContext(TheDeskContext)
 
@@ -320,15 +341,13 @@ const serverMenu = ({ className, left, top, onClose, server, openAuthorize, open
 					{server.server.account_id === null && (
 						<IconButton onClick={() => handleSelect('authorize')} title={formatMessage({ id: 'navigator.servers.authorize' })} icon={<Icon as={BsBoxArrowInRight} />} />
 					)}
-					{server.server.account_id !== null && (
-						<IconButton onClick={() => handleSelect('profile')} title={formatMessage({ id: 'navigator.servers.profile' })} icon={<Icon as={BsPerson} />} />
-					)}
+					{server.server.account_id !== null && <IconButton onClick={() => handleSelect('profile')} title={formatMessage({ id: 'navigator.servers.profile' })} icon={<Icon as={BsPerson} />} />}
 					{server.server.account_id !== null && (
 						<>
 							<IconButton onClick={() => handleSelect('notifications')} title={formatMessage({ id: 'navigator.servers.notifications' })} icon={<Icon as={BsBell} />} />
-							<IconButton onClick={() => handleSelect('announcements')} title={formatMessage({ id: 'navigator.servers.announcements' })} icon={<Icon as={BsMegaphone} />}  />
-							<IconButton onClick={() => handleSelect('lists')} title={formatMessage({ id: 'navigator.servers.lists' })} icon={<Icon as={BsList} />}   />
-							<IconButton onClick={() => handleSelect('followed_hashtags')} title={formatMessage({ id: 'navigator.servers.followed_hashtags' })} icon={<Icon as={BsHash} />}  />
+							<IconButton onClick={() => handleSelect('announcements')} title={formatMessage({ id: 'navigator.servers.announcements' })} icon={<Icon as={BsMegaphone} />} />
+							<IconButton onClick={() => handleSelect('lists')} title={formatMessage({ id: 'navigator.servers.lists' })} icon={<Icon as={BsList} />} />
+							<IconButton onClick={() => handleSelect('followed_hashtags')} title={formatMessage({ id: 'navigator.servers.followed_hashtags' })} icon={<Icon as={BsHash} />} />
 						</>
 					)}
 					<IconButton onClick={() => handleSelect('remove')} title={formatMessage({ id: 'navigator.servers.remove' })} color="red" appearance="primary" icon={<Icon as={BsBoxArrowRight} />} />
@@ -350,7 +369,7 @@ const serverMenu = ({ className, left, top, onClose, server, openAuthorize, open
 				</Stack>
 			</FlexboxGrid>
 			<div style={{ height: '50vh', padding: 5 }}>
-				<Notifications server={server.server} unreads={unreads} setUnreads={setUnreads} openMedia={() => { }} openReport={() => { }} openFromOtherAccount={() => { }} wrapIndex={-1} />
+				<Notifications server={server.server} unreads={unreads} setUnreads={setUnreads} openMedia={() => {}} openReport={() => {}} openFromOtherAccount={() => {}} wrapIndex={-1} />
 			</div>
 		</Popover>
 	)

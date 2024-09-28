@@ -10,13 +10,13 @@ export const TheDeskContext = createContext({
 	start: async (timelines: Array<[Timeline, Server]>) => [] as StreamingArray[],
 	listenUser: ((channel: string, callback: any, tts?: boolean) => null) as <T>(channel: string, callback: (a: { payload: T }) => void, tts?: boolean) => void | null,
 	listenTimeline: ((channel: string, callback: any, tts?: boolean) => null) as <T>(channel: string, callback: (a: { payload: T }) => void, tts?: boolean) => void | null,
-	allClose: () => { },
-	timelineRefresh: () => { },
+	allClose: () => {},
+	timelineRefresh: () => {},
 	latestTimelineRefreshed: new Date().getTime(),
 	timelineConfig: defaultSetting.timeline,
-	saveTimelineConfig: (config: Settings['timeline']) => { },
+	saveTimelineConfig: (config: Settings['timeline']) => {},
 	focused: false,
-	setFocused: (focused: boolean) => { },
+	setFocused: (focused: boolean) => {},
 })
 const stripForVoice = (html: string) => {
 	const div = document.createElement('div')

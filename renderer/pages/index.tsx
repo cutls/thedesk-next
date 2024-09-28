@@ -24,16 +24,16 @@ import type { Server, ServerSet } from '@/entities/server'
 import { type Timeline, columnWidth as columnWidthCalc } from '@/entities/timeline'
 import type { Unread } from '@/entities/unread'
 import { Context as i18nContext } from '@/i18n'
+import type { ReceiveNotificationPayload } from '@/payload'
 import { ContextLoadTheme } from '@/theme'
 import { useWindowSize } from '@/utils/useWindowSize'
 import type { Entity, MegalodonInterface } from '@cutls/megalodon'
 import Head from 'next/head'
+import { useRouter } from 'next/router'
 import Draggable from 'react-draggable'
 import { useIntl } from 'react-intl'
-import { listAccounts, listServers, listTimelines, migrateTimelineV1toV2, readSettings, updateColumnWidth } from 'utils/storage'
-import { useRouter } from 'next/router'
 import { ResizableBox } from 'react-resizable'
-import type { ReceiveNotificationPayload } from '@/payload'
+import { listAccounts, listServers, listTimelines, migrateTimelineV1toV2, readSettings, updateColumnWidth } from 'utils/storage'
 
 const { scrollLeft } = DOMHelper
 
@@ -96,7 +96,7 @@ function App() {
 		setTimelines(timelines)
 		listenUser<ReceiveNotificationPayload>('receive-notification', async (ev) => {
 			const accounts = await listAccounts()
-			const [account, server] = accounts.find((([_a, s]) => s.id === ev.payload.server_id))
+			const [account, server] = accounts.find(([_a, s]) => s.id === ev.payload.server_id)
 			if (timelineConfig.notification !== 'no') {
 				new window.Notification(`TheDesk: ${account.username}@${server.domain}`, {
 					body: actionText(ev.payload.notification),
@@ -128,8 +128,6 @@ function App() {
 				)
 			}
 		})
-
-
 
 		// Push Notification
 		const isInit = !localStorage.getItem('servers')
@@ -185,7 +183,7 @@ function App() {
 		}
 	}, [highlighted])
 
-	const handleKeyPress = useCallback(async (event: KeyboardEvent) => { }, [])
+	const handleKeyPress = useCallback(async (event: KeyboardEvent) => {}, [])
 	const columnWidthSet = async (i: number, widthRaw: number) => {
 		const width = Math.round(widthRaw / 50) * 50
 		const newWidths = await updateColumnWidth({ id: timelines[i][0][0].id, columnWidth: width })
@@ -197,7 +195,7 @@ function App() {
 		readSettings(lang).then((res) => {
 			setStyle({
 				fontSize: res.appearance.font_size,
-				fontFamily: res.appearance.font
+				fontFamily: res.appearance.font,
 			})
 			switchLang(res.appearance.language)
 			dayjs.locale(res.appearance.language)
@@ -300,19 +298,21 @@ function App() {
 							onResizeStop={(_, e) => columnWidthSet(i, e.size.width)}
 						>
 							<>
-								{tls.map((timeline, j) => <ShowTimeline
-									wrapIndex={i}
-									stackLength={tls.length}
-									isLast={j === tls.length - 1}
-									timeline={timeline[0]}
-									server={timeline[1]}
-									unreads={unreads}
-									setUnreads={setUnreads}
-									key={timeline[0].id}
-									openMedia={(media: Entity.Attachment[], index: number) => dispatch({ target: 'media', value: true, object: media, index: index })}
-									openReport={(status: Entity.Status, client: MegalodonInterface) => dispatch({ target: 'report', value: true, object: status, client: client })}
-									openFromOtherAccount={(status: Entity.Status) => dispatch({ target: 'fromOtherAccount', value: true, object: status })}
-								/>)}
+								{tls.map((timeline, j) => (
+									<ShowTimeline
+										wrapIndex={i}
+										stackLength={tls.length}
+										isLast={j === tls.length - 1}
+										timeline={timeline[0]}
+										server={timeline[1]}
+										unreads={unreads}
+										setUnreads={setUnreads}
+										key={timeline[0].id}
+										openMedia={(media: Entity.Attachment[], index: number) => dispatch({ target: 'media', value: true, object: media, index: index })}
+										openReport={(status: Entity.Status, client: MegalodonInterface) => dispatch({ target: 'report', value: true, object: status, client: client })}
+										openFromOtherAccount={(status: Entity.Status) => dispatch({ target: 'fromOtherAccount', value: true, object: status })}
+									/>
+								))}
 							</>
 						</ResizableBox>
 					))}

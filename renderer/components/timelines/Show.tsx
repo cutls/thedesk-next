@@ -31,17 +31,19 @@ const ShowWrapped: React.FC<Props> = (props) => {
 		setColumnHeight(height)
 		await updateColumnHeight({ id: props.timeline.id, columnHeight: height })
 	}
-	return <ResizableBox
-		width={0}
-		height={columnHeight || wHeight / props.stackLength}
-		axis="y"
-		onResizeStart={() => setInResizing(true)}
-		style={{ margin: '4px 0', flexGrow: !columnHeight && !inResizing ? 1 : 'initial', minWidth: '100%' }}
-		resizeHandles={props.isLast ? [] : ['s']}
-		onResizeStop={(_, e) => columnHeightSet(e.size.height)}
-	>
-		<Show {...props} />
-	</ResizableBox>
+	return (
+		<ResizableBox
+			width={0}
+			height={columnHeight || wHeight / props.stackLength}
+			axis="y"
+			onResizeStart={() => setInResizing(true)}
+			style={{ margin: '4px 0', flexGrow: !columnHeight && !inResizing ? 1 : 'initial', minWidth: '100%' }}
+			resizeHandles={props.isLast ? [] : ['s']}
+			onResizeStop={(_, e) => columnHeightSet(e.size.height)}
+		>
+			<Show {...props} />
+		</ResizableBox>
+	)
 }
 const Show: React.FC<Props> = (props) => {
 	if (props.timeline.kind === 'notifications') {
@@ -61,7 +63,16 @@ const Show: React.FC<Props> = (props) => {
 	if (props.timeline.kind === 'direct') {
 		return <ShowConversations wrapIndex={props.wrapIndex} server={props.server} timeline={props.timeline} openMedia={props.openMedia} />
 	}
-	return <ShowTimeline wrapIndex={props.wrapIndex} timeline={props.timeline} server={props.server} openMedia={props.openMedia} openReport={props.openReport} openFromOtherAccount={props.openFromOtherAccount} />
+	return (
+		<ShowTimeline
+			wrapIndex={props.wrapIndex}
+			timeline={props.timeline}
+			server={props.server}
+			openMedia={props.openMedia}
+			openReport={props.openReport}
+			openFromOtherAccount={props.openFromOtherAccount}
+		/>
+	)
 }
 
 export default ShowWrapped

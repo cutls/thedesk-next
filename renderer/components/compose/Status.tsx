@@ -15,6 +15,7 @@ import {
 	IconButton,
 	Input,
 	InputPicker,
+	InputProps,
 	Popover,
 	Radio,
 	Schema,
@@ -22,7 +23,6 @@ import {
 	Toggle,
 	Whisper,
 	useToaster,
-	InputProps,
 } from 'rsuite'
 
 import alert from '@/components/utils/alert'

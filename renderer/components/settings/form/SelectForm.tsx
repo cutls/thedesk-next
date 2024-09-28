@@ -10,10 +10,12 @@ type Props = {
 	style?: React.CSSProperties
 }
 function Select(props: Props) {
-	return <>
-		<p style={{ marginTop: 15, marginBottom: 5, fontSize: 20 }}>{props.label}</p>
-		{props.hint && <p style={{ marginBottom: 10 }}>{props.hint}</p>}
-		<SelectPicker style={props.style} searchable={props.searchable} value={props.value} onChange={props.onChange} data={props.data} />
-	</>
+	return (
+		<>
+			<p style={{ marginTop: 15, marginBottom: 5, fontSize: 20 }}>{props.label}</p>
+			{props.hint && <p style={{ marginBottom: 10 }}>{props.hint}</p>}
+			<SelectPicker style={props.style} searchable={props.searchable} value={props.value} onChange={props.onChange} data={props.data} />
+		</>
+	)
 }
 export default Select

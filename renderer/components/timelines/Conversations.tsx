@@ -188,7 +188,13 @@ const Conversations: React.FC<Props> = (props) => {
 						<FlexboxGrid.Item style={{ width: '80px' }}>
 							<FlexboxGrid align="middle" justify="end">
 								<FlexboxGrid.Item>
-									<Whisper trigger="click" placement="bottomEnd" controlId="option-popover" ref={triggerRef} speaker={<OptionPopover timeline={props.timeline} close={closeOptionPopover} wrapIndex={props.wrapIndex} />}>
+									<Whisper
+										trigger="click"
+										placement="bottomEnd"
+										controlId="option-popover"
+										ref={triggerRef}
+										speaker={<OptionPopover timeline={props.timeline} close={closeOptionPopover} wrapIndex={props.wrapIndex} />}
+									>
 										<Button appearance="subtle" style={{ padding: '4px 8px 4px 4px' }} title={formatMessage({ id: 'timeline.settings.title' })}>
 											<Icon as={BsSliders} />
 										</Button>
@@ -316,7 +322,13 @@ const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: ()
 						<Button appearance="link" size="xs" onClick={() => switchLeftTimeline(props.timeline)}>
 							<Icon as={BsChevronLeft} />
 						</Button>
-						<Button appearance="link" size="xs" onClick={() => stackTimeline(props.timeline)} title={formatMessage({ id: props.timeline.stacked ? 'timeline.settings.unstack' : 'timeline.settings.stack'})} disabled={isFirst && !props.timeline.stacked}>
+						<Button
+							appearance="link"
+							size="xs"
+							onClick={() => stackTimeline(props.timeline)}
+							title={formatMessage({ id: props.timeline.stacked ? 'timeline.settings.unstack' : 'timeline.settings.stack' })}
+							disabled={isFirst && !props.timeline.stacked}
+						>
 							<Icon as={props.timeline.stacked ? BsSquare : BsViewStacked} />
 						</Button>
 						<Button appearance="link" size="xs" onClick={() => switchRightTimeline(props.timeline)}>

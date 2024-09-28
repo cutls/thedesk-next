@@ -1,7 +1,7 @@
+import fs from 'fs'
 // Native
 import { join } from 'path'
 import { format } from 'url'
-import fs from 'fs'
 import { getFonts } from 'font-list'
 
 import { execFile } from 'child_process'
@@ -14,7 +14,7 @@ type SystemConfig = {
 
 const promisifyExecFile = promisify(execFile)
 // Packages
-import { BrowserWindow, type IpcMainEvent, app, clipboard, ipcMain, shell, Menu, nativeImage } from 'electron'
+import { BrowserWindow, type IpcMainEvent, Menu, app, clipboard, ipcMain, nativeImage, shell } from 'electron'
 import isDev from 'electron-is-dev'
 import prepareNext from 'electron-next'
 import defaultConfig from './defaultConfig.json'
@@ -38,7 +38,6 @@ try {
 } catch {
 	console.error('Failed to read config.json')
 }
-
 
 app.on('ready', async () => {
 	console.log('start')
@@ -65,10 +64,10 @@ app.on('ready', async () => {
 	const url = isDev
 		? 'http://localhost:8000/'
 		: format({
-			pathname: join(__dirname, '../renderer/out/index.html'),
-			protocol: 'file:',
-			slashes: true,
-		})
+				pathname: join(__dirname, '../renderer/out/index.html'),
+				protocol: 'file:',
+				slashes: true,
+			})
 
 	mainWindow.loadURL(url)
 	windowState.manage(mainWindow)
@@ -77,7 +76,7 @@ app.on('ready', async () => {
 			os: process.platform,
 			lang: app.getPreferredSystemLanguages(),
 			version: app.getVersion(),
-			fonts: await getFonts({ disableQuoting: true })
+			fonts: await getFonts({ disableQuoting: true }),
 		})
 	})
 	ipcMain.on('requestAppleMusic', async (_event: IpcMainEvent, _message: any) => {
@@ -96,7 +95,7 @@ app.on('ready', async () => {
 		}
 	})
 
-	ipcMain.on('imageOperation', async (_event: IpcMainEvent, { image, operation }: { image: string, operation: 'copy' | 'download' }) => {
+	ipcMain.on('imageOperation', async (_event: IpcMainEvent, { image, operation }: { image: string; operation: 'copy' | 'download' }) => {
 		if (operation === 'download') return mainWindow?.webContents.downloadURL(image)
 		const blob = await fetch(image).then((r) => r.blob())
 		if (operation === 'copy') clipboard.writeImage(nativeImage.createFromBuffer(Buffer.from(await blob.arrayBuffer())))

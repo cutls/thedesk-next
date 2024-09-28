@@ -29,5 +29,4 @@ contextBridge.exposeInMainWorld('electronAPI', {
 		ipcRenderer.on('customUrl', callback)
 	},
 })
-export type { }
-
+export type {}

@@ -193,7 +193,7 @@ const Notifications: React.FC<Props> = (props) => {
 			if (props.server.sns === 'pleroma') await client.readNotifications({ max_id: notifications[0].id })
 			await updateMarker(client)
 		} catch {
-			if(!ignoreError) toast.push(alert('error', formatMessage({ id: 'alert.failed_mark' })), { placement: 'topStart' })
+			if (!ignoreError) toast.push(alert('error', formatMessage({ id: 'alert.failed_mark' })), { placement: 'topStart' })
 		}
 	}
 
@@ -259,73 +259,81 @@ const Notifications: React.FC<Props> = (props) => {
 			className={`timeline notifications notification${props.timeline?.id || 'globalNotification'}`}
 		>
 			<Container style={{ height: '100%' }}>
-				{props.timeline && <Header style={headerStyle}>
-					<FlexboxGrid align="middle" justify="space-between">
-						<FlexboxGrid.Item style={{ width: 'calc(100% - 108px)' }}>
-							<FlexboxGrid align="middle" onClick={backToTop} style={{ cursor: 'pointer' }}>
-								{/** icon **/}
-								<FlexboxGrid.Item
-									style={{
-										lineHeight: '48px',
-										fontSize: '18px',
-										paddingRight: '8px',
-										paddingLeft: '8px',
-										paddingBottom: '6px',
-										width: '42px',
-									}}
-								>
-									<Icon as={BsBell} />
-								</FlexboxGrid.Item>
-								{/** name **/}
-								<FlexboxGrid.Item
-									style={{
-										lineHeight: '48px',
-										fontSize: '18px',
-										verticalAlign: 'middle',
-										overflow: 'hidden',
-										textOverflow: 'ellipsis',
-										whiteSpace: 'nowrap',
-										width: 'calc(100% - 42px)',
-									}}
-									title={`${timelineName('notifications', props.timeline?.name || 'Notifications', formatMessage)}@${props.server.domain}`}
-								>
-									{timelineName('notifications', props.timeline?.name || 'Notifications', formatMessage)}
-									<span style={{ fontSize: '14px' }}>@{props.server.domain}</span>
-								</FlexboxGrid.Item>
-							</FlexboxGrid>
-						</FlexboxGrid.Item>
-						<FlexboxGrid.Item style={{ width: '108px' }}>
-							<FlexboxGrid align="middle" justify="end">
-								<FlexboxGrid.Item>
-									<Button
-										appearance="subtle"
-										title={formatMessage({ id: 'timeline.mark_as_read' })}
-										disabled={notifications.length > 0 && marker && marker.last_read_id === notifications[0].id}
-										onClick={() => read(false)}
-										style={{ padding: '4px' }}
+				{props.timeline && (
+					<Header style={headerStyle}>
+						<FlexboxGrid align="middle" justify="space-between">
+							<FlexboxGrid.Item style={{ width: 'calc(100% - 108px)' }}>
+								<FlexboxGrid align="middle" onClick={backToTop} style={{ cursor: 'pointer' }}>
+									{/** icon **/}
+									<FlexboxGrid.Item
+										style={{
+											lineHeight: '48px',
+											fontSize: '18px',
+											paddingRight: '8px',
+											paddingLeft: '8px',
+											paddingBottom: '6px',
+											width: '42px',
+										}}
 									>
-										<Icon as={BsCheck2} />
-									</Button>
-								</FlexboxGrid.Item>
-								<FlexboxGrid.Item>
-									<Button appearance="subtle" onClick={reload} style={{ padding: '4px' }} title={formatMessage({ id: 'timeline.reload' })}>
-										<Icon as={BsArrowClockwise} />
-									</Button>
-								</FlexboxGrid.Item>
-								<FlexboxGrid.Item>
-									<Whisper trigger="click" placement="bottomEnd" controlId="option-popover" ref={triggerRef} speaker={<OptionPopover timeline={props.timeline} close={closeOptionPopover} wrapIndex={props.wrapIndex} />}>
-										<Button appearance="subtle" style={{ padding: '4px 8px 4px 4px' }} title={formatMessage({ id: 'timeline.settings.title' })}>
-											<Icon as={BsSliders} />
+										<Icon as={BsBell} />
+									</FlexboxGrid.Item>
+									{/** name **/}
+									<FlexboxGrid.Item
+										style={{
+											lineHeight: '48px',
+											fontSize: '18px',
+											verticalAlign: 'middle',
+											overflow: 'hidden',
+											textOverflow: 'ellipsis',
+											whiteSpace: 'nowrap',
+											width: 'calc(100% - 42px)',
+										}}
+										title={`${timelineName('notifications', props.timeline?.name || 'Notifications', formatMessage)}@${props.server.domain}`}
+									>
+										{timelineName('notifications', props.timeline?.name || 'Notifications', formatMessage)}
+										<span style={{ fontSize: '14px' }}>@{props.server.domain}</span>
+									</FlexboxGrid.Item>
+								</FlexboxGrid>
+							</FlexboxGrid.Item>
+							<FlexboxGrid.Item style={{ width: '108px' }}>
+								<FlexboxGrid align="middle" justify="end">
+									<FlexboxGrid.Item>
+										<Button
+											appearance="subtle"
+											title={formatMessage({ id: 'timeline.mark_as_read' })}
+											disabled={notifications.length > 0 && marker && marker.last_read_id === notifications[0].id}
+											onClick={() => read(false)}
+											style={{ padding: '4px' }}
+										>
+											<Icon as={BsCheck2} />
 										</Button>
-									</Whisper>
-								</FlexboxGrid.Item>
-								<FlexboxGrid.Item style={{ paddingRight: '8px', height: '20px' }}>
-									<Avatar circle src={FailoverImg(account ? account.avatar : null)} size="xs" title={account ? account.username : ''} />
-								</FlexboxGrid.Item>
-							</FlexboxGrid>
-						</FlexboxGrid.Item>
-					</FlexboxGrid>
-				</Header>}
+									</FlexboxGrid.Item>
+									<FlexboxGrid.Item>
+										<Button appearance="subtle" onClick={reload} style={{ padding: '4px' }} title={formatMessage({ id: 'timeline.reload' })}>
+											<Icon as={BsArrowClockwise} />
+										</Button>
+									</FlexboxGrid.Item>
+									<FlexboxGrid.Item>
+										<Whisper
+											trigger="click"
+											placement="bottomEnd"
+											controlId="option-popover"
+											ref={triggerRef}
+											speaker={<OptionPopover timeline={props.timeline} close={closeOptionPopover} wrapIndex={props.wrapIndex} />}
+										>
+											<Button appearance="subtle" style={{ padding: '4px 8px 4px 4px' }} title={formatMessage({ id: 'timeline.settings.title' })}>
+												<Icon as={BsSliders} />
+											</Button>
+										</Whisper>
+									</FlexboxGrid.Item>
+									<FlexboxGrid.Item style={{ paddingRight: '8px', height: '20px' }}>
+										<Avatar circle src={FailoverImg(account ? account.avatar : null)} size="xs" title={account ? account.username : ''} />
+									</FlexboxGrid.Item>
+								</FlexboxGrid>
+							</FlexboxGrid.Item>
+						</FlexboxGrid>
+					</Header>
+				)}
 
 				{loading ? (
 					<Loader style={{ margin: '10em auto' }} />
@@ -481,7 +489,13 @@ const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: ()
 						<Button appearance="link" size="xs" onClick={() => switchLeftTimeline(props.timeline)}>
 							<Icon as={BsChevronLeft} />
 						</Button>
-						<Button appearance="link" size="xs" onClick={() => stackTimeline(props.timeline)} title={formatMessage({ id: props.timeline.stacked ? 'timeline.settings.unstack' : 'timeline.settings.stack' })} disabled={isFirst && !props.timeline.stacked}>
+						<Button
+							appearance="link"
+							size="xs"
+							onClick={() => stackTimeline(props.timeline)}
+							title={formatMessage({ id: props.timeline.stacked ? 'timeline.settings.unstack' : 'timeline.settings.stack' })}
+							disabled={isFirst && !props.timeline.stacked}
+						>
 							<Icon as={props.timeline.stacked ? BsSquare : BsViewStacked} />
 						</Button>
 						<Button appearance="link" size="xs" onClick={() => switchRightTimeline(props.timeline)}>

@@ -29,7 +29,7 @@ export const defaultSetting: Settings = {
 		font_size: 14,
 		language: 'en',
 		color_theme: 'dark',
-		font: 'sans-serif'
+		font: 'sans-serif',
 	},
 	timeline: {
 		time: 'relative',

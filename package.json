@@ -9,7 +9,7 @@
 	},
 	"version": "25.0.15",
 	"codename": "Aiko",
-	 "packageManager": "pnpm@9.9.0",
+	"packageManager": "pnpm@9.9.0",
 	"scripts": {
 		"clean": "rimraf dist main renderer/out renderer/.next",
 		"dev": "npm run build-electron && electron .",
@@ -75,11 +75,7 @@
 		"productName": "TheDesk",
 		"appId": "next.top.thedesk",
 		"afterSign": "build-tool/notarize.js",
-		"files": [
-			"main-build",
-			"renderer/out",
-			"native"
-		],
+		"files": ["main-build", "renderer/out", "native"],
 		"win": {
 			"target": "msi",
 			"icon": "assets/desk.ico",
@@ -89,10 +85,7 @@
 			"oneClick": false
 		},
 		"linux": {
-			"target": [
-				"zip",
-				"deb"
-			]
+			"target": ["zip", "deb"]
 		},
 		"mac": {
 			"mergeASARs": false,

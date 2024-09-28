@@ -11,10 +11,9 @@ type Props = {
 function RadioBoolean(props: Props) {
 	return (
 		<>
-			
-		<p style={{ marginTop: 15, marginBottom: 5, fontSize: 20 }}>{props.label}</p>
-		{props.hint && <p style={{ marginBottom: 10 }}>{props.hint}</p>}
-		<Radio checked={props.value === 'yes'} onChange={() => props.onChange('yes')}>
+			<p style={{ marginTop: 15, marginBottom: 5, fontSize: 20 }}>{props.label}</p>
+			{props.hint && <p style={{ marginBottom: 10 }}>{props.hint}</p>}
+			<Radio checked={props.value === 'yes'} onChange={() => props.onChange('yes')}>
 				<FormattedMessage id="timeline.settings.do" />
 			</Radio>
 			<Radio checked={props.value === 'no'} onChange={() => props.onChange('no')}>
