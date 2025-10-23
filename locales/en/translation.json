@@ -172,6 +172,8 @@
 				}
 			},
 			"open_appData_folder": "Open AppData folder",
+			"delete_allData_confirm": "Are you sure you want to delete all data? All servers, accounts, timelines, and settings will be deleted.",
+			"delete_allData": "Delete all data",
 			"appData_hint": "config.json in this folder allows you to change system settings."
 		},
 		"thirdparty": {

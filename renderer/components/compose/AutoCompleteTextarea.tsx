@@ -4,7 +4,7 @@ import type { MegalodonInterface } from '@cutls/megalodon'
 import { SearchIndex, init } from 'emoji-mart'
 import { type Dispatch, type KeyboardEventHandler, type SetStateAction, forwardRef, useEffect, useRef, useState } from 'react'
 import { Input, Popover, Whisper } from 'rsuite'
-import type { PrependParameters } from 'rsuite/esm/@types/utils'
+import type { PrependParameters } from 'rsuite/esm/internals/types/utils'
 
 export type ArgProps = {
 	client: MegalodonInterface

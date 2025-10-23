@@ -139,6 +139,12 @@ function App() {
 		}
 	}
 	const reloadIsConnected = () => setSpotifyConnected(!!localStorage.getItem('spotifyV2Token'))
+	const deleteAllData = () => {
+		if (confirm(formatMessage({ id: 'settings.settings.delete_allData_confirm' }))) {
+			localStorage.clear()
+			location.href = './'
+		}
+	}
 
 	return (
 		<div style={Object.assign({ backgroundColor: 'var(--rs-bg-well)' }, style)}>
@@ -323,6 +329,10 @@ function App() {
 					<Divider />
 					<Button appearance="ghost" onClick={() => window.electronAPI.openAppDataFolder()}>
 						<FormattedMessage id="settings.settings.open_appData_folder" />
+					</Button>
+
+					<Button appearance="primary" onClick={() => deleteAllData()}>
+						<FormattedMessage id="settings.settings.delete_allData" />
 					</Button>
 					<p style={{ fontSize: 10, margin: 10 }}>
 						<FormattedMessage id="settings.settings.appData_hint" />

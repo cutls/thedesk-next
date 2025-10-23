@@ -83,7 +83,6 @@ app.on('ready', async () => {
 		const fromDock = async () => {
 			try {
 				const stdout = execSync(`osascript ${join(__dirname, '..', 'native', 'itunes-ctrl.scpt')}`).toString()
-				console.log(stdout)
 				if (!stdout) return null
 				const songRaw = JSON.parse(stdout)
 				const song = { type: 'dock', data: songRaw }

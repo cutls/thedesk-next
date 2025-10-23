@@ -90,7 +90,7 @@ export async function addServer({ domain }: { domain: string }): Promise<Server>
 	const servers: Server[] = JSON.parse(serversStr || '[]')
 	const serverMaxId = servers.reduce((max, server) => (server.id > max ? server.id : max), 0)
 	const sns = await detector(`https://${domain}`)
-	if (sns === 'gotosocial') return
+	if (sns === 'gotosocial' || sns === 'pixelfed') return
 	const server = {
 		id: serverMaxId + 1,
 		domain: domain,

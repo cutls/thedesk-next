@@ -103,7 +103,7 @@ const Status: React.FC<Props> = (props) => {
 	const [formError, setFormError] = useState<any>({})
 	const [customEmojis, setCustomEmojis] = useState<Array<CustomEmojiCategory>>([])
 	const [loading, setLoading] = useState<boolean>(false)
-	const [visibility, setVisibility] = useState<'public' | 'unlisted' | 'private' | 'direct'>('public')
+	const [visibility, setVisibility] = useState<'public' | 'unlisted' | 'private' | 'direct' | 'local'>('public')
 	const [cw, setCW] = useState<boolean>(false)
 	const [config, setConfig] = useState<Settings['compose']>(defaultSetting.compose)
 	const [language, setLanguage] = useState<string>('en')

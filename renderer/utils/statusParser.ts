@@ -1,6 +1,6 @@
 import { Color } from '@/entities/timeline'
 import type { Entity } from '@cutls/megalodon'
-import { BsEnvelope, BsGlobe, BsLock, BsUnlock } from 'react-icons/bs'
+import { BsEnvelope, BsGlobe, BsLock, BsPeople, BsUnlock } from 'react-icons/bs'
 
 export type ParsedAccount = {
 	username: string
@@ -127,7 +127,7 @@ export function accountMatch(findAccounts: Array<Entity.Account>, parsedAccount:
 	return user
 }
 
-export const privacyIcon = (visibility: 'public' | 'unlisted' | 'private' | 'direct') => {
+export const privacyIcon = (visibility: 'public' | 'unlisted' | 'private' | 'direct' | 'local') => {
 	switch (visibility) {
 		case 'public':
 			return BsGlobe
@@ -137,11 +137,13 @@ export const privacyIcon = (visibility: 'public' | 'unlisted' | 'private' | 'dir
 			return BsLock
 		case 'direct':
 			return BsEnvelope
+		case 'local':
+			return BsPeople
 		default:
 			return BsGlobe
 	}
 }
-export const privacyColor = (visibility: 'public' | 'unlisted' | 'private' | 'direct') => {
+export const privacyColor = (visibility: 'public' | 'unlisted' | 'private' | 'direct' | 'local') => {
 	switch (visibility) {
 		case 'public':
 			return ''
@@ -151,6 +153,8 @@ export const privacyColor = (visibility: 'public' | 'unlisted' | 'private' | 'di
 			return 'orange'
 		case 'direct':
 			return 'red'
+		case 'local':
+			return 'blue'
 		default:
 			return ''
 	}

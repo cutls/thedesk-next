@@ -172,7 +172,9 @@
 				}
 			},
 			"open_appData_folder": "アプリケーションデータフォルダを表示",
-			"appData_hint": "このフォルダのconfig.jsonでシステム設定を変更できます。"
+			"appData_hint": "このフォルダのconfig.jsonでシステム設定を変更できます。",
+			"delete_allData_confirm": "本当にすべてのデータを削除しますか？登録したサーバー、アカウント、タイムライン、設定がすべて削除されます。",
+			"delete_allData": "すべてのデータを削除する"
 		},
 		"thirdparty": {
 			"title": "このアプリについて / ライセンス"
