@@ -8,10 +8,10 @@ exports.default = async function notarizing(context) {
 	console.log(`start notarize: ${appOutDir}/${appName}.app`)
 	try {
 		return await notarize({
-			teamId: 'J529S6NXTQ',
+			teamId: process.env.APPLE_TEAM_ID,
 			appPath: `${appOutDir}/${appName}.app`,
-			appleId: process.env.APPLEID,
-			appleIdPassword: process.env.APPLEIDPASS,
+			appleId: process.env.APPLE_ID,
+			appleIdPassword: process.env.APPLE_APP_SPECIFIC_PASSWORD,
 			tool: 'notarytool',
 		})
 	} catch (e) {

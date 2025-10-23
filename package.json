@@ -15,7 +15,7 @@
 		"dev": "npm run build-electron && electron .",
 		"build-renderer": "next build renderer",
 		"build-electron": "tsc -p electron-src",
-		"build": "npm run thirdparty && npm run build-renderer && npm run build-electron",
+		"build": "npm run thirdparty && npm run build-renderer && npm run build-electron && node scripts/toRelativePath.js",
 		"pack:mac": "electron-builder --mac --universal",
 		"pack:linux": "electron-builder --linux --x64",
 		"pack:win": "electron-builder --windows --x64",
@@ -35,6 +35,7 @@
 		"electron-window-state": "^5.0.3",
 		"emoji-mart": "^5.6.0",
 		"font-list": "^2.0.1",
+		"next": "^14.2.3",
 		"parse-link-header": "^2.0.0",
 		"react": "18.2.0",
 		"react-blurhash": "^0.3.0",
@@ -60,10 +61,9 @@
 		"@types/react-resizable": "^3.0.8",
 		"@types/sanitize-html": "^2.11.0",
 		"@types/superagent": "^8.1.9",
-		"electron": "^38.4.0",
-		"electron-builder": "^26.0.12",
+		"electron": "37",
+		"electron-builder": "26.0.0",
 		"license-checker": "^25.0.1",
-		"next": "^14.2.3",
 		"rimraf": "^6.0.1",
 		"typescript": "^5.9.3"
 	},
@@ -72,10 +72,8 @@
 		"react-dom": "18.2.0"
 	},
 	"build": {
-		"asar": true,
 		"productName": "TheDesk",
 		"appId": "next.top.thedesk",
-		"afterSign": "build-tool/notarize.js",
 		"files": [
 			"main-build",
 			"renderer/out",
@@ -95,12 +93,12 @@
 			]
 		},
 		"mac": {
-			"mergeASARs": false,
 			"icon": "assets/icon.icns",
 			"hardenedRuntime": true,
 			"gatekeeperAssess": false,
 			"entitlements": "build-tool/entitlements.mac.plist",
-			"entitlementsInherit": "build-tool/entitlements.mac.plist"
+			"entitlementsInherit": "build-tool/entitlements.mac.plist",
+			"notarize": false
 		},
 		"dmg": {
 			"sign": false

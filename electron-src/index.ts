@@ -20,9 +20,13 @@ import prepareNext from 'electron-next'
 import defaultConfig from './defaultConfig.json'
 // Prepare the renderer once the app is ready
 let mainWindow: BrowserWindow | null = null
+let config: SystemConfig = defaultConfig
 const appDataPath = join(app.getPath('appData'), app.getName())
 const configPath = join(appDataPath, 'config.json')
-let config: SystemConfig = defaultConfig
+const logger = (msg: string) => {
+	console.log(`[TheDesk Main Process] ${msg}`)
+	fs.appendFileSync(join(appDataPath, 'main.log'), `[${new Date().toISOString()}] ${msg}\n`)
+}
 try {
 	if (!fs.existsSync(appDataPath) || !fs.existsSync(configPath)) {
 		fs.writeFileSync(configPath, JSON.stringify(defaultConfig))
@@ -40,19 +44,24 @@ try {
 }
 
 app.on('ready', async () => {
-	console.log('start')
-	await prepareNext('./renderer')
+	logger('start')
+	try {
+		await prepareNext('./renderer')
+	} catch (e) {
+		logger(`prepareNext error: ${(e as Error).message} @ ${__dirname}`)
+	}
 	if (!config.allowDoH) app.configureHostResolver({ secureDnsMode: 'off' })
+	logger('start2')
 	const windowState = stateKeeper({
 		defaultWidth: 800,
 		defaultHeight: 600,
 	})
 
 	mainWindow = new BrowserWindow({
-		x: windowState.x,
-		y: windowState.y,
-		width: windowState.width,
-		height: windowState.height,
+		x: windowState.x || 0,
+		y: windowState.y || 0,
+		width: windowState.width > 200 ? windowState.width : 800,
+		height: windowState.height > 200 ? windowState.height : 600,
 		webPreferences: {
 			nodeIntegration: false,
 			contextIsolation: true,
@@ -60,6 +69,7 @@ app.on('ready', async () => {
 			webSecurity: isDev ? false : undefined,
 		},
 	})
+	logger('start3')
 
 	const url = isDev
 		? 'http://localhost:8000/'
@@ -71,6 +81,7 @@ app.on('ready', async () => {
 
 	mainWindow.loadURL(url)
 	windowState.manage(mainWindow)
+	logger('start4')
 	ipcMain.on('requestInitialInfo', async (_event) => {
 		mainWindow?.webContents.send('initialInfo', {
 			os: process.platform,
@@ -145,6 +156,7 @@ app.on('ready', async () => {
 			selectionMenu.popup()
 		}
 	})
+	logger('finished')
 })
 const gotTheLock = app.requestSingleInstanceLock()
 if (!gotTheLock) {
