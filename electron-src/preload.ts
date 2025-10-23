@@ -13,8 +13,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
 	requestInitialInfo: (init: boolean) => {
 		ipcRenderer.send('requestInitialInfo', init)
 	},
-	requestAppleMusic: () => {
-		ipcRenderer.send('requestAppleMusic')
+	requestAppleMusic: (type: 'api' | 'dock') => {
+		ipcRenderer.send('requestAppleMusic', { type })
 	},
 	imageOperation: (image: string, operation: 'copy' | 'download') => {
 		ipcRenderer.send('imageOperation', { image, operation })

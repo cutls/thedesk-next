@@ -79,19 +79,29 @@ app.on('ready', async () => {
 			fonts: await getFonts({ disableQuoting: true }),
 		})
 	})
-	ipcMain.on('requestAppleMusic', async (_event: IpcMainEvent, _message: any) => {
-		const { stdout } = await promisifyExecFile(join(__dirname, '..', 'native', 'nowplaying-info.js'))
-		const song = JSON.parse(stdout)
-		if (!song.databaseID) return mainWindow?.webContents.send('appleMusic', song)
-		try {
-			const { stdout: artwork } = await promisifyExecFile(join(__dirname, '..', 'native', 'get-artwork'), [song.databaseID.toString()], {
-				maxBuffer: 64 * 1024 * 1024,
-				encoding: 'buffer',
-			})
-			song.artwork = artwork.toString('base64')
-			mainWindow?.webContents.send('appleMusic', song)
-		} catch {
-			mainWindow?.webContents.send('appleMusic', song)
+	ipcMain.on('requestAppleMusic', async (_event: IpcMainEvent, { type }: { type: 'api' | 'dock' }) => {
+		if (type === 'api') {
+			const { stdout } = await promisifyExecFile(join(__dirname, '..', 'native', 'nowplaying-info.js'))
+			const song = JSON.parse(stdout)
+			if (!song.databaseID) return mainWindow?.webContents.send('appleMusic', song)
+			try {
+				const { stdout: artwork } = await promisifyExecFile(join(__dirname, '..', 'native', 'get-artwork'), [song.databaseID.toString()], {
+					maxBuffer: 64 * 1024 * 1024,
+					encoding: 'buffer',
+				})
+				song.artwork = artwork.toString('base64')
+				mainWindow?.webContents.send('appleMusic', song)
+			} catch {
+				mainWindow?.webContents.send('appleMusic', song)
+			}
+		} else {
+			try {
+				const { stdout } = await promisifyExecFile(join(__dirname, '..', 'native', 'itunes-ctrl.scpt'))
+				const song = JSON.parse(stdout)
+				mainWindow?.webContents.send('appleMusic', song)
+			} catch (e) {
+				console.error(e)
+			}
 		}
 	})
 

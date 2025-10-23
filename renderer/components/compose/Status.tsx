@@ -510,7 +510,7 @@ const Status: React.FC<Props> = (props) => {
 	const NowPlayingDropdown = ({ onClose, left, top, className }, ref: any) => {
 		const handleSelect = async (key: string) => {
 			const showToaster = (message: string) => toast.push(alert('info', formatMessage({ id: message })), { placement: 'topStart' })
-			const ret = await nowplaying(key as 'spotify' | 'appleMusic', showToaster)
+			const ret = await nowplaying(key as 'spotify' | 'appleMusic' | 'control', showToaster)
 			if (!ret) return toast.push(alert('info', formatMessage({ id: 'compose.nowplaying.error' })), { placement: 'topStart' })
 			if (!ret.file) setSearchAA(ret.title)
 			if (ret.file) coreUploader(ret.file)
@@ -530,6 +530,11 @@ const Status: React.FC<Props> = (props) => {
 					{isDarwin && (
 						<Dropdown.Item eventKey={'appleMusic'} icon={<Icon as={BsMusicNoteBeamed} />}>
 							Apple Music
+						</Dropdown.Item>
+					)}
+					{isDarwin && (
+						<Dropdown.Item eventKey={'control'} icon={<Icon as={BsMusicNoteBeamed} />}>
+							<FormattedMessage id="compose.nowplaying.control" />
 						</Dropdown.Item>
 					)}
 				</Dropdown.Menu>

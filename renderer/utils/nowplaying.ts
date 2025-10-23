@@ -43,7 +43,7 @@ export function spotifyTemplateReplace(item: any, template: string) {
 	content = content.replace(regExp0, '')
 	return content
 }
-export async function nowplaying(key: 'spotify' | 'appleMusic', showToaster: (message: string) => void) {
+export async function nowplaying(key: 'spotify' | 'appleMusic' | 'control', showToaster: (message: string) => void) {
 	if (key === 'spotify') {
 		const start = 'https://api.spotify.com/v1/me/player/currently-playing'
 		try {
@@ -59,9 +59,9 @@ export async function nowplaying(key: 'spotify' | 'appleMusic', showToaster: (me
 			showToaster('compose.nowplaying.error')
 			return null
 		}
-	} else if (key === 'appleMusic') {
+	} else if (key === 'appleMusic' || key === 'control') {
 		console.log('request')
-		window.electronAPI.requestAppleMusic()
+		window.electronAPI.requestAppleMusic(key === 'appleMusic' ? 'api' : 'dock')
 		type IFile = { text: string; file: File; title: string }
 		const data: IFile = await new Promise((resolve) =>
 			window.electronAPI.appleMusic(async (_, item) => {

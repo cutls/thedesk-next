@@ -44,3 +44,5 @@ thirdparty.json
 .env
 *.sh
 native/nowplaying-ctrl.js
+
+ban.js

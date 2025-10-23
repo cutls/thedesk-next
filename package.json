@@ -9,7 +9,7 @@
 	},
 	"version": "25.0.15",
 	"codename": "Aiko",
-	"packageManager": "pnpm@9.9.0",
+	"packageManager": "pnpm@10.5.2",
 	"scripts": {
 		"clean": "rimraf dist main renderer/out renderer/.next",
 		"dev": "npm run build-electron && electron .",
