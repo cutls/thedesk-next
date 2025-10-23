@@ -220,8 +220,7 @@
 		"nowplaying": {
 			"again": "The integration with Spotify has been completed. Please run NowPlaying again.",
 			"error": "Error has occurred. Please run NowPlaying again.",
-			"unkwnown_aa_btn": "Get not-found artwork from etwork",
-			"control": "Apple Music from Dock"
+			"unkwnown_aa_btn": "Get not-found artwork from network"
 		}
 	},
 	"search": {

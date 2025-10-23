@@ -4,7 +4,7 @@ import { join } from 'path'
 import { format } from 'url'
 import { getFonts } from 'font-list'
 
-import { execFile } from 'child_process'
+import { execFile, execSync } from 'child_process'
 import { promisify } from 'util'
 import stateKeeper from 'electron-window-state'
 type SystemConfig = {
@@ -79,29 +79,40 @@ app.on('ready', async () => {
 			fonts: await getFonts({ disableQuoting: true }),
 		})
 	})
-	ipcMain.on('requestAppleMusic', async (_event: IpcMainEvent, { type }: { type: 'api' | 'dock' }) => {
-		if (type === 'api') {
-			const { stdout } = await promisifyExecFile(join(__dirname, '..', 'native', 'nowplaying-info.js'))
-			const song = JSON.parse(stdout)
-			if (!song.databaseID) return mainWindow?.webContents.send('appleMusic', song)
+	ipcMain.on('requestAppleMusic', async (_event: IpcMainEvent, { fallback }: { fallback: boolean }) => {
+		const fromDock = async () => {
 			try {
-				const { stdout: artwork } = await promisifyExecFile(join(__dirname, '..', 'native', 'get-artwork'), [song.databaseID.toString()], {
-					maxBuffer: 64 * 1024 * 1024,
-					encoding: 'buffer',
-				})
-				song.artwork = artwork.toString('base64')
-				mainWindow?.webContents.send('appleMusic', song)
-			} catch {
-				mainWindow?.webContents.send('appleMusic', song)
-			}
-		} else {
-			try {
-				const { stdout } = await promisifyExecFile(join(__dirname, '..', 'native', 'itunes-ctrl.scpt'))
-				const song = JSON.parse(stdout)
-				mainWindow?.webContents.send('appleMusic', song)
+				const stdout = execSync(`osascript ${join(__dirname, '..', 'native', 'itunes-ctrl.scpt')}`).toString()
+				console.log(stdout)
+				if (!stdout) return null
+				const songRaw = JSON.parse(stdout)
+				const song = { type: 'dock', data: songRaw }
+				return mainWindow?.webContents.send('appleMusic', song)
 			} catch (e) {
-				console.error(e)
+				console.error({ stdout: (e as any).stdout?.toString(), stderr: (e as any).stderr?.toString() })
+				return mainWindow?.webContents.send('appleMusic', { error: true, message: (e as any).stderr?.toString() })
 			}
+		}
+		let song: Record<string, any> = {}
+		try {
+			const { stdout } = await promisifyExecFile(join(__dirname, '..', 'native', 'nowplaying-info.js'))
+			if (!stdout && fallback) return await fromDock()
+			song = JSON.parse(stdout)
+			if ((!song || !song.name) && fallback) return await fromDock()
+			if (!song.databaseID) return mainWindow?.webContents.send('appleMusic', song)
+		} catch (e: any) {
+			if (fallback) return await fromDock()
+			return mainWindow?.webContents.send('appleMusic', { error: true, message: 'unknown error' })
+		}
+		try {
+			const { stdout: artwork } = await promisifyExecFile(join(__dirname, '..', 'native', 'get-artwork'), [song.databaseID.toString()], {
+				maxBuffer: 64 * 1024 * 1024,
+				encoding: 'buffer',
+			})
+			song.artwork = artwork.toString('base64')
+			mainWindow?.webContents.send('appleMusic', song)
+		} catch {
+			mainWindow?.webContents.send('appleMusic', song)
 		}
 	})
 

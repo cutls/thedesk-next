@@ -43,7 +43,7 @@ export function spotifyTemplateReplace(item: any, template: string) {
 	content = content.replace(regExp0, '')
 	return content
 }
-export async function nowplaying(key: 'spotify' | 'appleMusic' | 'control', showToaster: (message: string) => void) {
+export async function nowplaying(key: 'spotify' | 'appleMusic', showToaster: (message: string) => void) {
 	if (key === 'spotify') {
 		const start = 'https://api.spotify.com/v1/me/player/currently-playing'
 		try {
@@ -59,15 +59,15 @@ export async function nowplaying(key: 'spotify' | 'appleMusic' | 'control', show
 			showToaster('compose.nowplaying.error')
 			return null
 		}
-	} else if (key === 'appleMusic' || key === 'control') {
+	} else if (key === 'appleMusic') {
 		console.log('request')
-		window.electronAPI.requestAppleMusic(key === 'appleMusic' ? 'api' : 'dock')
+		window.electronAPI.requestAppleMusic(true)
 		type IFile = { text: string; file: File; title: string }
 		const data: IFile = await new Promise((resolve) =>
-			window.electronAPI.appleMusic(async (_, item) => {
-				console.log(item)
+			window.electronAPI.appleMusic(async (_, itemRaw) => {
+				const item = itemRaw.type === 'dock' ? await getUnknownData(itemRaw.data) : itemRaw
 				const contentRaw = localStorage.getItem('nowplayingTemplate')
-				const artwork = item.artwork ? new File([Buffer.from(item.artwork, 'base64')], 'cover.png', { type: 'image/png' }) : null
+				const artwork = item.artwork ? new File([Buffer.from(item.artwork, 'base64')], 'cover.jpg', { type: 'image/jpeg' }) : null
 				let content = contentRaw === 'null' || !contentRaw ? '#NowPlaying {song} / {album} / {artist}\n{url} #SpotifyWithTheDesk' : contentRaw
 				const regExp1 = /{song}/g
 				content = content.replace(regExp1, item.name)
@@ -92,7 +92,6 @@ export async function nowplaying(key: 'spotify' | 'appleMusic' | 'control', show
 				resolve({ text: content, file: artwork, title: `${item.name} ${item.album} ${item.artist}` })
 			}),
 		)
-		console.log(data)
 		return data
 	}
 }
@@ -126,6 +125,46 @@ export async function getUnknownAA(q: string, country: string) {
 	const data = json.results[0].artworkUrl100
 	const file = new File([await (await fetch(data.replace(/100x100/, '512x512'))).blob()], 'cover.jpg', { type: 'image/jpeg' })
 	return file
+}
+export async function getUnknownData(q: { trackName: string; artistAndAlbum: string }) {
+	const langStr = localStorage.getItem('lang') || 'en-US'
+	const [_, countryR] = langStr.split('-')
+	const country = countryR || 'US'
+	let term = ''
+	let artist = ''
+	let album = ''
+	const { trackName, artistAndAlbum } = q
+	const m = artistAndAlbum.match(' — ')
+	if (!m || m.length > 1) {
+		term = trackName
+	} else {
+		const s = artistAndAlbum.split(' — ')
+		artist = s[0]
+		album = s[1]
+		term = `${trackName} ${artist}`
+	}
+	const start = `https://itunes.apple.com/search?term=${term}&country=${country}&entity=song`
+	const promise = await fetch(start, {
+		method: 'GET',
+	})
+	const json = await promise.json()
+	if (!json.resultCount) return { name: trackName, album: album || artistAndAlbum, artist: artist || '', artwork: null}
+	const data = json.results.find((item: any) => item.collectionName === album) || json.results[0]
+	const jucket = data.artworkUrl100
+	function blobToBase64(blob: Blob) {
+		return new Promise<string>((resolve, _) => {
+			const reader = new FileReader()
+			reader.onloadend = () => (typeof reader.result === 'string' ? resolve(reader.result) : resolve(''))
+			reader.readAsDataURL(blob)
+		})
+	}
+	const file = (await blobToBase64(await (await fetch(jucket.replace(/100x100/, '512x512'))).blob())).replace(/^data:image\/(png|jpeg|jpg);base64,/, '')
+	return {
+		name: data.trackName,
+		album: data.collectionName,
+		artist: data.artistName,
+		artwork: file,
+	}
 }
 export async function nowplayingInit(isDev: boolean, showToaster: (m: string) => void) {
 	if (!isDev) open(`${apiGateway}?state=connect`)
