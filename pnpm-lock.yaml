@@ -92,7 +92,7 @@ importers:
         specifier: ^2.0.6
         version: 2.2.7
       '@electron/notarize':
-        specifier: ^2.3.2
+        specifier: ^2.5.0
         version: 2.5.0
       '@formatjs/intl-displaynames':
         specifier: ^6.8.13

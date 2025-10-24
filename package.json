@@ -7,7 +7,7 @@
 		"email": "p@cutls.dev",
 		"url": "https://cutls.dev"
 	},
-	"version": "25.0.16",
+	"version": "25.0.17",
 	"codename": "Aiko",
 	"packageManager": "pnpm@10.5.2",
 	"scripts": {
@@ -53,7 +53,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.0.6",
-		"@electron/notarize": "^2.3.2",
+		"@electron/notarize": "^2.5.0",
 		"@formatjs/intl-displaynames": "^6.8.13",
 		"@types/node": "^14.18.63",
 		"@types/react": "^16.14.52",
@@ -74,6 +74,7 @@
 	"build": {
 		"productName": "TheDesk",
 		"appId": "next.top.thedesk",
+		"afterSign": "build-tool/notarize.js",
 		"files": [
 			"main-build",
 			"renderer/out",

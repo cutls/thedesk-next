@@ -46,3 +46,4 @@ thirdparty.json
 native/nowplaying-ctrl.js
 
 ban.js
+*.p8
