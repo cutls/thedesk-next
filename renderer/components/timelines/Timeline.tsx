@@ -372,7 +372,7 @@ export default function TimelineColumn(props: Props) {
 		})
 	}
 	const headerStyle: CSSProperties = {
-		backgroundColor: props.timeline.color ? `var(--rs-color-${props.timeline.color})` : 'var(--rs-color-card)',
+		backgroundColor: props.timeline.color ? `var(--rs-color-${props.timeline.color})` : 'var(--rs-carousel-bg)',
 		borderBottomWidth: '3px',
 		borderBottomStyle: 'solid',
 		borderBottomColor: account && account.color ? `var(--rs-color-${account.color})` : 'transparent',
@@ -387,7 +387,7 @@ export default function TimelineColumn(props: Props) {
 							{/** icon **/}
 							<FlexboxGrid.Item
 								style={{
-									lineHeight: '3.4em',
+									lineHeight: '2em',
 									fontSize: '1.2em',
 									paddingRight: '8px',
 									paddingLeft: '8px',
@@ -400,7 +400,7 @@ export default function TimelineColumn(props: Props) {
 							{/** name **/}
 							<FlexboxGrid.Item
 								style={{
-									lineHeight: '3.4em',
+									lineHeight: '2em',
 									fontSize: '1.2em',
 									verticalAlign: 'middle',
 									overflow: 'hidden',
