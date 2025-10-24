@@ -6,7 +6,7 @@ import { Virtuoso } from 'react-virtuoso'
 import { Avatar, Button, Container, Content, Divider, Dropdown, FlexboxGrid, Header, List, Loader, Popover, Radio, RadioGroup, Stack, Whisper, useToaster } from 'rsuite'
 
 import alert from '@/components/utils/alert'
-import { TheDeskContext } from '@/context'
+import { TheDeskContext, TimelineRefreshContext } from '@/context'
 import { TIMELINE_MAX_STATUSES, TIMELINE_STATUSES_COUNT } from '@/defaults'
 import type { Account } from '@/entities/account'
 import type { CustomEmojiCategory } from '@/entities/emoji'
@@ -233,7 +233,7 @@ const Notifications: React.FC<Props> = (props) => {
 	const backToTop = () => {
 		scrollerRef.current.scrollTo({
 			top: 0,
-			behavior: 'smooth',
+			behavior: 'smooth'
 		})
 	}
 	const columnWidthSet = (widthRaw: number) => {
@@ -242,10 +242,10 @@ const Notifications: React.FC<Props> = (props) => {
 		setColumnWidth(width)
 	}
 	const headerStyle: CSSProperties = {
-		backgroundColor: props.timeline?.color ? `var(--rs-color-${props.timeline.color})` : 'var(--rs-color-card)',
+		backgroundColor: props.timeline?.color ? `var(--rs-color-${props.timeline.color})` : 'var(--rs-carousel-bg)',
 		borderBottomWidth: '3px',
 		borderBottomStyle: 'solid',
-		borderBottomColor: account && account.color ? `var(--rs-color-${account.color})` : 'transparent',
+		borderBottomColor: account && account.color ? `var(--rs-color-${account.color})` : 'transparent'
 	}
 
 	return (
@@ -267,12 +267,12 @@ const Notifications: React.FC<Props> = (props) => {
 									{/** icon **/}
 									<FlexboxGrid.Item
 										style={{
-											lineHeight: '48px',
-											fontSize: '18px',
+											lineHeight: '2em',
+											fontSize: '1.2em',
 											paddingRight: '8px',
 											paddingLeft: '8px',
 											paddingBottom: '6px',
-											width: '42px',
+											width: 'calc(2.4em - 6px)'
 										}}
 									>
 										<Icon as={BsBell} />
@@ -280,13 +280,13 @@ const Notifications: React.FC<Props> = (props) => {
 									{/** name **/}
 									<FlexboxGrid.Item
 										style={{
-											lineHeight: '48px',
-											fontSize: '18px',
+											lineHeight: '2em',
+											fontSize: '1.2em',
 											verticalAlign: 'middle',
 											overflow: 'hidden',
 											textOverflow: 'ellipsis',
 											whiteSpace: 'nowrap',
-											width: 'calc(100% - 42px)',
+											width: 'calc(100% - 2.4em + 6px)'
 										}}
 										title={`${timelineName('notifications', props.timeline?.name || 'Notifications', formatMessage)}@${props.server.domain}`}
 									>
@@ -367,9 +367,9 @@ const Notifications: React.FC<Props> = (props) => {
 												{
 													paddingTop: '2px',
 													paddingBottom: '2px',
-													backgroundColor: 'var(--rs-bg-well)',
+													backgroundColor: 'var(--rs-bg-well)'
 												},
-												shadow,
+												shadow
 											)}
 										>
 											<Notification
@@ -403,12 +403,12 @@ const Notifications: React.FC<Props> = (props) => {
 	)
 }
 const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: () => void; wrapIndex: number }>((props, ref) => {
-	const { timelineRefresh } = useContext(TheDeskContext)
+	const { timelineRefresh } = useContext(TimelineRefreshContext)
 	const { formatMessage } = useIntl()
 	const isFirst = props.wrapIndex === 0
 	const newRef = useRef()
 	const removeTimelineFn = async (timeline: Timeline) => {
-		removeTimeline(timeline)
+		await removeTimeline(timeline)
 		timelineRefresh()
 		//await invoke('remove_timeline', { id: timeline.id })
 	}

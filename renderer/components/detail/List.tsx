@@ -6,7 +6,7 @@ import { BsChevronLeft, BsPin, BsX } from 'react-icons/bs'
 import { Virtuoso } from 'react-virtuoso'
 import { Button, Content, FlexboxGrid, Header, List, Loader } from 'rsuite'
 
-import { TheDeskContext } from '@/context'
+import { TheDeskContext, TimelineRefreshContext } from '@/context'
 import type { Account } from '@/entities/account'
 import type { CustomEmojiCategory } from '@/entities/emoji'
 import type { Server } from '@/entities/server'
@@ -24,7 +24,7 @@ type Props = {
 export default function ListDetail(props: Props) {
 	const router = useRouter()
 	const { formatMessage } = useIntl()
-	const { timelineRefresh } = useContext(TheDeskContext)
+	const { timelineRefresh } = useContext(TimelineRefreshContext)
 
 	const [client, setClient] = useState<MegalodonInterface | null>(null)
 	const [server, setServer] = useState<Server | null>(null)

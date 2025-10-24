@@ -11,12 +11,14 @@ export const TheDeskContext = createContext({
 	listenUser: ((channel: string, callback: any, tts?: boolean) => null) as <T>(channel: string, callback: (a: { payload: T }) => void, tts?: boolean) => void | null,
 	listenTimeline: ((channel: string, callback: any, tts?: boolean) => null) as <T>(channel: string, callback: (a: { payload: T }) => void, tts?: boolean) => void | null,
 	allClose: () => {},
-	timelineRefresh: () => {},
 	latestTimelineRefreshed: new Date().getTime(),
 	timelineConfig: defaultSetting.timeline,
 	saveTimelineConfig: (config: Settings['timeline']) => {},
 	focused: false,
 	setFocused: (focused: boolean) => {},
+})
+export const TimelineRefreshContext = createContext({
+	timelineRefresh: () => {}
 })
 const stripForVoice = (html: string) => {
 	const div = document.createElement('div')
@@ -223,7 +225,7 @@ export const TheDeskProviderWrapper: React.FC = (props) => {
 	}
 
 	return (
-		<TheDeskContext.Provider value={{ listenUser, listenTimeline, start, allClose, timelineRefresh, latestTimelineRefreshed, timelineConfig, saveTimelineConfig, focused, setFocused }}>
+		<TheDeskContext.Provider value={{ listenUser, listenTimeline, start, allClose, latestTimelineRefreshed, timelineConfig, saveTimelineConfig, focused, setFocused }}>
 			{props.children}
 		</TheDeskContext.Provider>
 	)

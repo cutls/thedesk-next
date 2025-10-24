@@ -7,7 +7,7 @@ import { Virtuoso } from 'react-virtuoso'
 import { Avatar, Button, Container, Content, Divider, FlexboxGrid, Header, List, Loader, Popover, Radio, RadioGroup, Stack, Whisper, useToaster } from 'rsuite'
 
 import alert from '@/components/utils/alert'
-import { TheDeskContext } from '@/context'
+import { TheDeskContext, TimelineRefreshContext } from '@/context'
 import { TIMELINE_MAX_STATUSES, TIMELINE_STATUSES_COUNT } from '@/defaults'
 import type { Account } from '@/entities/account'
 import type { CustomEmojiCategory } from '@/entities/emoji'
@@ -527,7 +527,7 @@ export default function TimelineColumn(props: Props) {
 	)
 }
 const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: () => void; wrapIndex: number }>((props, ref) => {
-	const { timelineRefresh } = useContext(TheDeskContext)
+	const { timelineRefresh } = useContext(TimelineRefreshContext)
 	const { formatMessage } = useIntl()
 	const isFirst = props.wrapIndex === 0
 	const removeTimelineFn = async (timeline: Timeline) => {

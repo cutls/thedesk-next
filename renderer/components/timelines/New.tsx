@@ -1,5 +1,5 @@
 import { time } from 'console'
-import { TheDeskContext } from '@/context'
+import { TheDeskContext, TimelineRefreshContext } from '@/context'
 import generator, { type Entity } from '@cutls/megalodon'
 import { Icon } from '@rsuite/icons'
 import { useContext, useEffect, useState } from 'react'
@@ -126,7 +126,7 @@ type Props = {
 
 const New: React.FC<Props> = (props) => {
 	const { formatMessage } = useIntl()
-	const { timelineRefresh } = useContext(TheDeskContext)
+	const { timelineRefresh } = useContext(TimelineRefreshContext)
 
 	const [server, setServer] = useState<Server | null>(null)
 	const [walkthrough, setWalkthrough] = useState<boolean>(false)

@@ -18,7 +18,7 @@ import Thirdparty from '@/components/settings/Thirdparty'
 import NewTimeline from '@/components/timelines/New'
 import ShowTimeline from '@/components/timelines/Show'
 import alert from '@/components/utils/alert'
-import { TheDeskContext } from '@/context'
+import { TheDeskContext, TimelineRefreshContext } from '@/context'
 import type { Account } from '@/entities/account'
 import type { Server, ServerSet } from '@/entities/server'
 import { type Timeline, columnWidth as columnWidthCalc } from '@/entities/timeline'
@@ -100,7 +100,7 @@ function App() {
 			const [account, server] = accounts.find(([_a, s]) => s.id === ev.payload.server_id)
 			if (timelineConfig.notification !== 'no') {
 				new window.Notification(`TheDesk: ${account.username}@${server.domain}`, {
-					body: actionText(ev.payload.notification),
+					body: actionText(ev.payload.notification)
 				})
 			}
 		})
@@ -124,8 +124,8 @@ function App() {
 				setServers(
 					res.map((r) => ({
 						server: r[0],
-						account: r[1],
-					})),
+						account: r[1]
+					}))
 				)
 			}
 		})
@@ -147,7 +147,7 @@ function App() {
 			document.removeEventListener('keydown', handleKeyPress)
 		}
 	}, [])
-	useEffect(() => {
+	const timelineRefresh = async () => {
 		loadTimelines()
 		listServers().then((res) => {
 			if (res.length === 0) {
@@ -158,12 +158,15 @@ function App() {
 				setServers(
 					res.map((r) => ({
 						server: r[0],
-						account: r[1],
-					})),
+						account: r[1]
+					}))
 				)
 			}
 		})
-	}, [latestTimelineRefreshed])
+	}
+	useEffect(() => {
+		loadTimelines()
+	}, [])
 	useEffect(() => {
 		localStorage.setItem('composePosition', composePosition.join(','))
 	}, [composePosition])
@@ -197,7 +200,7 @@ function App() {
 		readSettings(lang).then((res) => {
 			setStyle({
 				fontSize: `${res.appearance.font_size}px`,
-				fontFamily: res.appearance.font,
+				fontFamily: res.appearance.font
 			})
 			switchLang(res.appearance.language)
 			dayjs.locale(res.appearance.language)
@@ -228,125 +231,131 @@ function App() {
 	const draggalePosition = { x: Math.min(px >= 0 ? px : 0, width - 300), y: Math.min(py >= 0 ? py : 0, height - 300) }
 
 	return (
-		<div className="container index" style={Object.assign({ backgroundColor: 'var(--rs-bg-well)', width: '100%', overflow: 'hidden' }, style)}>
-			<Head>
-				<title>TheDesk</title>
-			</Head>
-			{/** Modals **/}
-			<Update version={version} />
-			<NewServer open={modalState.newServer.opened} onClose={() => dispatch({ target: 'newServer', value: false, object: null })} initialServer={modalState.newServer.object} />
-			<Media index={modalState.media.index} media={modalState.media.object} opened={modalState.media.opened} close={() => dispatch({ target: 'media', value: false, object: [], index: -1 })} />
-			<Thirdparty open={modalState.thirdparty.opened} onClose={() => dispatch({ target: 'thirdparty', value: false })} />
-			<Report
-				opened={modalState.report.opened}
-				status={modalState.report.object}
-				client={modalState.report.client}
-				close={() => dispatch({ target: 'report', value: false, object: null, client: null })}
-			/>
-			<FromOtherAccount opened={modalState.fromOtherAccount.opened} status={modalState.fromOtherAccount.object} close={() => dispatch({ target: 'fromOtherAccount', value: false, object: null })} />
-			{modalState.announcements.object && (
-				<Announcements
-					account={modalState.announcements.object.account}
-					server={modalState.announcements.object.server}
-					opened={modalState.announcements.opened}
-					close={() => dispatch({ target: 'announcements', value: false, object: null })}
+		<TimelineRefreshContext.Provider value={{ timelineRefresh }}>
+			<div className="container index" style={Object.assign({ backgroundColor: 'var(--rs-bg-well)', width: '100%', overflow: 'hidden' }, style)}>
+				<Head>
+					<title>TheDesk</title>
+				</Head>
+				{/** Modals **/}
+				<Update version={version} />
+				<NewServer open={modalState.newServer.opened} onClose={() => dispatch({ target: 'newServer', value: false, object: null })} initialServer={modalState.newServer.object} />
+				<Media index={modalState.media.index} media={modalState.media.object} opened={modalState.media.opened} close={() => dispatch({ target: 'media', value: false, object: [], index: -1 })} />
+				<Thirdparty open={modalState.thirdparty.opened} onClose={() => dispatch({ target: 'thirdparty', value: false })} />
+				<Report
+					opened={modalState.report.opened}
+					status={modalState.report.object}
+					client={modalState.report.client}
+					close={() => dispatch({ target: 'report', value: false, object: null, client: null })}
 				/>
-			)}
-			<ListMemberships
-				opened={modalState.listMemberships.opened}
-				list={modalState.listMemberships.object}
-				client={modalState.listMemberships.client}
-				close={() => dispatch({ target: 'listMemberships', value: false, object: null, client: null })}
-			/>
-			<AddListMember
-				opened={modalState.addListMember.opened}
-				user={modalState.addListMember.object}
-				client={modalState.addListMember.client}
-				close={() => dispatch({ target: 'addListMember', value: false, object: null, client: null })}
-			/>
-			{/** Modals **/}
-			{migrate && <div style={{ position: 'fixed', width: '100vw', zIndex: 1500, backgroundColor: 'var(--rs-bg-well)', padding: 5 }}><FormattedMessage id="migrate" /> <a href={migrate}>Migrate</a></div>}
-			<Container style={{ height: 'calc(100% - 56px)' }}>
-				<Animation.Transition in={composeOpened} exitedClassName="compose-exited" exitingClassName="compose-exiting" enteredClassName="compose-entered" enteringClassName="compose-entering">
-					{(props, ref) => (
-						<Draggable handle=".draggable" position={draggalePosition} onStop={(_e, data) => setComposePosition([data.x, data.y])}>
-							<div {...props} ref={ref} style={{ position: 'fixed', zIndex: 4 }}>
-								<Compose setOpened={setComposeOpened} servers={servers} />
+				<FromOtherAccount opened={modalState.fromOtherAccount.opened} status={modalState.fromOtherAccount.object} close={() => dispatch({ target: 'fromOtherAccount', value: false, object: null })} />
+				{modalState.announcements.object && (
+					<Announcements
+						account={modalState.announcements.object.account}
+						server={modalState.announcements.object.server}
+						opened={modalState.announcements.opened}
+						close={() => dispatch({ target: 'announcements', value: false, object: null })}
+					/>
+				)}
+				<ListMemberships
+					opened={modalState.listMemberships.opened}
+					list={modalState.listMemberships.object}
+					client={modalState.listMemberships.client}
+					close={() => dispatch({ target: 'listMemberships', value: false, object: null, client: null })}
+				/>
+				<AddListMember
+					opened={modalState.addListMember.opened}
+					user={modalState.addListMember.object}
+					client={modalState.addListMember.client}
+					close={() => dispatch({ target: 'addListMember', value: false, object: null, client: null })}
+				/>
+				{/** Modals **/}
+				{migrate && (
+					<div style={{ position: 'fixed', width: '100vw', zIndex: 1500, backgroundColor: 'var(--rs-bg-well)', padding: 5 }}>
+						<FormattedMessage id="migrate" /> <a href={migrate}>Migrate</a>
+					</div>
+				)}
+				<Container style={{ height: 'calc(100% - 56px)' }}>
+					<Animation.Transition in={composeOpened} exitedClassName="compose-exited" exitingClassName="compose-exiting" enteredClassName="compose-entered" enteringClassName="compose-entering">
+						{(props, ref) => (
+							<Draggable handle=".draggable" position={draggalePosition} onStop={(_e, data) => setComposePosition([data.x, data.y])}>
+								<div {...props} ref={ref} style={{ position: 'fixed', zIndex: 4 }}>
+									<Compose setOpened={setComposeOpened} servers={servers} />
+								</div>
+							</Draggable>
+						)}
+					</Animation.Transition>
+					<Animation.Transition in={searchOpened} exitedClassName="search-exited" exitingClassName="search-exiting" enteredClassName="search-entered" enteringClassName="search-entering">
+						{(props, ref) => (
+							<div {...props} ref={ref} style={{ overflow: 'hidden' }}>
+								<Search
+									setOpened={setSearchOpened}
+									servers={servers}
+									openMedia={(media: Entity.Attachment[], index: number) => dispatch({ target: 'media', value: true, object: media, index: index })}
+									openReport={(status: Entity.Status, client: MegalodonInterface) => dispatch({ target: 'report', value: true, object: status, client: client })}
+									openFromOtherAccount={(status: Entity.Status) => dispatch({ target: 'fromOtherAccount', value: true, object: status })}
+								/>
 							</div>
-						</Draggable>
-					)}
-				</Animation.Transition>
-				<Animation.Transition in={searchOpened} exitedClassName="search-exited" exitingClassName="search-exiting" enteredClassName="search-entered" enteringClassName="search-entering">
-					{(props, ref) => (
-						<div {...props} ref={ref} style={{ overflow: 'hidden' }}>
-							<Search
-								setOpened={setSearchOpened}
-								servers={servers}
-								openMedia={(media: Entity.Attachment[], index: number) => dispatch({ target: 'media', value: true, object: media, index: index })}
-								openReport={(status: Entity.Status, client: MegalodonInterface) => dispatch({ target: 'report', value: true, object: status, client: client })}
-								openFromOtherAccount={(status: Entity.Status) => dispatch({ target: 'fromOtherAccount', value: true, object: status })}
-							/>
-						</div>
-					)}
-				</Animation.Transition>
-				<Content className="timeline-space" style={{ display: 'flex', position: 'relative', borderTop: '3px solid var(--rs-divider-border)' }} ref={spaceRef}>
-					{timelines.map((tls, i) => (
-						<ResizableBox
-							key={tls[0][0].id}
-							width={columnWidths[i]}
-							height={0}
-							axis="x"
-							style={{ margin: '0 4px', minHeight: '100%', flexShrink: 0, width: columnWidths[i], display: 'flex', flexDirection: 'column' }}
-							resizeHandles={['e']}
-							onResizeStop={(_, e) => columnWidthSet(i, e.size.width)}
-						>
-							<>
-								{tls.map((timeline, j) => (
-									<ShowTimeline
-										wrapIndex={i}
-										stackLength={tls.length}
-										isLast={j === tls.length - 1}
-										timeline={timeline[0]}
-										server={timeline[1]}
-										unreads={unreads}
-										setUnreads={setUnreads}
-										key={timeline[0].id}
-										openMedia={(media: Entity.Attachment[], index: number) => dispatch({ target: 'media', value: true, object: media, index: index })}
-										openReport={(status: Entity.Status, client: MegalodonInterface) => dispatch({ target: 'report', value: true, object: status, client: client })}
-										openFromOtherAccount={(status: Entity.Status) => dispatch({ target: 'fromOtherAccount', value: true, object: status })}
-									/>
-								))}
-							</>
-						</ResizableBox>
-					))}
-					<NewTimeline servers={servers} />
-				</Content>
-				<Detail
-					dispatch={dispatch}
-					openMedia={(media: Entity.Attachment[], index: number) => dispatch({ target: 'media', value: true, object: media, index: index })}
-					openReport={(status: Entity.Status, client: MegalodonInterface) => dispatch({ target: 'report', value: true, object: status, client: client })}
-					openFromOtherAccount={(status: Entity.Status) => dispatch({ target: 'fromOtherAccount', value: true, object: status })}
-					openListMemberships={(list: Entity.List, client: MegalodonInterface) => dispatch({ target: 'listMemberships', value: true, object: list, client: client })}
-					openAddListMember={(user: Entity.Account, client: MegalodonInterface) => {
-						dispatch({ target: 'addListMember', value: true, object: user, client: client })
-					}}
-				/>
-			</Container>
+						)}
+					</Animation.Transition>
+					<Content className="timeline-space" style={{ display: 'flex', position: 'relative', borderTop: '3px solid var(--rs-divider-border)' }} ref={spaceRef}>
+						{timelines.map((tls, i) => (
+							<ResizableBox
+								key={tls[0][0].id}
+								width={columnWidths[i]}
+								height={0}
+								axis="x"
+								style={{ margin: '0 4px', minHeight: '100%', flexShrink: 0, width: columnWidths[i], display: 'flex', flexDirection: 'column' }}
+								resizeHandles={['e']}
+								onResizeStop={(_, e) => columnWidthSet(i, e.size.width)}
+							>
+								<>
+									{tls.map((timeline, j) => (
+										<ShowTimeline
+											wrapIndex={i}
+											stackLength={tls.length}
+											isLast={j === tls.length - 1}
+											timeline={timeline[0]}
+											server={timeline[1]}
+											unreads={unreads}
+											setUnreads={setUnreads}
+											key={timeline[0].id}
+											openMedia={(media: Entity.Attachment[], index: number) => dispatch({ target: 'media', value: true, object: media, index: index })}
+											openReport={(status: Entity.Status, client: MegalodonInterface) => dispatch({ target: 'report', value: true, object: status, client: client })}
+											openFromOtherAccount={(status: Entity.Status) => dispatch({ target: 'fromOtherAccount', value: true, object: status })}
+										/>
+									))}
+								</>
+							</ResizableBox>
+						))}
+						<NewTimeline servers={servers} />
+					</Content>
+					<Detail
+						dispatch={dispatch}
+						openMedia={(media: Entity.Attachment[], index: number) => dispatch({ target: 'media', value: true, object: media, index: index })}
+						openReport={(status: Entity.Status, client: MegalodonInterface) => dispatch({ target: 'report', value: true, object: status, client: client })}
+						openFromOtherAccount={(status: Entity.Status) => dispatch({ target: 'fromOtherAccount', value: true, object: status })}
+						openListMemberships={(list: Entity.List, client: MegalodonInterface) => dispatch({ target: 'listMemberships', value: true, object: list, client: client })}
+						openAddListMember={(user: Entity.Account, client: MegalodonInterface) => {
+							dispatch({ target: 'addListMember', value: true, object: user, client: client })
+						}}
+					/>
+				</Container>
 
-			<Navigator
-				servers={servers}
-				unreads={unreads}
-				addNewServer={() => dispatch({ target: 'newServer', value: true, object: null })}
-				openAuthorize={(server: Server) => dispatch({ target: 'newServer', value: true, object: server })}
-				openAnnouncements={(server: Server, account: Account) => dispatch({ target: 'announcements', value: true, object: { server, account } })}
-				openThirdparty={() => dispatch({ target: 'thirdparty', value: true })}
-				openSettings={() => router.push('./setting', currentPath ? `${currentPath}setting.html` : undefined)}
-				toggleCompose={toggleCompose}
-				toggleSearch={toggleSearch}
-				setHighlighted={setHighlighted}
-				setUnreads={setUnreads}
-			/>
-		</div>
+				<Navigator
+					servers={servers}
+					unreads={unreads}
+					addNewServer={() => dispatch({ target: 'newServer', value: true, object: null })}
+					openAuthorize={(server: Server) => dispatch({ target: 'newServer', value: true, object: server })}
+					openAnnouncements={(server: Server, account: Account) => dispatch({ target: 'announcements', value: true, object: { server, account } })}
+					openThirdparty={() => dispatch({ target: 'thirdparty', value: true })}
+					openSettings={() => router.push('./setting', currentPath ? `${currentPath}setting.html` : undefined)}
+					toggleCompose={toggleCompose}
+					toggleSearch={toggleSearch}
+					setHighlighted={setHighlighted}
+					setUnreads={setUnreads}
+				/>
+			</div>
+		</TimelineRefreshContext.Provider>
 	)
 }
 
@@ -397,42 +406,42 @@ type ModalState = {
 const initialModalState: ModalState = {
 	newServer: {
 		opened: false,
-		object: null,
+		object: null
 	},
 	media: {
 		opened: false,
 		object: [],
-		index: 0,
+		index: 0
 	},
 	thirdparty: {
-		opened: false,
+		opened: false
 	},
 	settings: {
-		opened: false,
+		opened: false
 	},
 	report: {
 		opened: false,
 		object: null,
-		client: null,
+		client: null
 	},
 	fromOtherAccount: {
 		opened: false,
-		object: null,
+		object: null
 	},
 	announcements: {
 		opened: false,
-		object: null,
+		object: null
 	},
 	listMemberships: {
 		opened: false,
 		object: null,
-		client: null,
+		client: null
 	},
 	addListMember: {
 		opened: false,
 		object: null,
-		client: null,
-	},
+		client: null
+	}
 }
 
 const modalReducer = (current: ModalState, action: { target: string; value: boolean; object?: any; index?: number; client?: MegalodonInterface | null }) => {

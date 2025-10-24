@@ -1,5 +1,5 @@
 import alert from '@/components/utils/alert'
-import { TheDeskContext } from '@/context'
+import { TheDeskContext, TimelineRefreshContext } from '@/context'
 import type { Account } from '@/entities/account'
 import { Instruction } from '@/entities/instruction'
 import type { Marker } from '@/entities/marker'
@@ -61,7 +61,8 @@ const diceCt = (dice: number) => {
 }
 const Navigator: React.FC<NavigatorProps> = (props): ReactElement => {
 	const { formatMessage } = useIntl()
-	const { timelineRefresh, timelineConfig, listenUser } = useContext(TheDeskContext)
+	const { timelineConfig, listenUser } = useContext(TheDeskContext)
+	const { timelineRefresh } = useContext(TimelineRefreshContext)
 	const { servers, openAuthorize, openAnnouncements, openThirdparty, openSettings } = props
 	const [awake, setAwake] = useState(0)
 	const [walkthrough, setWalkthrough] = useState(false)
@@ -301,7 +302,7 @@ const serverMenu = (
 	ref: React.RefCallback<HTMLElement>,
 ): ReactElement => {
 	const router = useRouter()
-	const { timelineRefresh } = useContext(TheDeskContext)
+	const { timelineRefresh } = useContext(TimelineRefreshContext)
 
 	const handleSelect = (eventKey: string) => {
 		onClose()

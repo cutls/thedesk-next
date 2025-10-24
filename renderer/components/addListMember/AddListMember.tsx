@@ -74,6 +74,7 @@ export default function AddListMember(props: Props) {
 							{/** name **/}
 							<FlexboxGrid.Item colspan={20}>
 								<div>
+									{/** biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation> */}
 									<span dangerouslySetInnerHTML={{ __html: emojify(user.display_name, user.emojis) }} />
 								</div>
 								<div>

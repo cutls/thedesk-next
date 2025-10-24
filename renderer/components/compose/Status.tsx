@@ -442,6 +442,7 @@ const Status: React.FC<Props> = (props) => {
 		setFormValue((current) => Object.assign({}, current, { spoiler: '' }))
 	}
 
+	// biome-ignore lint/correctness/noNestedComponentDefinitions: <explanation>
 	const EmojiPicker = forwardRef<HTMLDivElement>((props, ref) => (
 		<Popover ref={ref} {...props}>
 			<Picker

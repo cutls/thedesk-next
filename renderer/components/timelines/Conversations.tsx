@@ -5,7 +5,7 @@ import { forwardRef, useCallback, useContext, useEffect, useRef, useState } from
 import { BsChevronLeft, BsChevronRight, BsEnvelope, BsSliders, BsSquare, BsViewStacked, BsX } from 'react-icons/bs'
 import { Avatar, Button, Container, Content, Divider, Dropdown, FlexboxGrid, Header, List, Loader, Popover, Radio, RadioGroup, Stack, Whisper, useToaster } from 'rsuite'
 
-import { TheDeskContext } from '@/context'
+import { TheDeskContext, TimelineRefreshContext } from '@/context'
 import { TIMELINE_MAX_STATUSES, TIMELINE_STATUSES_COUNT } from '@/defaults'
 import type { Account } from '@/entities/account'
 import type { Server } from '@/entities/server'
@@ -238,7 +238,7 @@ const Conversations: React.FC<Props> = (props) => {
 	)
 }
 const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: () => void; wrapIndex: number }>((props, ref) => {
-	const { timelineRefresh } = useContext(TheDeskContext)
+	const { timelineRefresh } = useContext(TimelineRefreshContext)
 	const { formatMessage } = useIntl()
 	const isFirst = props.wrapIndex === 0
 	const newRef = useRef()
