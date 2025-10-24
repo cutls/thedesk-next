@@ -5,7 +5,7 @@ import { useContext, useEffect, useState } from 'react'
 import { BsChevronLeft, BsPersonPlus, BsPersonX, BsPin, BsX } from 'react-icons/bs'
 import { Button, Content, FlexboxGrid, Header, List, Loader } from 'rsuite'
 
-import { TheDeskContext } from '@/context'
+import { TheDeskContext, TimelineRefreshContext } from '@/context'
 import type { Account } from '@/entities/account'
 import type { CustomEmojiCategory } from '@/entities/emoji'
 import type { Server } from '@/entities/server'
@@ -30,7 +30,7 @@ export default function TagDetail(props: Props) {
 	const [tag, setTag] = useState('')
 	const [hashtag, setHashtag] = useState<Entity.Tag | null>(null)
 	const [customEmojis, setCustomEmojis] = useState<Array<CustomEmojiCategory>>([])
-	const { timelineRefresh } = useContext(TheDeskContext)
+	const { timelineRefresh } = useContext(TimelineRefreshContext)
 
 	const router = useRouter()
 
