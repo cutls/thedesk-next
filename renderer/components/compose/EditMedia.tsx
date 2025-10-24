@@ -60,9 +60,6 @@ export default function EditMedia(props: Props) {
 		if (formRef === undefined || formRef.current === undefined) {
 			return
 		}
-		if (!formRef.current.check()) {
-			return
-		}
 		setLoading(true)
 		try {
 			await props.client.updateMedia(attachment.id, { description: formValue.description })

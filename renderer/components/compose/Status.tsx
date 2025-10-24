@@ -227,10 +227,6 @@ const Status: React.FC<Props> = (props) => {
 			return
 		}
 		if (formRef === undefined || formRef.current === undefined) return
-		if (!formRef.current.check()) {
-			toast.push(alert('error', formatMessage({ id: 'alert.validation_error' })), { placement: 'topStart' })
-			return
-		}
 		setLoading(true)
 		try {
 			let options = { visibility: useVis || visibility }
