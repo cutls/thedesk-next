@@ -50,9 +50,11 @@ export async function addTimeline(server: Server, timeline: AddTimeline): Promis
 	localStorage.setItem('timelinesV2', JSON.stringify(timelines))
 	return
 }
-async function removeTimelineCore(timelines: Timeline[][], id: number): Promise<Timeline[][]> {
-	const newTimelines = timelines.map((timeline) => timeline.filter((tl) => tl.id !== id))
-	return await reorderTimelineCore(newTimelines)
+async function removeTimelineCore(timelines: Timeline[][], ids: number[]): Promise<Timeline[][]> {
+	const newTimelines = timelines.map((timeline) => timeline.filter((tl) => !ids.includes(tl.id))).filter((tls) => tls.length > 0)
+	const ret = await reorderTimelineCore(newTimelines)
+	console.log(`delete ${ids.join()}`, newTimelines, ret)
+	return ret
 }
 async function reorderTimelineCore(timelines: Timeline[][]): Promise<Timeline[][]> {
 	const newOrderTimelines: Timeline[][] = []
@@ -72,7 +74,7 @@ async function reorderTimelineCore(timelines: Timeline[][]): Promise<Timeline[][
 export async function removeTimeline({ id }: { id: number }): Promise<void> {
 	const timelinesStr = localStorage.getItem('timelinesV2')
 	const timelines: Timeline[][] = JSON.parse(timelinesStr || '[]')
-	const newOrderTimelines = await removeTimelineCore(timelines, id)
+	const newOrderTimelines = await removeTimelineCore(timelines, [id])
 	localStorage.setItem('timelinesV2', JSON.stringify(newOrderTimelines))
 	return
 }
@@ -123,13 +125,11 @@ export async function removeServer({ id }: { id: number }): Promise<void> {
 	const newServers = servers.filter((server) => server.id !== id)
 	localStorage.setItem('servers', JSON.stringify(newServers))
 	const timelinesStr = localStorage.getItem('timelinesV2')
-	let timelines: Timeline[][] = JSON.parse(timelinesStr || '[]')
+	const timelines: Timeline[][] = JSON.parse(timelinesStr || '[]')
 	const flatTls = timelines.flat()
 	const deleteFlatTimelineIds = flatTls.filter((timeline) => timeline.server_id === id).map((tl) => tl.id)
-	for (const removeId of deleteFlatTimelineIds) {
-		timelines = await removeTimelineCore(timelines, removeId)
-	}
-	localStorage.setItem('timelinesV2', JSON.stringify(timelines))
+	const newTimelines = await removeTimelineCore(timelines, deleteFlatTimelineIds)
+	localStorage.setItem('timelinesV2', JSON.stringify(newTimelines))
 	return
 }
 
