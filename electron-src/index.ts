@@ -14,7 +14,7 @@ type SystemConfig = {
 
 const promisifyExecFile = promisify(execFile)
 // Packages
-import { BrowserWindow, type IpcMainEvent, Menu, app, clipboard, ipcMain, nativeImage, shell } from 'electron'
+import { BrowserWindow, type IpcMainEvent, Menu, MenuItemConstructorOptions, app, clipboard, ipcMain, nativeImage, shell } from 'electron'
 import isDev from 'electron-is-dev'
 import defaultConfig from './defaultConfig.json'
 const appServe = app.isPackaged
@@ -81,6 +81,16 @@ app.on('ready', async () => {
 			//if (mainWindow) mainWindow.webContents.reloadIgnoringCache()
 		})
 	}
+	const isJa = app.getPreferredSystemLanguages().includes('ja')
+	const template: MenuItemConstructorOptions[] = [
+	  { role: 'fileMenu', submenu: [ { label: isJa ? '設定' : 'Prefrences', click: () => mainWindow?.loadURL('app://-/setting.html') } ] },
+	  { role: 'editMenu' },
+	  { role: 'viewMenu' },
+	  { role: 'windowMenu' },
+	]
+	if (process.platform === 'darwin') template.unshift({ role: 'appMenu', submenu: [ { label: isJa ? '設定' : 'Prefrences', click: () => mainWindow?.loadURL('app://-/setting.html') } ] })
+	const menu = Menu.buildFromTemplate(template);
+	Menu.setApplicationMenu(menu)
 	windowState.manage(mainWindow)
 	ipcMain.on('requestInitialInfo', async (_event) => {
 		mainWindow?.webContents.send('initialInfo', {
