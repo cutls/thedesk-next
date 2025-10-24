@@ -31,7 +31,7 @@ import type { Entity, MegalodonInterface } from '@cutls/megalodon'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import Draggable from 'react-draggable'
-import { useIntl } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { ResizableBox } from 'react-resizable'
 import { listAccounts, listServers, listTimelines, migrateTimelineV1toV2, readSettings, updateColumnWidth } from 'utils/storage'
 
@@ -54,6 +54,7 @@ function App() {
 	const [composePosition, setComposePosition] = useState<[number, number]>([0, 0])
 	const [version, setVersion] = useState<string | null>(null)
 	const [currentPath, setCurrentPath] = useState<string | undefined>(undefined)
+	const [migrate, setMigrate] = useState<string | null>(null)
 
 	const [modalState, dispatch] = useReducer(modalReducer, initialModalState)
 	const spaceRef = useRef<HTMLDivElement>()
@@ -139,6 +140,7 @@ function App() {
 			localStorage.setItem('fonts', JSON.stringify(data.fonts))
 			setVersion(data.version)
 			loadAppearance()
+			if (isInit && !data.isFirstRun) setMigrate(`file://${data.currentRendererAbsolutePath}/old.html?at=${location.href}`)
 		})
 
 		return () => {
@@ -263,6 +265,7 @@ function App() {
 				close={() => dispatch({ target: 'addListMember', value: false, object: null, client: null })}
 			/>
 			{/** Modals **/}
+			{migrate && <div style={{ position: 'fixed', width: '100vw', zIndex: 1500, backgroundColor: 'var(--rs-bg-well)', padding: 5 }}><FormattedMessage id="migrate" /> <a href={migrate}>Migrate</a></div>}
 			<Container style={{ height: 'calc(100% - 56px)' }}>
 				<Animation.Transition in={composeOpened} exitedClassName="compose-exited" exitingClassName="compose-exiting" enteredClassName="compose-entered" enteringClassName="compose-entering">
 					{(props, ref) => (

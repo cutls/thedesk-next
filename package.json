@@ -12,7 +12,7 @@
 	"packageManager": "pnpm@10.5.2",
 	"scripts": {
 		"clean": "rimraf dist main renderer/out renderer/.next",
-		"dev": "npm run build-electron && electron .",
+		"dev": "npm run build-electron && concurrently -n \"NEXT,ELECTRON\" -c \"yellow,blue\" --kill-others \"next dev renderer\" \"electron .\"",
 		"build-renderer": "next build renderer",
 		"build-electron": "tsc -p electron-src",
 		"build": "npm run thirdparty && npm run build-renderer && npm run build-electron && node scripts/toRelativePath.js",
@@ -32,6 +32,7 @@
 		"dayjs": "^1.11.18",
 		"electron-is-dev": "^3.0.1",
 		"electron-next": "^3.1.5",
+		"electron-serve": "^3.0.0",
 		"electron-window-state": "^5.0.3",
 		"emoji-mart": "^5.6.0",
 		"font-list": "^2.0.1",
@@ -61,6 +62,7 @@
 		"@types/react-resizable": "^3.0.8",
 		"@types/sanitize-html": "^2.11.0",
 		"@types/superagent": "^8.1.9",
+		"concurrently": "^9.2.1",
 		"electron": "37",
 		"electron-builder": "26.0.0",
 		"license-checker": "^25.0.1",
@@ -75,7 +77,9 @@
 		"productName": "TheDesk",
 		"appId": "next.top.thedesk",
 		"afterSign": "build-tool/notarize.js",
-		"asarUnpack": ["native/**"],
+		"asarUnpack": [
+			"native/**"
+		],
 		"files": [
 			"main-build",
 			"renderer/out",

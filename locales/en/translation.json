@@ -416,5 +416,6 @@
 	"list_memberships": {
 		"title": "List memberships",
 		"search_placeholder": "Search among people you follow"
-	}
+	},
+	"migrate": "If your data was lost when migrating from v25.0.18 or earlier, please click Migrate to restore your data."
 }

@@ -416,5 +416,6 @@
 	"list_memberships": {
 		"title": "リストメンバー管理",
 		"search_placeholder": "フォローしている人の中から検索"
-	}
+	},
+	"migrate": "v25.0.18以前からの以降でデータが消えた場合、Migrateをクリックしてデータを復元してください。"
 }

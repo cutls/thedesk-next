@@ -1,12 +1,12 @@
 import fs from 'fs'
 // Native
 import { join } from 'path'
-import { format } from 'url'
 import { getFonts } from 'font-list'
 
 import { execFile } from 'child_process'
 import { promisify } from 'util'
 import stateKeeper from 'electron-window-state'
+import serve from 'electron-serve'
 type SystemConfig = {
 	hardwareAcceleration: boolean
 	allowDoH: boolean
@@ -16,8 +16,12 @@ const promisifyExecFile = promisify(execFile)
 // Packages
 import { BrowserWindow, type IpcMainEvent, Menu, app, clipboard, ipcMain, nativeImage, shell } from 'electron'
 import isDev from 'electron-is-dev'
-import prepareNext from 'electron-next'
 import defaultConfig from './defaultConfig.json'
+const appServe = app.isPackaged
+	? serve({
+			directory: join(__dirname, '../renderer/out')
+		})
+	: null
 // Prepare the renderer once the app is ready
 let mainWindow: BrowserWindow | null = null
 let config: SystemConfig = defaultConfig
@@ -27,9 +31,11 @@ const logger = (msg: string) => {
 	console.log(`[TheDesk Main Process] ${msg}`)
 	fs.appendFileSync(join(appDataPath, 'main.log'), `[${new Date().toISOString()}] ${msg}\n`)
 }
+let firstRun = false
 try {
 	if (!fs.existsSync(appDataPath) || !fs.existsSync(configPath)) {
 		fs.writeFileSync(configPath, JSON.stringify(defaultConfig))
+		firstRun = true
 	} else {
 		try {
 			const data = fs.readFileSync(configPath)
@@ -45,11 +51,6 @@ try {
 
 app.on('ready', async () => {
 	logger('start')
-	try {
-		await prepareNext('./renderer')
-	} catch (e) {
-		if (isDev) logger(`prepareNext error: ${(e as Error).message} @ ${__dirname}`)
-	}
 	if (!config.allowDoH) app.configureHostResolver({ secureDnsMode: 'off' })
 	const windowState = stateKeeper({
 		defaultWidth: 800,
@@ -69,22 +70,26 @@ app.on('ready', async () => {
 		}
 	})
 
-	const url = isDev
-		? 'http://localhost:8000/'
-		: format({
-				pathname: join(__dirname, '../renderer/out/index.html'),
-				protocol: 'file:',
-				slashes: true
-			})
-
-	mainWindow.loadURL(url)
+	if (app.isPackaged && appServe !== null) {
+		appServe(mainWindow).then(() => {
+			if (mainWindow) mainWindow.loadURL('app://-')
+		})
+	} else {
+		mainWindow.loadURL('http://localhost:3000')
+		mainWindow.webContents.openDevTools()
+		mainWindow.webContents.on('did-fail-load', () => {
+			//if (mainWindow) mainWindow.webContents.reloadIgnoringCache()
+		})
+	}
 	windowState.manage(mainWindow)
 	ipcMain.on('requestInitialInfo', async (_event) => {
 		mainWindow?.webContents.send('initialInfo', {
 			os: process.platform,
 			lang: app.getPreferredSystemLanguages(),
 			version: app.getVersion(),
-			fonts: await getFonts({ disableQuoting: true })
+			fonts: await getFonts({ disableQuoting: true }),
+			isFirstRun: firstRun,
+			currentRendererAbsolutePath: join(__dirname, '../renderer/out')
 		})
 	})
 	ipcMain.on('requestAppleMusic', async (_event: IpcMainEvent, { fallback }: { fallback: boolean }) => {
