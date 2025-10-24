@@ -219,8 +219,8 @@ function App() {
 						label={formatMessage({ id: 'settings.settings.timeline.max_length' })}
 						hint={formatMessage({ id: 'settings.settings.timeline.max_length_hint' })}
 						value={timelineConfig.max_length}
-						onChange={(value) => updateTimeline('max_length', value)}
-						min={10}
+						onChange={(value) => updateTimeline('max_length', value > 0 ? Math.max(value, 10) : 0)}
+						min={0}
 						max={1000}
 						step={1}
 						unit={formatMessage({ id: 'settings.settings.timeline.max_length_unit' })}
