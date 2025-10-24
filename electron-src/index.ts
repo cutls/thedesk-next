@@ -4,7 +4,7 @@ import { join } from 'path'
 import { format } from 'url'
 import { getFonts } from 'font-list'
 
-import { execFile, execSync } from 'child_process'
+import { execFile } from 'child_process'
 import { promisify } from 'util'
 import stateKeeper from 'electron-window-state'
 type SystemConfig = {
@@ -48,13 +48,12 @@ app.on('ready', async () => {
 	try {
 		await prepareNext('./renderer')
 	} catch (e) {
-		logger(`prepareNext error: ${(e as Error).message} @ ${__dirname}`)
+		if (isDev) logger(`prepareNext error: ${(e as Error).message} @ ${__dirname}`)
 	}
 	if (!config.allowDoH) app.configureHostResolver({ secureDnsMode: 'off' })
-	logger('start2')
 	const windowState = stateKeeper({
 		defaultWidth: 800,
-		defaultHeight: 600,
+		defaultHeight: 600
 	})
 
 	mainWindow = new BrowserWindow({
@@ -66,46 +65,43 @@ app.on('ready', async () => {
 			nodeIntegration: false,
 			contextIsolation: true,
 			preload: join(__dirname, 'preload.js'),
-			webSecurity: isDev ? false : undefined,
-		},
+			webSecurity: isDev ? false : undefined
+		}
 	})
-	logger('start3')
 
 	const url = isDev
 		? 'http://localhost:8000/'
 		: format({
 				pathname: join(__dirname, '../renderer/out/index.html'),
 				protocol: 'file:',
-				slashes: true,
+				slashes: true
 			})
 
 	mainWindow.loadURL(url)
 	windowState.manage(mainWindow)
-	logger('start4')
 	ipcMain.on('requestInitialInfo', async (_event) => {
 		mainWindow?.webContents.send('initialInfo', {
 			os: process.platform,
 			lang: app.getPreferredSystemLanguages(),
 			version: app.getVersion(),
-			fonts: await getFonts({ disableQuoting: true }),
+			fonts: await getFonts({ disableQuoting: true })
 		})
 	})
 	ipcMain.on('requestAppleMusic', async (_event: IpcMainEvent, { fallback }: { fallback: boolean }) => {
 		const fromDock = async () => {
 			try {
-				const stdout = execSync(`osascript ${join(__dirname, '..', 'native', 'itunes-ctrl.scpt')}`).toString()
+				const { stdout } = await promisifyExecFile(join(__dirname, '..', 'native', 'nowplaying-ctrl.js').replace('app.asar', 'app.asar.unpacked'))
 				if (!stdout) return null
 				const songRaw = JSON.parse(stdout)
 				const song = { type: 'dock', data: songRaw }
 				return mainWindow?.webContents.send('appleMusic', song)
 			} catch (e) {
-				console.error({ stdout: (e as any).stdout?.toString(), stderr: (e as any).stderr?.toString() })
-				return mainWindow?.webContents.send('appleMusic', { error: true, message: (e as any).stderr?.toString() })
+				return mainWindow?.webContents.send('appleMusic', { type: 'dock', data: (e as any).stderr?.toString() })
 			}
 		}
 		let song: Record<string, any> = {}
 		try {
-			const { stdout } = await promisifyExecFile(join(__dirname, '..', 'native', 'nowplaying-info.js'))
+			const { stdout } = await promisifyExecFile(join(__dirname, '..', 'native', 'nowplaying-info.js').replace('app.asar', 'app.asar.unpacked'))
 			if (!stdout && fallback) return await fromDock()
 			song = JSON.parse(stdout)
 			if ((!song || !song.name) && fallback) return await fromDock()
@@ -117,7 +113,7 @@ app.on('ready', async () => {
 		try {
 			const { stdout: artwork } = await promisifyExecFile(join(__dirname, '..', 'native', 'get-artwork'), [song.databaseID.toString()], {
 				maxBuffer: 64 * 1024 * 1024,
-				encoding: 'buffer',
+				encoding: 'buffer'
 			})
 			song.artwork = artwork.toString('base64')
 			mainWindow?.webContents.send('appleMusic', song)
@@ -142,7 +138,7 @@ app.on('ready', async () => {
 				{ role: 'copy' },
 				{ role: 'paste' },
 				{ type: 'separator' },
-				{ role: 'selectAll' },
+				{ role: 'selectAll' }
 			])
 			inputMenu.popup()
 		} else if (selectionText && selectionText.trim() !== '') {
@@ -151,7 +147,7 @@ app.on('ready', async () => {
 				{ role: 'copy' },
 				{ type: 'separator' },
 				{ role: 'selectAll' },
-				{ label: isJa ? `Googleで「${selectionText}」を検索` : `Search "${selectionText}" with Google`, click: () => shell.openExternal(`https://www.google.com/search?q=${selectionText}`) },
+				{ label: isJa ? `Googleで「${selectionText}」を検索` : `Search "${selectionText}" with Google`, click: () => shell.openExternal(`https://www.google.com/search?q=${selectionText}`) }
 			])
 			selectionMenu.popup()
 		}

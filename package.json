@@ -75,6 +75,7 @@
 		"productName": "TheDesk",
 		"appId": "next.top.thedesk",
 		"afterSign": "build-tool/notarize.js",
+		"asarUnpack": ["native/**"],
 		"files": [
 			"main-build",
 			"renderer/out",

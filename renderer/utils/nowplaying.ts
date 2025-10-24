@@ -12,8 +12,8 @@ async function spotifyApi(url: string, showToaster: (message: string) => void) {
 			method: 'get',
 			headers: {
 				'content-type': 'application/json',
-				Authorization: `Bearer ${at}`,
-			},
+				Authorization: `Bearer ${at}`
+			}
 		})
 		if (jsonRaw.status === 204) return
 		return jsonRaw.json()
@@ -65,6 +65,12 @@ export async function nowplaying(key: 'spotify' | 'appleMusic', showToaster: (me
 		type IFile = { text: string; file: File; title: string }
 		const data: IFile = await new Promise((resolve) =>
 			window.electronAPI.appleMusic(async (_, itemRaw) => {
+				console.log(itemRaw)
+				if (itemRaw.data.error) {
+					if (itemRaw.data.error) showToaster(itemRaw.data.error)
+					showToaster('compose.nowplaying.accessibilityError')
+					return
+				}
 				const item = itemRaw.type === 'dock' ? await getUnknownData(itemRaw.data) : itemRaw
 				const contentRaw = localStorage.getItem('nowplayingTemplate')
 				const artwork = item.artwork ? new File([Buffer.from(item.artwork, 'base64')], 'cover.jpg', { type: 'image/jpeg' }) : null
@@ -90,7 +96,7 @@ export async function nowplaying(key: 'spotify' | 'appleMusic', showToaster: (me
 				const regExp0 = /{genre}/g
 				content = content.replace(regExp0, '')
 				resolve({ text: content, file: artwork, title: `${item.name} ${item.album} ${item.artist}` })
-			}),
+			})
 		)
 		return data
 	}
@@ -102,8 +108,8 @@ async function refreshSpotifyToken() {
 		const api = await fetch(start, {
 			method: 'get',
 			headers: {
-				'content-type': 'application/json',
-			},
+				'content-type': 'application/json'
+			}
 		})
 		const json = await api.json()
 		const { accessToken, refreshToken: _newRT } = json
@@ -116,7 +122,7 @@ async function refreshSpotifyToken() {
 export async function getUnknownAA(q: string, country: string) {
 	const start = `https://itunes.apple.com/search?term=${q}&country=${country}&entity=song`
 	const promise = await fetch(start, {
-		method: 'GET',
+		method: 'GET'
 	})
 	const json = await promise.json()
 	if (!json.resultCount) {
@@ -145,10 +151,10 @@ export async function getUnknownData(q: { trackName: string; artistAndAlbum: str
 	}
 	const start = `https://itunes.apple.com/search?term=${term}&country=${country}&entity=song`
 	const promise = await fetch(start, {
-		method: 'GET',
+		method: 'GET'
 	})
 	const json = await promise.json()
-	if (!json.resultCount) return { name: trackName, album: album || artistAndAlbum, artist: artist || '', artwork: null}
+	if (!json.resultCount) return { name: trackName, album: album || artistAndAlbum, artist: artist || '', artwork: null }
 	const data = json.results.find((item: any) => item.collectionName === album) || json.results[0]
 	const jucket = data.artworkUrl100
 	function blobToBase64(blob: Blob) {
@@ -163,7 +169,7 @@ export async function getUnknownData(q: { trackName: string; artistAndAlbum: str
 		name: data.trackName,
 		album: data.collectionName,
 		artist: data.artistName,
-		artwork: file,
+		artwork: file
 	}
 }
 export async function nowplayingInit(isDev: boolean, showToaster: (m: string) => void) {
@@ -180,8 +186,8 @@ export async function nowplayingInit(isDev: boolean, showToaster: (m: string) =>
 export async function nowplayingCode(code: string, showToaster: (m: string) => void) {
 	const api = await fetch(`${apiGateway}?state=auth&code=${code.replace(/\n/g, '')}`, {
 		headers: {
-			'content-type': 'application/json',
-		},
+			'content-type': 'application/json'
+		}
 	})
 	const json = await api.json()
 	const { accessToken, refreshToken } = json
@@ -209,8 +215,8 @@ const mockTrackItem = {
 				id: '3WrFJ7ztbogyGnTHbHJFl2',
 				name: 'The Beatles',
 				type: 'artist',
-				uri: 'spotify:artist:3WrFJ7ztbogyGnTHbHJFl2',
-			},
+				uri: 'spotify:artist:3WrFJ7ztbogyGnTHbHJFl2'
+			}
 		],
 		available_markets: [
 			'AR',
@@ -396,7 +402,7 @@ const mockTrackItem = {
 			'TJ',
 			'VE',
 			'ET',
-			'XK',
+			'XK'
 		],
 		external_urls: { spotify: 'https://open.spotify.com/album/1cTeNkeINtXiaMLlashAKs' },
 		href: 'https://api.spotify.com/v1/albums/1cTeNkeINtXiaMLlashAKs',
@@ -404,14 +410,14 @@ const mockTrackItem = {
 		images: [
 			{ height: 640, url: 'https://i.scdn.co/image/ab67616d0000b2736e3d3c964df32136fb1cd594', width: 640 },
 			{ height: 300, url: 'https://i.scdn.co/image/ab67616d00001e026e3d3c964df32136fb1cd594', width: 300 },
-			{ height: 64, url: 'https://i.scdn.co/image/ab67616d000048516e3d3c964df32136fb1cd594', width: 64 },
+			{ height: 64, url: 'https://i.scdn.co/image/ab67616d000048516e3d3c964df32136fb1cd594', width: 64 }
 		],
 		name: 'The Beatles 1967 - 1970 (Remastered)',
 		release_date: '1973-04-02',
 		release_date_precision: 'day',
 		total_tracks: 28,
 		type: 'album',
-		uri: 'spotify:album:1cTeNkeINtXiaMLlashAKs',
+		uri: 'spotify:album:1cTeNkeINtXiaMLlashAKs'
 	},
 	artists: [
 		{
@@ -420,8 +426,8 @@ const mockTrackItem = {
 			id: '3WrFJ7ztbogyGnTHbHJFl2',
 			name: 'The Beatles',
 			type: 'artist',
-			uri: 'spotify:artist:3WrFJ7ztbogyGnTHbHJFl2',
-		},
+			uri: 'spotify:artist:3WrFJ7ztbogyGnTHbHJFl2'
+		}
 	],
 	available_markets: [
 		'AR',
@@ -607,7 +613,7 @@ const mockTrackItem = {
 		'TJ',
 		'VE',
 		'ET',
-		'XK',
+		'XK'
 	],
 	disc_number: 2,
 	duration_ms: 187373,
@@ -622,7 +628,7 @@ const mockTrackItem = {
 	preview_url: 'https://p.scdn.co/mp3-preview/36e7496068fe92ffff9a43c4bb64163d9b8f96e5?cid=0f18e54abe0b4aedb4591e353d3aff69',
 	track_number: 8,
 	type: 'track',
-	uri: 'spotify:track:5bIEpKwEFgJzB7U3gFaeKm',
+	uri: 'spotify:track:5bIEpKwEFgJzB7U3gFaeKm'
 }
 export async function getSpotifyPlaylist(lang: 'ja' | 'en', showToaster: (m: string) => void) {
 	const token = localStorage.getItem('spotifyV2Token')
