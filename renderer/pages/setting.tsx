@@ -76,7 +76,7 @@ function App() {
 		const lang = localStorage.getItem('lang') || window.navigator.language
 		readSettings(lang).then((res) => {
 			setStyle({
-				fontSize: res.appearance.font_size,
+				fontSize: `${res.appearance.font_size}px`,
 				fontFamily: res.appearance.font,
 			})
 			switchLang(res.appearance.language)
@@ -155,7 +155,7 @@ function App() {
 				<Button onClick={() => router.push('./', currentPath ? `${currentPath}index.html` : undefined)}>
 					<Icon as={BsChevronLeft} style={{ fontSize: '1.4em' }} />
 				</Button>
-				<Heading style={{ fontSize: 24, fontWeight: 'bold' }}>
+				<Heading style={{ fontSize: '1.3em', fontWeight: 'bold' }}>
 					<FormattedMessage id="settings.settings.title" />
 				</Heading>
 				<Button appearance="primary" color="green" type="submit" onClick={handleSubmit} startIcon={<BsCheck2 />}>
@@ -164,17 +164,18 @@ function App() {
 			</Stack>
 			<Stack style={{ justifyContent: 'center', display: 'flex' }}>
 				<Content style={{ width: 600, maxWidth: '100%', padding: 10, marginTop: 50, marginBottom: 50 }}>
-					<p style={{ fontSize: 24, marginTop: 12, fontWeight: 'bold' }}>
+					<p style={{ fontSize: '1.3em', marginTop: 12, fontWeight: 'bold' }}>
 						<FormattedMessage id="settings.settings.appearance.title" />
 					</p>
 					<NumberForm
 						label={formatMessage({ id: 'settings.settings.appearance.font_size' })}
 						value={appearance.font_size}
 						onChange={(value) => updateAppearance('font_size', value)}
-						min={12}
-						max={24}
+						min={14}
+						max={22}
 						step={1}
 						unit="px"
+						fontSize="1.1em"
 					/>
 					<SelectForm
 						label={formatMessage({ id: 'settings.settings.appearance.language' })}
@@ -182,6 +183,7 @@ function App() {
 						onChange={(value) => updateAppearance('language', value)}
 						data={languages}
 						style={{ width: '100%' }}
+						fontSize="1.1em"
 					/>
 					<SelectForm
 						label={formatMessage({ id: 'settings.settings.appearance.color_theme' })}
@@ -190,8 +192,9 @@ function App() {
 						data={themes}
 						searchable={false}
 						style={{ width: '100%' }}
+						fontSize="1.1em"
 					/>
-					<p style={{ marginTop: 15, marginBottom: 5, fontSize: 20 }}>
+					<p style={{ marginTop: 15, marginBottom: 5, fontSize: '1.1em' }}>
 						<FormattedMessage id="settings.settings.appearance.font" />
 					</p>
 					<SelectPicker
@@ -203,7 +206,7 @@ function App() {
 						renderMenuItem={(label, item) => <p style={{ fontFamily: item.label.toString() }}>{item.label}</p>}
 					/>
 					<Divider />
-					<p style={{ fontSize: 24, marginTop: 12, fontWeight: 'bold' }}>
+					<p style={{ fontSize: '1.3em', marginTop: 12, fontWeight: 'bold' }}>
 						<FormattedMessage id="settings.settings.timeline.title" />
 					</p>
 					<SelectForm
@@ -213,6 +216,7 @@ function App() {
 						data={labelValueBuilder('timeline.time', time)}
 						searchable={false}
 						style={{ width: '100%' }}
+						fontSize="1.1em"
 					/>
 					<RadioBoolean label={formatMessage({ id: 'settings.settings.timeline.animation' })} value={timelineConfig.animation} onChange={(value) => updateTimeline('animation', value)} />
 					<NumberForm
@@ -224,12 +228,14 @@ function App() {
 						max={1000}
 						step={1}
 						unit={formatMessage({ id: 'settings.settings.timeline.max_length_unit' })}
+						fontSize="1.1em"
 					/>
 					<RadioBoolean
 						label={formatMessage({ id: 'settings.settings.timeline.notification' })}
 						hint={formatMessage({ id: 'settings.settings.timeline.notification_hint' })}
 						value={timelineConfig.notification}
 						onChange={(value) => updateTimeline('notification', value)}
+						fontSize="1.1em"
 					/>
 					<RadioForm
 						label={formatMessage({ id: 'settings.settings.timeline.ttsProvider.title' })}
@@ -237,6 +243,7 @@ function App() {
 						value={timelineConfig.ttsProvider}
 						onChange={(value) => updateTimeline('ttsProvider', value)}
 						data={labelValueBuilder('timeline.ttsProvider', ['system', 'bouyomi'])}
+						fontSize="1.1em"
 					/>
 					{timelineConfig.ttsProvider === 'bouyomi' && (
 						<NumberForm
@@ -247,10 +254,11 @@ function App() {
 							max={65535}
 							step={1}
 							unit=""
+						fontSize="1.1em"
 						/>
 					)}
 					<Divider />
-					<p style={{ fontSize: 24, marginTop: 12, fontWeight: 'bold' }}>
+					<p style={{ fontSize: '1.3em', marginTop: 12, fontWeight: 'bold' }}>
 						<FormattedMessage id="settings.settings.compose.title" />
 					</p>
 					<SelectForm
@@ -260,6 +268,7 @@ function App() {
 						data={labelValueBuilder('compose.btnPosition', btnPosition)}
 						searchable={false}
 						style={{ width: '100%' }}
+						fontSize="1.1em"
 					/>
 					<SelectForm
 						label={formatMessage({ id: 'settings.settings.compose.afterPost.title' })}
@@ -268,6 +277,7 @@ function App() {
 						data={labelValueBuilder('compose.afterPost', afterPost)}
 						searchable={false}
 						style={{ width: '100%' }}
+						fontSize="1.1em"
 					/>
 					<SelectForm
 						label={formatMessage({ id: 'settings.settings.compose.secondaryToot' })}
@@ -277,9 +287,10 @@ function App() {
 						data={visLabel}
 						searchable={false}
 						style={{ width: '100%' }}
+						fontSize="1.1em"
 					/>
 					<Divider />
-					<p style={{ fontSize: 24, marginTop: 12, fontWeight: 'bold', marginBottom: 10 }}>
+					<p style={{ fontSize: '1.3em', marginTop: 12, fontWeight: 'bold', marginBottom: 10 }}>
 						<FormattedMessage id="settings.settings.spotify.title" />
 					</p>
 					<Button appearance="primary" disabled={spotifyConnected || spotifyInitiating} style={{ marginRight: '5px' }} color="green" onClick={() => nowplayingInitFn()}>
@@ -307,7 +318,7 @@ function App() {
 							</Button>
 						</div>
 					)}
-					<p style={{ fontSize: 24, marginTop: 12, fontWeight: 'bold' }}>
+					<p style={{ fontSize: '1.3em', marginTop: 12, fontWeight: 'bold' }}>
 						<FormattedMessage id="settings.settings.spotify.template" />
 					</p>
 					<Input as="textarea" rows={3} value={spotifyTemp} onChange={(e) => setSpotifyTemp(e)} onFocus={() => getDemoTrack()} />

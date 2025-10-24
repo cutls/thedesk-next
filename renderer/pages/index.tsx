@@ -194,7 +194,7 @@ function App() {
 		const lang = localStorage.getItem('lang') || window.navigator.language
 		readSettings(lang).then((res) => {
 			setStyle({
-				fontSize: res.appearance.font_size,
+				fontSize: `${res.appearance.font_size}px`,
 				fontFamily: res.appearance.font,
 			})
 			switchLang(res.appearance.language)

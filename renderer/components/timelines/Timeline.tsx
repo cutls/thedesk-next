@@ -387,12 +387,12 @@ export default function TimelineColumn(props: Props) {
 							{/** icon **/}
 							<FlexboxGrid.Item
 								style={{
-									lineHeight: '48px',
-									fontSize: '18px',
+									lineHeight: '3.4em',
+									fontSize: '1.2em',
 									paddingRight: '8px',
 									paddingLeft: '8px',
 									paddingBottom: '6px',
-									width: '42px',
+									width: 'calc(2.4em - 6px)',
 								}}
 							>
 								{timelineIcon(props.timeline.kind)}
@@ -400,18 +400,18 @@ export default function TimelineColumn(props: Props) {
 							{/** name **/}
 							<FlexboxGrid.Item
 								style={{
-									lineHeight: '48px',
-									fontSize: '18px',
+									lineHeight: '3.4em',
+									fontSize: '1.2em',
 									verticalAlign: 'middle',
 									overflow: 'hidden',
 									textOverflow: 'ellipsis',
 									whiteSpace: 'nowrap',
-									width: 'calc(100% - 42px)',
+									width: 'calc(100% - 2.4em + 6px)',
 								}}
 								title={`${timelineName(props.timeline.kind, props.timeline.name, formatMessage)}@${props.server.domain}`}
 							>
 								{timelineName(props.timeline.kind, props.timeline.name, formatMessage)}
-								<span style={{ fontSize: '14px' }}>@{props.server.domain}</span>
+								<span style={{ fontSize: '1em' }}>@{props.server.domain}</span>
 							</FlexboxGrid.Item>
 						</FlexboxGrid>
 					</FlexboxGrid.Item>

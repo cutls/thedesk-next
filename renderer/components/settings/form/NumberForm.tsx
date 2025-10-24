@@ -9,12 +9,13 @@ type Props = {
 	max?: number
 	step?: number
 	unit?: string
+	fontSize?: string | number
 }
 function NumberForm(props: Props) {
 	const unitFormat = props.unit ? (value) => `${value}${props.unit}` : undefined
 	return (
 		<>
-			<p style={{ marginTop: 15, marginBottom: 5, fontSize: 20 }}>{props.label}</p>
+			<p style={{ marginTop: 15, marginBottom: 5, fontSize: props.fontSize || 20 }}>{props.label}</p>
 			{props.hint && <p style={{ marginBottom: 10 }}>{props.hint}</p>}
 			<InputNumber min={props.min} max={props.max} step={props.step} value={props.value} onChange={props.onChange} formatter={unitFormat} />
 		</>
