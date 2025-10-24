@@ -369,7 +369,7 @@ const serverMenu = (
 				</Stack>
 			</FlexboxGrid>
 			<div style={{ height: '50vh', padding: 5 }}>
-				<Notifications server={server.server} unreads={unreads} setUnreads={setUnreads} openMedia={() => {}} openReport={() => {}} openFromOtherAccount={() => {}} wrapIndex={-1} />
+				{server.server.account_id ? <Notifications server={server.server} unreads={unreads} setUnreads={setUnreads} openMedia={() => {}} openReport={() => {}} openFromOtherAccount={() => {}} wrapIndex={-1} /> : <FormattedMessage id="navigator.servers.requires_login" />}
 			</div>
 		</Popover>
 	)

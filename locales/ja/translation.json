@@ -69,7 +69,8 @@
 			"lists": "リスト",
 			"followed_hashtags": "フォロー中のハッシュタグ",
 			"notifications": "通知を表示",
-			"color": "アカウントの色"
+			"color": "アカウントの色",
+			"requires_login": "通知の表示にはログインが必要です。"
 		}
 	},
 	"update": {

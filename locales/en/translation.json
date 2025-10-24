@@ -69,7 +69,8 @@
 			"lists": "Lists",
 			"followed_hashtags": "Followed Hashtags",
 			"notifications": "Notifications",
-			"color": "Account color"
+			"color": "Account color",
+			"requires_login": "Notification TL requires login"
 		}
 	},
 	"update": {

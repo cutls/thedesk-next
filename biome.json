@@ -10,7 +10,8 @@
 			"style": {},
 			"correctness": {
 				"useExhaustiveDependencies": "off",
-				"useHookAtTopLevel": "off"
+				"useHookAtTopLevel": "off",
+				"useUniqueElementIds": "off"
 			},
 			"suspicious": {
 				"noExplicitAny": "off"
