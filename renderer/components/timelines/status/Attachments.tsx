@@ -1,10 +1,13 @@
+import { TheDeskContext } from '@/context'
+import { defaultSetting, Settings } from '@/entities/settings'
 import type { ColumnWidth } from '@/entities/timeline'
 import failoverImg from '@/utils/failoverImg'
 import { open } from '@/utils/openBrowser'
+import { readSettings } from '@/utils/storage'
 import type { Entity } from '@cutls/megalodon'
 import { Icon } from '@rsuite/icons'
 import Image from 'next/image'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { Blurhash } from 'react-blurhash'
 import { BsBoxArrowUpRight, BsCaretRightFill, BsEyeSlash, BsVolumeUp } from 'react-icons/bs'
 import { FormattedMessage } from 'react-intl'
@@ -19,14 +22,11 @@ type Props = {
 
 const Attachments: React.FC<Props> = (props) => {
 	const [sensitive, setSensitive] = useState<boolean>(props.sensitive)
-
-	const changeSensitive = () => {
-		setSensitive((current) => !current)
-	}
+	const { timelineConfig } = useContext(TheDeskContext)
 
 	return (
 		<div style={{ display: 'flex', flexWrap: 'wrap' }}>
-			<AttachmentBox attachments={props.attachments} openMedia={props.openMedia} sensitive={sensitive} changeSensitive={changeSensitive} columnWidth={props.columnWidth} />
+			<AttachmentBox attachments={props.attachments} openMedia={props.openMedia} sensitive={sensitive} cropImage={timelineConfig.cropImage} columnWidth={props.columnWidth} />
 		</div>
 	)
 }
@@ -34,23 +34,12 @@ const Attachments: React.FC<Props> = (props) => {
 type AttachmentBoxProps = {
 	attachments: Array<Entity.Attachment>
 	openMedia: (media: Array<Entity.Attachment>, index: number) => void
-	changeSensitive: () => void
+	cropImage: 'cover' | 'contain'
 	sensitive: boolean
 	columnWidth: number
 }
 
 function AttachmentBox(props: AttachmentBoxProps) {
-	const [max, setMax] = useState(1)
-	const [remains, setRemains] = useState(0)
-
-	useEffect(() => {
-		let m = 1
-		if (props.columnWidth >= 420) m = 2
-		setMax(m)
-		const length = props.attachments.length
-		//setRemains(length - m)
-	}, [props.attachments, props.columnWidth])
-	//const attachments = props.attachments
 	const attachments = props.attachments
 	const imageWidth = (props.columnWidth - 80) / attachments.length
 
@@ -59,7 +48,7 @@ function AttachmentBox(props: AttachmentBoxProps) {
 			{attachments.map((media, index) => (
 				// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
 				<div key={media.id + index} style={{ margin: '1px', width: imageWidth }}>
-					<Attachment media={media} width={imageWidth} sensitive={props.sensitive} changeSensitive={props.changeSensitive} openMedia={() => props.openMedia(attachments, index)} />
+					<Attachment media={media} width={imageWidth} sensitive={props.sensitive} cropImage={props.cropImage} openMedia={() => props.openMedia(attachments, index)} />
 				</div>
 			))}
 		</div>
@@ -69,14 +58,13 @@ function AttachmentBox(props: AttachmentBoxProps) {
 type AttachmentProps = {
 	media: Entity.Attachment
 	openMedia: (media: Entity.Attachment) => void
-	changeSensitive: () => void
+	cropImage: 'cover' | 'contain'
 	sensitive: boolean
 	width?: number
 }
 
 const Attachment: React.FC<AttachmentProps> = (props) => {
-	const { media, changeSensitive, sensitive, width } = props
-
+	const { media, cropImage, sensitive, width } = props
 	const externalWindow = async (url: string) => {
 		open(url)
 	}
@@ -103,7 +91,7 @@ const Attachment: React.FC<AttachmentProps> = (props) => {
 							alt={media.description ? media.description : media.id}
 							title={media.description ? media.description : media.id}
 							onClick={() => props.openMedia(media)}
-							style={{ objectFit: 'cover', cursor: 'pointer', filter: 'blur(5px)' }}
+							style={{ objectFit: cropImage, cursor: 'pointer', filter: 'blur(5px)' }}
 						/>
 					</div>
 				)
@@ -115,7 +103,7 @@ const Attachment: React.FC<AttachmentProps> = (props) => {
 					alt={media.description ? media.description : media.id}
 					title={media.description ? media.description : media.id}
 					onClick={() => props.openMedia(media)}
-					style={{ objectFit: 'cover', cursor: 'pointer' }}
+					style={{ objectFit: cropImage, cursor: 'pointer' }}
 				/>
 			)}
 		</div>

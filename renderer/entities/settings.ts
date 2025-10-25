@@ -14,6 +14,7 @@ export type Settings = {
 		notification: FormBoolean
 		ttsProvider: 'system' | 'bouyomi'
 		ttsPort: number
+		cropImage: 'cover' | 'contain'
 	}
 	compose: {
 		btnPosition: 'left' | 'right'
@@ -38,6 +39,7 @@ export const defaultSetting: Settings = {
 		notification: 'yes',
 		ttsProvider: 'system',
 		ttsPort: 50080,
+		cropImage: 'cover',
 	},
 	compose: {
 		btnPosition: 'right',

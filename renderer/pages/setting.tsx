@@ -240,6 +240,14 @@ function App() {
 						fontSize="1.1em"
 					/>
 					<RadioForm
+						label={formatMessage({ id: 'settings.settings.timeline.cropImage.title' })}
+						hint={formatMessage({ id: 'settings.settings.timeline.cropImage.hint' })}
+						value={timelineConfig.cropImage}
+						onChange={(value) => updateTimeline('cropImage', value)}
+						data={[{ label: 'Cover', value: 'cover' }, { label: 'Contain', value: 'contain' }]}
+						fontSize="1.1em"
+					/>
+					<RadioForm
 						label={formatMessage({ id: 'settings.settings.timeline.ttsProvider.title' })}
 						hint={formatMessage({ id: 'settings.settings.timeline.ttsProvider.hint' })}
 						value={timelineConfig.ttsProvider}

@@ -129,6 +129,10 @@
 				"max_length_unit": "字",
 				"notification": "デスクトップ通知",
 				"notification_hint": "通知はそのアカウントの通知カラムがある時のみ表示されます。",
+				"cropImage": {
+					"title": "添付画像の表示方法",
+					"hint": "Cover はカラム幅に合わせてトリミング、Contain はカラム幅によらず全体を表示します。"
+				},
 				"ttsProvider": {
 					"title": "TTSのプロバイダ",
 					"hint": "棒読みちゃん連携を利用する場合はHTTP連携を利用します",

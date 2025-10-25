@@ -135,6 +135,10 @@
 					"system": "System",
 					"bouyomi": "Bouyomi-chan"
 				},
+				"cropImage": {
+					"title": "How to display attached images",
+					"hint": "Cover crops to fit the column width, Contain displays the whole image regardless of the column width."
+				},
 				"ttsPort": " HTTP Port"
 			},
 			"compose": {

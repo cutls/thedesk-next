@@ -19,6 +19,7 @@ import Actions from './Actions'
 import Attachments from './Attachments'
 import Body from './Body'
 import Poll from './Poll'
+import { Settings } from '@/entities/settings'
 
 type Props = {
 	status: Entity.Status
@@ -27,6 +28,7 @@ type Props = {
 	account: Account | null
 	pinned?: boolean
 	columnWidth: number
+	cropImage: Settings['timeline']['cropImage']
 	updateStatus: (status: Entity.Status) => void
 	openMedia: (media: Array<Entity.Attachment>, index: number) => void
 	setReplyOpened?: (opened: boolean) => void
