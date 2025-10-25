@@ -78,7 +78,7 @@ app.on('ready', async () => {
 		mainWindow.loadURL('http://localhost:3000')
 		mainWindow.webContents.openDevTools()
 		mainWindow.webContents.on('did-fail-load', () => {
-			//if (mainWindow) mainWindow.webContents.reloadIgnoringCache()
+			if (mainWindow) mainWindow.webContents.reloadIgnoringCache()
 		})
 	}
 	const isJa = app.getPreferredSystemLanguages().includes('ja')
