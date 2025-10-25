@@ -139,6 +139,7 @@ const Conversations: React.FC<Props> = (props) => {
 		updateColumnWidth({ id: props.timeline.id, columnWidth: width })
 		setColumnWidth(width)
 	}
+	if (!props.server) return null
 
 	return (
 		<ResizableBox

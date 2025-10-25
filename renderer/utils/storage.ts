@@ -19,7 +19,9 @@ export async function listTimelines(): Promise<[Timeline, Server][][]> {
 	const timelines: Timeline[][] = JSON.parse(timelinesStr || '[]')
 	const serversStr = localStorage.getItem('servers')
 	const servers: Server[] = JSON.parse(serversStr || '[]')
-	return timelines.map((oneColumn) => oneColumn.map((timeline) => [timeline, servers.find((server) => server.id === timeline.server_id)]))
+	return timelines
+		.map((oneColumn) => oneColumn.map((timeline) => [timeline, servers.find((server) => server.id === timeline.server_id)]).filter((pair) => pair[1] !== undefined))
+		.filter((d) => d.length) as [Timeline, Server][][]
 }
 
 export async function listAccounts(): Promise<[Account, Server][]> {
@@ -44,8 +46,8 @@ export async function addTimeline(server: Server, timeline: AddTimeline): Promis
 			sort: flatTls.length + 1,
 			server_id: server.id,
 			list_id: timeline.listId || null,
-			column_width: timeline.columnWidth,
-		},
+			column_width: timeline.columnWidth
+		}
 	])
 	localStorage.setItem('timelinesV2', JSON.stringify(timelines))
 	return
@@ -99,7 +101,7 @@ export async function addServer({ domain }: { domain: string }): Promise<Server>
 		base_url: `https://${domain}`,
 		sns,
 		favicon: null,
-		account_id: null,
+		account_id: null
 	}
 	servers.push(server)
 	localStorage.setItem('servers', JSON.stringify(servers))

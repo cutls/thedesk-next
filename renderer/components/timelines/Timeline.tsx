@@ -19,7 +19,7 @@ import type {
 	ReceiveHomeStatusPayload,
 	ReceiveHomeStatusUpdatePayload,
 	ReceiveTimelineStatusPayload,
-	ReceiveTimelineStatusUpdatePayload,
+	ReceiveTimelineStatusUpdatePayload
 } from '@/payload'
 import { mapCustomEmojiCategory } from '@/utils/emojiData'
 import FailoverImg from '@/utils/failoverImg'
@@ -80,17 +80,16 @@ export default function TimelineColumn(props: Props) {
 			try {
 				const res = await loadTimeline(props.timeline, client)
 				setStatuses(res)
+				const emojis = await client.getInstanceCustomEmojis()
+				setCustomEmojis(mapCustomEmojiCategory(props.server.domain, emojis.data))
 			} catch (err) {
 				console.error(err)
 				toast.push(alert('error', formatMessage({ id: 'alert.failed_load' }, { timeline: `${props.timeline.name} timeline` })), {
-					placement: 'topStart',
+					placement: 'topStart'
 				})
 			} finally {
 				setLoading(false)
 			}
-
-			const emojis = await client.getInstanceCustomEmojis()
-			setCustomEmojis(mapCustomEmojiCategory(props.server.domain, emojis.data))
 		}
 		f()
 		setColumnWidth(columnWidthCalc(props.timeline.column_width))
@@ -111,7 +110,7 @@ export default function TimelineColumn(props: Props) {
 
 					setStatuses((last) => appendStatus(last, ev.payload.status))
 				},
-				props.timeline.tts,
+				props.timeline.tts
 			)
 
 			listenUser<ReceiveHomeStatusUpdatePayload>('receive-home-status-update', (ev) => {
@@ -146,7 +145,7 @@ export default function TimelineColumn(props: Props) {
 
 					setStatuses((last) => appendStatus(last, ev.payload.status))
 				},
-				props.timeline.tts,
+				props.timeline.tts
 			)
 
 			listenTimeline<ReceiveTimelineStatusUpdatePayload>('receive-timeline-status-update', (ev) => {
@@ -253,7 +252,7 @@ export default function TimelineColumn(props: Props) {
 		} catch (err) {
 			console.error(err)
 			toast.push(alert('error', formatMessage({ id: 'alert.failed_load' }, { timeline: `${props.timeline.name} timeline` })), {
-				placement: 'topStart',
+				placement: 'topStart'
 			})
 		} finally {
 			setLoading(false)
@@ -368,15 +367,16 @@ export default function TimelineColumn(props: Props) {
 	const backToTop = () => {
 		scrollerRef.current.scrollTo({
 			top: 0,
-			behavior: 'smooth',
+			behavior: 'smooth'
 		})
 	}
 	const headerStyle: CSSProperties = {
 		backgroundColor: props.timeline.color ? `var(--rs-color-${props.timeline.color})` : 'var(--rs-carousel-bg)',
 		borderBottomWidth: '3px',
 		borderBottomStyle: 'solid',
-		borderBottomColor: account && account.color ? `var(--rs-color-${account.color})` : 'transparent',
+		borderBottomColor: account && account.color ? `var(--rs-color-${account.color})` : 'transparent'
 	}
+	if (!props.server) return null
 
 	return (
 		<Container style={{ height: '100%' }}>
@@ -392,7 +392,7 @@ export default function TimelineColumn(props: Props) {
 									paddingRight: '8px',
 									paddingLeft: '8px',
 									paddingBottom: '6px',
-									width: 'calc(2.4em - 6px)',
+									width: 'calc(2.4em - 6px)'
 								}}
 							>
 								{timelineIcon(props.timeline.kind)}
@@ -406,7 +406,7 @@ export default function TimelineColumn(props: Props) {
 									overflow: 'hidden',
 									textOverflow: 'ellipsis',
 									whiteSpace: 'nowrap',
-									width: 'calc(100% - 2.4em + 6px)',
+									width: 'calc(100% - 2.4em + 6px)'
 								}}
 								title={`${timelineName(props.timeline.kind, props.timeline.name, formatMessage)}@${props.server.domain}`}
 							>
@@ -471,7 +471,7 @@ export default function TimelineColumn(props: Props) {
 					<List
 						style={{
 							width: '100%',
-							height: '100%',
+							height: '100%'
 						}}
 					>
 						<Virtuoso

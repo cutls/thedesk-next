@@ -24,7 +24,8 @@
 				"noDelete": "off"
 			},
 			"a11y": {
-				"useValidAriaRole": "off"
+				"useValidAriaRole": "off",
+				"noLabelWithoutControl": "off"
 			}
 		}
 	},

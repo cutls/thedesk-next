@@ -15,7 +15,7 @@ export const TheDeskContext = createContext({
 	timelineConfig: defaultSetting.timeline,
 	saveTimelineConfig: (config: Settings['timeline']) => {},
 	focused: false,
-	setFocused: (focused: boolean) => {},
+	setFocused: (focused: boolean) => {}
 })
 export const TimelineRefreshContext = createContext({
 	timelineRefresh: () => {}
@@ -42,25 +42,29 @@ export const TheDeskProviderWrapper: React.FC = (props) => {
 				const servers = await listServers()
 				for (const [server, account] of servers) {
 					const noStreaming = server.no_streaming
-					const sns = await detector(server.base_url)
-					if (!account || !account.access_token) continue
-					const client = generator(sns, server.base_url, account.access_token)
-					const streaming = !noStreaming ? await client.userStreamingSubscription() : undefined
-					userStreamings.push([server.id, streaming, 'home'])
+					try {
+						const sns = await detector(server.base_url)
+						if (!account || !account.access_token) continue
+						const client = generator(sns, server.base_url, account.access_token)
+						const streaming = !noStreaming ? await client.userStreamingSubscription() : undefined
+						userStreamings.push([server.id, streaming, 'home'])
+					} catch {
+						console.error('skipped user streaming')
+					}
 				}
 
 				const streamings: StreamingArray[] = []
 				let i = 0
 				for (const [timeline, server] of timelines) {
 					if (!server || !server.account_id) continue
-					const accountId = server.account_id
-					const [account] = await getAccount({ id: accountId })
-					const sns = await detector(server.base_url)
-					const client = generator(sns, server.base_url, account?.access_token, 'TheDesk(Desktop)')
-					const noStreaming = server.no_streaming
 
 					let streaming: StreamingArray = undefined
 					try {
+						const accountId = server.account_id
+						const [account] = await getAccount({ id: accountId })
+						const sns = await detector(server.base_url)
+						const client = generator(sns, server.base_url, account?.access_token, 'TheDesk(Desktop)')
+						const noStreaming = server.no_streaming
 						const targetSocket = userStreamings.find(([id]) => id === server.id)[1]
 						if (!noStreaming && timeline.kind === 'public') streaming = [timeline.id, await client.publicStreamingSubscription(targetSocket), 'public']
 						if (!noStreaming && timeline.kind === 'local') streaming = [timeline.id, await client.localStreamingSubscription(targetSocket), 'public:local']

@@ -73,8 +73,12 @@ const Notifications: React.FC<Props> = (props) => {
 				setLoading(false)
 			}
 			updateMarker(cli)
-			const emojis = await cli.getInstanceCustomEmojis()
-			setCustomEmojis(mapCustomEmojiCategory(props.server.domain, emojis.data))
+			try {
+				const emojis = await cli.getInstanceCustomEmojis()
+				setCustomEmojis(mapCustomEmojiCategory(props.server.domain, emojis.data))
+			} catch (err) {
+				console.error(err)
+			}
 
 			listenUser<ReceiveNotificationPayload>('receive-notification', (ev) => {
 				if (ev.payload.server_id !== props.server.id) return

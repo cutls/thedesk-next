@@ -30,6 +30,8 @@ const AuthorizedTimelines: React.FC<AuthorizedProps> = (props) => {
 				const client = generator(server.sns, server.base_url, account.access_token, 'Fedistar')
 				const res = await client.getLists()
 				setLists(res.data)
+			} catch (e) {
+				console.error(e)
 			} finally {
 				setLoading(false)
 			}
