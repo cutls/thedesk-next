@@ -123,9 +123,11 @@ function App() {
 	}
 	const nowplayingCodeFn = async () => {
 		try {
+			setSpotifyConnecting(true)
 			await nowplayingCode(spotifyCode, showToaster)
 			setSpotifyConnected(true)
 		} finally {
+			setSpotifyConnecting(false)
 			setSpotifyInitiating(false)
 		}
 	}
@@ -342,7 +344,7 @@ function App() {
 						<FormattedMessage id="settings.settings.open_appData_folder" />
 					</Button>
 
-					<Button appearance="primary" onClick={() => deleteAllData()}>
+					<Button appearance="primary" color="red" onClick={() => deleteAllData()} style={{ marginLeft: '1em'}}>
 						<FormattedMessage id="settings.settings.delete_allData" />
 					</Button>
 					<p style={{ fontSize: 10, margin: 10 }}>
