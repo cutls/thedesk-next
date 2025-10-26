@@ -5,7 +5,6 @@ import { getFonts } from 'font-list'
 
 import { execFile } from 'child_process'
 import { promisify } from 'util'
-import stateKeeper from 'electron-window-state'
 import serve from 'electron-serve'
 type SystemConfig = {
 	hardwareAcceleration: boolean
@@ -14,9 +13,10 @@ type SystemConfig = {
 
 const promisifyExecFile = promisify(execFile)
 // Packages
-import { BrowserWindow, type IpcMainEvent, Menu, MenuItemConstructorOptions, app, clipboard, ipcMain, nativeImage, shell } from 'electron'
+import { BrowserWindow, type IpcMainEvent, Menu, type MenuItemConstructorOptions, app, clipboard, ipcMain, nativeImage, shell, screen } from 'electron'
 import isDev from 'electron-is-dev'
 import defaultConfig from './defaultConfig.json'
+import { WindowState } from './types'
 const appServe = app.isPackaged
 	? serve({
 			directory: join(__dirname, '../renderer/out')
@@ -27,6 +27,7 @@ let mainWindow: BrowserWindow | null = null
 let config: SystemConfig = defaultConfig
 const appDataPath = join(app.getPath('appData'), app.getName())
 const configPath = join(appDataPath, 'config.json')
+const windowStatePath = join(appDataPath, 'window-state.json')
 const logger = (msg: string) => {
 	console.log(`[TheDesk Main Process] ${msg}`)
 	fs.appendFileSync(join(appDataPath, 'main.log'), `[${new Date().toISOString()}] ${msg}\n`)
@@ -48,15 +49,20 @@ try {
 } catch {
 	console.error('Failed to read config.json')
 }
-
+function writePos(mainWindow: Electron.BrowserWindow | null) {
+	if (!mainWindow) return
+	const size: WindowState = {
+		...mainWindow.getBounds(),
+		isMaximized: mainWindow.isMaximized(),
+		isFullScreen: mainWindow.isFullScreen(),
+		displayBounds: screen.getPrimaryDisplay().bounds
+	}
+	fs.writeFileSync(windowStatePath, JSON.stringify(size))
+}
 app.on('ready', async () => {
 	logger('start')
 	if (!config.allowDoH) app.configureHostResolver({ secureDnsMode: 'off' })
-	const windowState = stateKeeper({
-		defaultWidth: 800,
-		defaultHeight: 600
-	})
-
+	const windowState: WindowState = fs.existsSync(windowStatePath) ? JSON.parse(fs.readFileSync(windowStatePath).toString()) : {}
 	mainWindow = new BrowserWindow({
 		x: windowState.x || 0,
 		y: windowState.y || 0,
@@ -69,6 +75,8 @@ app.on('ready', async () => {
 			webSecurity: isDev ? false : undefined
 		}
 	})
+	if (windowState.isMaximized) mainWindow.maximize()
+	if (windowState.isFullScreen) mainWindow.setFullScreen(true)
 
 	if (app.isPackaged && appServe !== null) {
 		appServe(mainWindow).then(() => {
@@ -83,15 +91,19 @@ app.on('ready', async () => {
 	}
 	const isJa = app.getPreferredSystemLanguages().includes('ja')
 	const template: MenuItemConstructorOptions[] = [
-	  { role: 'fileMenu', submenu: [ { label: isJa ? '設定' : 'Prefrences', click: () => mainWindow?.loadURL('app://-/setting.html') } ] },
-	  { role: 'editMenu' },
-	  { role: 'viewMenu' },
-	  { role: 'windowMenu' },
+		{ role: 'fileMenu', submenu: [{ label: isJa ? '設定' : 'Prefrences', click: () => mainWindow?.loadURL('app://-/setting.html') }] },
+		{ role: 'editMenu' },
+		{ role: 'viewMenu' },
+		{ role: 'windowMenu' }
 	]
-	if (process.platform === 'darwin') template.unshift({ role: 'appMenu', submenu: [ { label: isJa ? '設定' : 'Prefrences', click: () => mainWindow?.loadURL('app://-/setting.html') } ] })
-	const menu = Menu.buildFromTemplate(template);
+	if (process.platform === 'darwin') template.unshift({ role: 'appMenu', submenu: [{ label: isJa ? '設定' : 'Prefrences', click: () => mainWindow?.loadURL('app://-/setting.html') }] })
+	const menu = Menu.buildFromTemplate(template)
 	Menu.setApplicationMenu(menu)
-	windowState.manage(mainWindow)
+	mainWindow.on('maximize', () => writePos(mainWindow))
+	mainWindow.on('unmaximize', () => writePos(mainWindow))
+	mainWindow.on('resized', () => writePos(mainWindow))
+	mainWindow.on('moved', () => writePos(mainWindow))
+	mainWindow.on('minimize', () => writePos(mainWindow))
 	ipcMain.on('requestInitialInfo', async (_event) => {
 		mainWindow?.webContents.send('initialInfo', {
 			os: process.platform,
