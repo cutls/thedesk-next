@@ -1,10 +1,10 @@
-import type { CustomEmojiCategory } from '@/entities/emoji'
-import { data } from '@/utils/emojiData'
 import type { MegalodonInterface } from '@cutls/megalodon'
-import { SearchIndex, init } from 'emoji-mart'
-import { type Dispatch, type KeyboardEventHandler, type SetStateAction, forwardRef, useEffect, useRef, useState } from 'react'
+import { init, SearchIndex } from 'emoji-mart'
+import { type Dispatch, forwardRef, type KeyboardEventHandler, type SetStateAction, useEffect, useRef, useState } from 'react'
 import { Input, Popover, Whisper } from 'rsuite'
 import type { PrependParameters } from 'rsuite/esm/internals/types/utils'
+import type { CustomEmojiCategory } from '@/entities/emoji'
+import { data } from '@/utils/emojiData'
 
 export type ArgProps = {
 	client: MegalodonInterface
@@ -70,16 +70,16 @@ const AutoCompleteTextarea: React.ForwardRefRenderFunction<HTMLTextAreaElement, 
 				const emojis = res.flatMap((emoji) =>
 					emoji.skins.map((skin) => ({
 						name: skin.shortcodes,
-						code: skin.native,
-					})),
+						code: skin.native
+					}))
 				)
 				const custom = props.emojis
 					.flatMap((d) => d.emojis.filter((e) => e.name.includes(token.replace(':', ''))))
 					.flatMap((emoji) =>
 						emoji.skins.map((skin) => ({
 							name: skin.shortcodes,
-							icon: skin.src,
-						})),
+							icon: skin.src
+						}))
 					)
 				if (shouldOpen.current) {
 					setSuggestList([...emojis, ...custom])
@@ -94,8 +94,8 @@ const AutoCompleteTextarea: React.ForwardRefRenderFunction<HTMLTextAreaElement, 
 				if (shouldOpen.current) {
 					setSuggestList(
 						res.data.map((a) => ({
-							name: `@${a.acct}`,
-						})),
+							name: `@${a.acct}`
+						}))
 					)
 					setStartIndex(start)
 					setMatchWord(token)
@@ -108,8 +108,8 @@ const AutoCompleteTextarea: React.ForwardRefRenderFunction<HTMLTextAreaElement, 
 				if (shouldOpen.current) {
 					setSuggestList(
 						res.data.hashtags.map((tag) => ({
-							name: `#${tag.name}`,
-						})),
+							name: `#${tag.name}`
+						}))
 					)
 					setStartIndex(start)
 					setMatchWord(token)

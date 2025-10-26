@@ -3,12 +3,11 @@ import { Icon } from '@rsuite/icons'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { BsChevronLeft, BsListUl, BsPencil, BsX } from 'react-icons/bs'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { Button, Content, FlexboxGrid, Header, List } from 'rsuite'
-
 import { Account } from '@/entities/account'
 import { Server } from '@/entities/server'
 import { getAccount } from '@/utils/storage'
-import { FormattedMessage, useIntl } from 'react-intl'
 
 type Props = {
 	openListMemberships: (list: Entity.List, client: MegalodonInterface) => void
@@ -25,7 +24,7 @@ export default function ListsDetail(props: Props) {
 		if (!router.query.account_id || !router.query.server_id) return
 		const f = async () => {
 			const [account, server] = await getAccount({
-				id: Number.parseInt(router.query.account_id.toLocaleString()),
+				id: Number.parseInt(router.query.account_id.toLocaleString())
 			})
 			const cli = generator(server.sns, server.base_url, account.access_token, 'Fedistar')
 			setClient(cli)

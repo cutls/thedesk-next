@@ -1,3 +1,6 @@
+import type { Entity, MegalodonInterface } from '@cutls/megalodon'
+import { useState } from 'react'
+import { ResizableBox } from 'react-resizable'
 import ShowConversations from '@/components/timelines/Conversations'
 import ShowNotifications from '@/components/timelines/Notifications'
 import ShowTimeline from '@/components/timelines/Timeline'
@@ -6,9 +9,6 @@ import type { Timeline } from '@/entities/timeline'
 import type { Unread } from '@/entities/unread'
 import { updateColumnHeight } from '@/utils/storage'
 import { useWindowSize } from '@/utils/useWindowSize'
-import type { Entity, MegalodonInterface } from '@cutls/megalodon'
-import { useState } from 'react'
-import { ResizableBox } from 'react-resizable'
 
 type Props = {
 	isLast: boolean

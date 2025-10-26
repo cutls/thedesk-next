@@ -1,10 +1,10 @@
-import { TheDeskContext } from '@/context'
-import emojify from '@/utils/emojify'
 import type { Entity, MegalodonInterface } from '@cutls/megalodon'
 import { Icon } from '@rsuite/icons'
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { BsListUl, BsPlusLg, BsXLg } from 'react-icons/bs'
 import { Avatar, Button, FlexboxGrid, List, Modal } from 'rsuite'
+import { TheDeskContext } from '@/context'
+import emojify from '@/utils/emojify'
 
 type Props = {
 	opened: boolean
@@ -35,7 +35,7 @@ export default function AddListMember(props: Props) {
 		let obj = {}
 		a.data.map((list) => {
 			obj = Object.assign({}, obj, {
-				[list.id]: list,
+				[list.id]: list
 			})
 			return list
 		})
@@ -47,7 +47,7 @@ export default function AddListMember(props: Props) {
 			await client.addAccountsToList(list.id, [user.id])
 			await reload(user, client)
 		},
-		[user, client],
+		[user, client]
 	)
 
 	const remove = useCallback(
@@ -55,7 +55,7 @@ export default function AddListMember(props: Props) {
 			await client.deleteAccountsFromList(list.id, [user.id])
 			await reload(user, client)
 		},
-		[user, client],
+		[user, client]
 	)
 	const isAnimeIcon = timelineConfig.animation === 'yes'
 

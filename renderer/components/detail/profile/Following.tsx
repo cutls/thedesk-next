@@ -1,9 +1,9 @@
-import { TIMELINE_STATUSES_COUNT } from '@/defaults'
-import type { Account } from '@/entities/account'
 import type { Entity, MegalodonInterface } from '@cutls/megalodon'
 import parse from 'parse-link-header'
 import { useEffect, useImperativeHandle, useState } from 'react'
 import { List, Loader } from 'rsuite'
+import { TIMELINE_STATUSES_COUNT } from '@/defaults'
+import type { Account } from '@/entities/account'
 import User from './User'
 
 export type FuncProps = {
@@ -58,7 +58,7 @@ const Following: React.ForwardRefRenderFunction<FuncProps, ArgProps> = (props, r
 			} finally {
 				setLoadingMore(false)
 			}
-		},
+		}
 	}))
 
 	const loadFollowing = async (user: Entity.Account, client: MegalodonInterface, maxId?: string): Promise<Array<Entity.Account>> => {
@@ -90,7 +90,7 @@ const Following: React.ForwardRefRenderFunction<FuncProps, ArgProps> = (props, r
 					return res.data
 				}
 				return r
-			}),
+			})
 		)
 	}
 
@@ -102,7 +102,7 @@ const Following: React.ForwardRefRenderFunction<FuncProps, ArgProps> = (props, r
 					return res.data
 				}
 				return r
-			}),
+			})
 		)
 	}
 

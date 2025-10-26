@@ -1,8 +1,8 @@
-import emojify from '@/utils/emojify'
 import type { Entity } from '@cutls/megalodon'
 import { type Dispatch, type HTMLAttributes, type SetStateAction, useState } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { Button } from 'rsuite'
+import emojify from '@/utils/emojify'
 import LinkPreview from './LinkPreview'
 
 type Props = {

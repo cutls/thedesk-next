@@ -6,6 +6,7 @@ import { type ReactElement, useCallback, useEffect, useState } from 'react'
 import { BsChevronLeft, BsChevronRight, BsCopy, BsDownload } from 'react-icons/bs'
 import type { ToolbarConfig } from 'react-viewer/lib/ViewerProps'
 import { Button, FlexboxGrid, Modal } from 'rsuite'
+
 const Viewer = dynamic(() => import('react-viewer'), { ssr: false })
 
 type Props = {
@@ -18,13 +19,13 @@ const customToolbar: ToolbarConfig[] = [
 	{
 		key: 'dl',
 		render: <BsDownload />,
-		onClick: ({ src }) => window.electronAPI.imageOperation(src, 'download'),
+		onClick: ({ src }) => window.electronAPI.imageOperation(src, 'download')
 	},
 	{
 		key: 'copy',
 		render: <BsCopy />,
-		onClick: ({ src }) => window.electronAPI.imageOperation(src, 'copy'),
-	},
+		onClick: ({ src }) => window.electronAPI.imageOperation(src, 'copy')
+	}
 ]
 const Media: React.FC<Props> = (props) => {
 	const { media } = props
@@ -65,7 +66,7 @@ const Media: React.FC<Props> = (props) => {
 				}
 			}
 		},
-		[props.opened, previous, next],
+		[props.opened, previous, next]
 	)
 
 	useEffect(() => {

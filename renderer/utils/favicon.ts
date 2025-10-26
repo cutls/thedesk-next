@@ -1,6 +1,6 @@
-import url from 'url'
 import cheerio from 'cheerio'
 import superagent from 'superagent'
+import url from 'url'
 
 export async function getFavicon(domain: string, type: string) {
 	let file = null

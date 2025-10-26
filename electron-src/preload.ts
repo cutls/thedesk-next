@@ -27,6 +27,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
 	},
 	customUrl: (callback: (event: Electron.IpcRendererEvent, data: any) => void) => {
 		ipcRenderer.on('customUrl', callback)
-	},
+	}
 })
 export type {}

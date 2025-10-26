@@ -3,16 +3,15 @@ import { Icon } from '@rsuite/icons'
 import { useRouter } from 'next/router'
 import { useContext, useEffect, useState } from 'react'
 import { BsChevronLeft, BsPersonPlus, BsPersonX, BsPin, BsX } from 'react-icons/bs'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { Virtuoso } from 'react-virtuoso'
 import { Button, Content, FlexboxGrid, Header, List, Loader } from 'rsuite'
-
 import { TheDeskContext, TimelineRefreshContext } from '@/context'
 import type { Account } from '@/entities/account'
 import type { CustomEmojiCategory } from '@/entities/emoji'
 import type { Server } from '@/entities/server'
 import { mapCustomEmojiCategory } from '@/utils/emojiData'
 import { addTimeline, getAccount, getServer } from '@/utils/storage'
-import { FormattedMessage, useIntl } from 'react-intl'
-import { Virtuoso } from 'react-virtuoso'
 import Status from '../timelines/status/Status'
 
 type Props = {
@@ -40,7 +39,7 @@ export default function TagDetail(props: Props) {
 			let server: Server
 			if (router.query.account_id && router.query.server_id) {
 				const [account, s] = await getAccount({
-					id: Number.parseInt(router.query.account_id.toLocaleString()),
+					id: Number.parseInt(router.query.account_id.toLocaleString())
 				})
 				server = s
 				setServer(s)

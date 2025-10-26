@@ -1,7 +1,7 @@
-import { open as openBrowser } from '@/utils/openBrowser'
 import { useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Button, DatePicker, Modal, SelectPicker } from 'rsuite'
+import { open as openBrowser } from '@/utils/openBrowser'
 
 export default ({ version }: { version: string }) => {
 	const { formatMessage } = useIntl()
@@ -76,7 +76,7 @@ export default ({ version }: { version: string }) => {
 							searchable={false}
 							data={[
 								{ label: formatMessage({ id: 'update.date' }), value: 'date' },
-								{ label: formatMessage({ id: 'update.next_update' }), value: 'nextUpdate' },
+								{ label: formatMessage({ id: 'update.next_update' }), value: 'nextUpdate' }
 							]}
 						/>
 						{untilMode === 'date' && <DatePicker value={until} onChange={(e) => setUntil(e)} />}{' '}

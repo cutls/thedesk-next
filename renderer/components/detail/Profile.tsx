@@ -1,3 +1,11 @@
+import generator, { type Entity, type MegalodonInterface } from '@cutls/megalodon'
+import { Icon } from '@rsuite/icons'
+import Image from 'next/image'
+import { useRouter } from 'next/router'
+import { forwardRef, type MouseEventHandler, type ReactElement, useCallback, useEffect, useRef, useState } from 'react'
+import { BsChevronLeft, BsThreeDotsVertical, BsX } from 'react-icons/bs'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { Button, Content, Dropdown, FlexboxGrid, Header, IconButton, Nav, Popover, useToaster, Whisper } from 'rsuite'
 import type { Account } from '@/entities/account'
 import type { Server } from '@/entities/server'
 import { domainFromAcct } from '@/utils/domain'
@@ -5,14 +13,6 @@ import emojify from '@/utils/emojify'
 import { open } from '@/utils/openBrowser'
 import { findLink } from '@/utils/statusParser'
 import { getAccount, getServer } from '@/utils/storage'
-import generator, { type Entity, type MegalodonInterface } from '@cutls/megalodon'
-import { Icon } from '@rsuite/icons'
-import Image from 'next/image'
-import { useRouter } from 'next/router'
-import { type MouseEventHandler, type ReactElement, forwardRef, useCallback, useEffect, useRef, useState } from 'react'
-import { BsChevronLeft, BsThreeDotsVertical, BsX } from 'react-icons/bs'
-import { FormattedMessage, useIntl } from 'react-intl'
-import { Button, Content, Dropdown, FlexboxGrid, Header, IconButton, Nav, Popover, Whisper, useToaster } from 'rsuite'
 import alert from '../utils/alert'
 import Followers, { type FuncProps as FollowersFunc } from './profile/Followers'
 import Following, { type FuncProps as FollowingFunc } from './profile/Following'
@@ -54,7 +54,7 @@ const Profile: React.FC<Props> = (props) => {
 			let cli: MegalodonInterface
 			if (router.query.account_id && router.query.server_id) {
 				const [account, server] = await getAccount({
-					id: Number.parseInt(router.query.account_id.toLocaleString()),
+					id: Number.parseInt(router.query.account_id.toLocaleString())
 				})
 				setAccount(account)
 				setServer(server)
@@ -217,7 +217,7 @@ const Profile: React.FC<Props> = (props) => {
 								left: '10px',
 								backgroundColor: 'rgba(0, 0, 0, 0.7)',
 								padding: '4px',
-								borderRadius: '4px',
+								borderRadius: '4px'
 							}}
 						>
 							<FormattedMessage id="detail.profile.follows_you" />
@@ -255,9 +255,9 @@ const Profile: React.FC<Props> = (props) => {
 														onChange: () => {
 															loadRelationship(client, user)
 														},
-														openAddListMember,
+														openAddListMember
 													},
-													ref,
+													ref
 												)
 											}
 										>
@@ -283,7 +283,7 @@ const Profile: React.FC<Props> = (props) => {
 								borderRadius: '4px',
 								margin: '16px 0',
 								overflow: 'hidden',
-								wordBreak: 'break-word',
+								wordBreak: 'break-word'
 							}}
 							onClick={onClick}
 						>

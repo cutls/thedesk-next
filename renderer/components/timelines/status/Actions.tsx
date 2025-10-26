@@ -1,3 +1,10 @@
+import type { Entity, MegalodonInterface, Response } from '@cutls/megalodon'
+import Picker from '@emoji-mart/react'
+import { Icon } from '@rsuite/icons'
+import { type Dispatch, forwardRef, type ReactElement, type SetStateAction, useContext, useRef, useState } from 'react'
+import { BsBookmark, BsEmojiSmile, BsEnvelope, BsFillBookmarkFill, BsLock, BsRepeat, BsReply, BsStar, BsStarFill, BsThreeDots } from 'react-icons/bs'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { Dropdown, FlexboxGrid, IconButton, Popover, useToaster, Whisper } from 'rsuite'
 import alert from '@/components/utils/alert'
 import type { Account } from '@/entities/account'
 import type { CustomEmojiCategory } from '@/entities/emoji'
@@ -5,13 +12,6 @@ import type { Server } from '@/entities/server'
 import { Context } from '@/theme'
 import { data } from '@/utils/emojiData'
 import { open, writeText } from '@/utils/openBrowser'
-import type { Entity, MegalodonInterface, Response } from '@cutls/megalodon'
-import Picker from '@emoji-mart/react'
-import { Icon } from '@rsuite/icons'
-import { type Dispatch, type ReactElement, type SetStateAction, forwardRef, useContext, useRef, useState } from 'react'
-import { BsBookmark, BsEmojiSmile, BsEnvelope, BsFillBookmarkFill, BsLock, BsRepeat, BsReply, BsStar, BsStarFill, BsThreeDots } from 'react-icons/bs'
-import { FormattedMessage, useIntl } from 'react-intl'
-import { Dropdown, FlexboxGrid, IconButton, Popover, Whisper, useToaster } from 'rsuite'
 import ActionButton from './ActionButton'
 
 type Props = {
@@ -214,9 +214,9 @@ const Actions: React.FC<Props> = (props) => {
 									},
 									onFromOtherAccount: () => {
 										props.openFromOtherAccount()
-									},
+									}
 								},
-								ref,
+								ref
 							)
 						}
 					>

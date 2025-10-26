@@ -1,9 +1,9 @@
+import { detector } from '@cutls/megalodon'
 import type { Account } from '@/entities/account'
 import type { Server } from '@/entities/server'
-import { type Settings, defaultSetting } from '@/entities/settings'
-import { type AddTimeline, type Color, type Timeline, colorList, columnWidth as columnWidthCalc } from '@/entities/timeline'
+import { defaultSetting, type Settings } from '@/entities/settings'
+import { type AddTimeline, type Color, colorList, columnWidth as columnWidthCalc, type Timeline } from '@/entities/timeline'
 import { localTypeList } from '@/i18n'
-import { detector } from '@cutls/megalodon'
 export function migrateTimelineV1toV2() {
 	const timelinesV2Str = localStorage.getItem('timelinesV2')
 	if (!timelinesV2Str) {

@@ -1,5 +1,5 @@
-import type { CustomEmojiCategory } from '@/entities/emoji'
 import type { Entity } from '@cutls/megalodon'
+import type { CustomEmojiCategory } from '@/entities/emoji'
 
 export const data = async () => {
 	const response = await fetch('https://cdn.jsdelivr.net/npm/@emoji-mart/data')
@@ -14,14 +14,14 @@ export const mapCustomEmojiCategory = (domain: string, emojis: Array<Entity.Emoj
 		emojis: emojis
 			.map((emoji) => ({
 				name: emoji.shortcode,
-				image: emoji.url,
+				image: emoji.url
 			}))
 			.filter((e, i, array) => array.findIndex((ar) => e.name === ar.name) === i)
 			.map((e) => ({
 				id: e.name,
 				name: e.name,
 				keywords: [e.name],
-				skins: [{ src: e.image, shortcodes: `:${e.name}:` }],
-			})),
-	},
+				skins: [{ src: e.image, shortcodes: `:${e.name}:` }]
+			}))
+	}
 ]

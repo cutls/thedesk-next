@@ -3,16 +3,15 @@ import { Icon } from '@rsuite/icons'
 import { useRouter } from 'next/router'
 import { useContext, useEffect, useState } from 'react'
 import { BsChevronLeft, BsPin, BsX } from 'react-icons/bs'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { Virtuoso } from 'react-virtuoso'
 import { Button, Content, FlexboxGrid, Header, List, Loader } from 'rsuite'
-
 import { TheDeskContext, TimelineRefreshContext } from '@/context'
 import type { Account } from '@/entities/account'
 import type { CustomEmojiCategory } from '@/entities/emoji'
 import type { Server } from '@/entities/server'
 import { mapCustomEmojiCategory } from '@/utils/emojiData'
 import { addTimeline, getAccount } from '@/utils/storage'
-import { FormattedMessage, useIntl } from 'react-intl'
 import Status from '../timelines/status/Status'
 
 type Props = {
@@ -38,7 +37,7 @@ export default function ListDetail(props: Props) {
 		const f = async () => {
 			if (router.query.account_id && router.query.list_id) {
 				const [account, server] = await getAccount({
-					id: Number.parseInt(router.query.account_id.toLocaleString()),
+					id: Number.parseInt(router.query.account_id.toLocaleString())
 				})
 				setServer(server)
 				setAccount(account)

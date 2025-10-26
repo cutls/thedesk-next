@@ -21,7 +21,7 @@ export default function FollowedHashtags() {
 		if (!router.query.account_id || !router.query.server_id) return
 		const f = async () => {
 			const [account, server] = await getAccount({
-				id: Number.parseInt(router.query.account_id.toLocaleString()),
+				id: Number.parseInt(router.query.account_id.toLocaleString())
 			})
 			const cli = generator(server.sns, server.base_url, account.access_token, 'Fedistar')
 			setClient(cli)

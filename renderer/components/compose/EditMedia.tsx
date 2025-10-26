@@ -1,9 +1,9 @@
-import { TheDeskContext } from '@/context'
 import type { Entity, MegalodonInterface } from '@cutls/megalodon'
 import Image from 'next/image'
 import { forwardRef, useContext, useEffect, useRef, useState } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { Button, ButtonToolbar, FlexboxGrid, Form, Input, Modal, Schema } from 'rsuite'
+import { TheDeskContext } from '@/context'
 
 type Props = {
 	attachment: Entity.Attachment | null
@@ -17,19 +17,19 @@ type FormValue = {
 }
 
 const model = Schema.Model({
-	description: Schema.Types.StringType().isRequired('This field is required').maxLength(1500),
+	description: Schema.Types.StringType().isRequired('This field is required').maxLength(1500)
 })
 
 export default function EditMedia(props: Props) {
 	const [formValue, setFormValue] = useState<FormValue>({
-		description: '',
+		description: ''
 	})
 	const [loading, setLoading] = useState(false)
 	const [attachment, setAttachment] = useState<Entity.Attachment | null>(null)
 	const { setFocused } = useContext(TheDeskContext)
 	const focusAttr = {
 		onFocus: () => setFocused(true),
-		onBlur: () => setFocused(false),
+		onBlur: () => setFocused(false)
 	}
 
 	const formRef = useRef<any>()
@@ -44,11 +44,11 @@ export default function EditMedia(props: Props) {
 			setAttachment(res.data)
 			if (res.data.description) {
 				setFormValue({
-					description: res.data.description,
+					description: res.data.description
 				})
 			} else {
 				setFormValue({
-					description: '',
+					description: ''
 				})
 			}
 		}

@@ -1,10 +1,10 @@
-import { TheDeskContext } from '@/context'
-import emojify from '@/utils/emojify'
 import type { Entity } from '@cutls/megalodon'
 import { Icon } from '@rsuite/icons'
 import { useContext } from 'react'
 import { BsPersonPlus, BsPersonX } from 'react-icons/bs'
 import { Avatar, Button, FlexboxGrid } from 'rsuite'
+import { TheDeskContext } from '@/context'
+import emojify from '@/utils/emojify'
 
 type Props = {
 	user: Entity.Account

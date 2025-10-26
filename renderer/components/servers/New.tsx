@@ -1,14 +1,14 @@
-import { TheDeskContext } from '@/context'
-import type { Server } from '@/entities/server'
-import { parseDomain } from '@/utils/domainParser'
-import { addApplication, authorizeCode } from '@/utils/oauth'
-import { addServer } from '@/utils/storage'
 import type { OAuth } from '@cutls/megalodon'
 import { Icon } from '@rsuite/icons'
 import { useContext, useEffect, useState } from 'react'
 import { BsClipboard } from 'react-icons/bs'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Button, ButtonToolbar, Checkbox, Form, Input, Loader, Modal, Toggle, useToaster } from 'rsuite'
+import { TheDeskContext } from '@/context'
+import type { Server } from '@/entities/server'
+import { parseDomain } from '@/utils/domainParser'
+import { addApplication, authorizeCode } from '@/utils/oauth'
+import { addServer } from '@/utils/storage'
 import alert from '../utils/alert'
 
 type Props = {
@@ -29,7 +29,7 @@ const New: React.FC<Props> = (props) => {
 	const { setFocused } = useContext(TheDeskContext)
 	const focusAttr = {
 		onFocus: () => setFocused(true),
-		onBlur: () => setFocused(false),
+		onBlur: () => setFocused(false)
 	}
 
 	const toast = useToaster()
@@ -186,7 +186,7 @@ const New: React.FC<Props> = (props) => {
 								margin: '8px 0',
 								display: 'flex',
 								justifyContent: 'space-between',
-								alignItems: 'center',
+								alignItems: 'center'
 							}}
 						>
 							<span
@@ -194,7 +194,7 @@ const New: React.FC<Props> = (props) => {
 								style={{
 									width: '90%',
 									whiteSpace: 'nowrap',
-									overflowX: 'auto',
+									overflowX: 'auto'
 								}}
 							>
 								{app.url}

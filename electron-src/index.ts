@@ -1,22 +1,24 @@
+import { execFile } from 'child_process'
+import serve from 'electron-serve'
+import { getFonts } from 'font-list'
 import fs from 'fs'
 // Native
 import { join } from 'path'
-import { getFonts } from 'font-list'
-
-import { execFile } from 'child_process'
 import { promisify } from 'util'
-import serve from 'electron-serve'
+
 type SystemConfig = {
 	hardwareAcceleration: boolean
 	allowDoH: boolean
 }
 
 const promisifyExecFile = promisify(execFile)
+
 // Packages
-import { BrowserWindow, type IpcMainEvent, Menu, type MenuItemConstructorOptions, app, clipboard, ipcMain, nativeImage, shell, screen } from 'electron'
+import { app, BrowserWindow, clipboard, type IpcMainEvent, ipcMain, Menu, type MenuItemConstructorOptions, nativeImage, screen, shell } from 'electron'
 import isDev from 'electron-is-dev'
 import defaultConfig from './defaultConfig.json'
-import { WindowState } from './types'
+import type { WindowState } from './types'
+
 const appServe = app.isPackaged
 	? serve({
 			directory: join(__dirname, '../renderer/out')

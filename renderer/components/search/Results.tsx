@@ -1,10 +1,3 @@
-import Status from '@/components/timelines/status/Status'
-import { TheDeskContext } from '@/context'
-import type { Account } from '@/entities/account'
-import type { CustomEmojiCategory } from '@/entities/emoji'
-import type { Server } from '@/entities/server'
-import { mapCustomEmojiCategory } from '@/utils/emojiData'
-import emojify from '@/utils/emojify'
 import type { Entity, MegalodonInterface } from '@cutls/megalodon'
 import { Icon } from '@rsuite/icons'
 import { useRouter } from 'next/router'
@@ -12,6 +5,13 @@ import { useCallback, useContext, useState } from 'react'
 import { BsChatQuote, BsHash, BsPeople, BsSearch } from 'react-icons/bs'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Avatar, Form, Input, InputGroup, List } from 'rsuite'
+import Status from '@/components/timelines/status/Status'
+import { TheDeskContext } from '@/context'
+import type { Account } from '@/entities/account'
+import type { CustomEmojiCategory } from '@/entities/emoji'
+import type { Server } from '@/entities/server'
+import { mapCustomEmojiCategory } from '@/utils/emojiData'
+import emojify from '@/utils/emojify'
 
 type Props = {
 	account: Account
@@ -34,7 +34,7 @@ export default function Results(props: Props) {
 	const { setFocused } = useContext(TheDeskContext)
 	const focusAttr = {
 		onFocus: () => setFocused(true),
-		onBlur: () => setFocused(false),
+		onBlur: () => setFocused(false)
 	}
 
 	const search = async (word: string) => {

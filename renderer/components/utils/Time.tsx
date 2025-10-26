@@ -1,10 +1,10 @@
 import dayjs from 'dayjs'
 // https://github.com/iamkun/dayjs/tree/dev/src/locale
 import 'dayjs/locale/ja'
-import { TheDeskContext } from '@/context'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import updateLocale from 'dayjs/plugin/updateLocale'
 import { type HTMLAttributes, useContext } from 'react'
+import { TheDeskContext } from '@/context'
 
 type Props = {
 	time: string
@@ -27,8 +27,8 @@ const parseDatetime = (timestamp: string) => {
 			M: 'a month',
 			MM: '%d months',
 			y: 'a year',
-			yy: '%d years',
-		},
+			yy: '%d years'
+		}
 	})
 	dayjs.extend(relativeTime)
 	return dayjs(timestamp).fromNow(true)
@@ -41,7 +41,7 @@ const Time: React.FC<Props> = (props) => {
 	const absProps = {
 		title: fullday,
 		style: absStyle,
-		onClick: props.onClick,
+		onClick: props.onClick
 	}
 	if (timelineConfig.time === 'absolute') {
 		if (dayjs(props.time).year() !== dayjs().year()) return <time {...absProps}>{dayjs(props.time).format('YYYY/M/D H:mm')}</time>

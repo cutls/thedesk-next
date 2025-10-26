@@ -3,15 +3,14 @@ import { Icon } from '@rsuite/icons'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useState } from 'react'
 import { BsChevronLeft, BsX } from 'react-icons/bs'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { Button, Content, FlexboxGrid, Header, List } from 'rsuite'
-
 import { TIMELINE_STATUSES_COUNT } from '@/defaults'
 import type { Account } from '@/entities/account'
 import type { CustomEmojiCategory } from '@/entities/emoji'
 import type { Server } from '@/entities/server'
 import { mapCustomEmojiCategory } from '@/utils/emojiData'
 import { getAccount, getServer } from '@/utils/storage'
-import { FormattedMessage, useIntl } from 'react-intl'
 import Status from '../timelines/status/Status'
 
 type Props = {
@@ -38,7 +37,7 @@ const StatusDetail: React.FC<Props> = (props) => {
 			let server: Server
 			if (router.query.account_id && router.query.server_id) {
 				const [account, s] = await getAccount({
-					id: Number.parseInt(router.query.account_id.toLocaleString()),
+					id: Number.parseInt(router.query.account_id.toLocaleString())
 				})
 				server = s
 				setServer(s)
@@ -96,7 +95,7 @@ const StatusDetail: React.FC<Props> = (props) => {
 					if (status.reblog && status.reblog.id === updated.id) return Object.assign({}, status, { reblog: updated })
 					if (status.reblog && updated.reblog && status.reblog.id === updated.reblog.id) return Object.assign({}, status, { reblog: updated.reblog })
 					return status
-				}),
+				})
 			)
 
 			setDescendants((last) =>
@@ -105,10 +104,10 @@ const StatusDetail: React.FC<Props> = (props) => {
 					if (status.reblog && status.reblog.id === updated.id) return Object.assign({}, status, { reblog: updated })
 					if (status.reblog && updated.reblog && status.reblog.id === updated.reblog.id) return Object.assign({}, status, { reblog: updated.reblog })
 					return status
-				}),
+				})
 			)
 		},
-		[status, setStatus, ancestors, setAncestors, descendants, setDescendants],
+		[status, setStatus, ancestors, setAncestors, descendants, setDescendants]
 	)
 
 	const setAccountDetail = (userId: string, serverId: number, accountId?: number) => {
@@ -155,7 +154,7 @@ const StatusDetail: React.FC<Props> = (props) => {
 									paddingTop: '2px',
 									paddingBottom: '2px',
 									backgroundColor: 'var(--rs-border-secondary)',
-									boxShadow: '0 -1px 0 var(--rs-bg-well),0 1px 0 var(--rs-bg-well)',
+									boxShadow: '0 -1px 0 var(--rs-bg-well),0 1px 0 var(--rs-bg-well)'
 								}}
 							>
 								<Status

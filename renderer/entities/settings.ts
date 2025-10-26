@@ -1,4 +1,5 @@
 import type { localeType } from '../i18n'
+
 type FormBoolean = 'yes' | 'no'
 export type Settings = {
 	appearance: {
@@ -30,7 +31,7 @@ export const defaultSetting: Settings = {
 		font_size: 14,
 		language: 'en',
 		color_theme: 'dark',
-		font: 'sans-serif',
+		font: 'sans-serif'
 	},
 	timeline: {
 		time: 'relative',
@@ -39,11 +40,11 @@ export const defaultSetting: Settings = {
 		notification: 'yes',
 		ttsProvider: 'system',
 		ttsPort: 50080,
-		cropImage: 'cover',
+		cropImage: 'cover'
 	},
 	compose: {
 		btnPosition: 'right',
 		afterPost: 'close',
-		secondaryToot: 'no',
-	},
+		secondaryToot: 'no'
+	}
 }

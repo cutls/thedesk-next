@@ -1,23 +1,22 @@
-import generator, { type MegalodonInterface, type Entity } from '@cutls/megalodon'
+import generator, { type Entity, type MegalodonInterface } from '@cutls/megalodon'
 import { Icon } from '@rsuite/icons'
+import { useRouter } from 'next/router'
 import parse from 'parse-link-header'
 import { forwardRef, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { BsChevronLeft, BsChevronRight, BsEnvelope, BsSliders, BsSquare, BsViewStacked, BsX } from 'react-icons/bs'
-import { Avatar, Button, Container, Content, Divider, Dropdown, FlexboxGrid, Header, List, Loader, Popover, Radio, RadioGroup, Stack, Whisper, useToaster } from 'rsuite'
-
+import { FormattedMessage, useIntl } from 'react-intl'
+import { ResizableBox } from 'react-resizable'
+import { Virtuoso } from 'react-virtuoso'
+import { Avatar, Button, Container, Content, Divider, Dropdown, FlexboxGrid, Header, List, Loader, Popover, Radio, RadioGroup, Stack, useToaster, Whisper } from 'rsuite'
+import { getAccount, removeTimeline, updateColumnColor, updateColumnOrder, updateColumnStack, updateColumnWidth } from 'utils/storage'
 import { TheDeskContext, TimelineRefreshContext } from '@/context'
 import { TIMELINE_MAX_STATUSES, TIMELINE_STATUSES_COUNT } from '@/defaults'
 import type { Account } from '@/entities/account'
 import type { Server } from '@/entities/server'
-import { type ColumnWidth, type Timeline, colorList, columnWidth as columnWidthCalc, columnWidthSet } from '@/entities/timeline'
+import { type ColumnWidth, colorList, columnWidth as columnWidthCalc, columnWidthSet, type Timeline } from '@/entities/timeline'
 import type { ReceiveTimelineConversationPayload } from '@/payload'
 import FailoverImg from '@/utils/failoverImg'
 import timelineName from '@/utils/timelineName'
-import { useRouter } from 'next/router'
-import { FormattedMessage, useIntl } from 'react-intl'
-import { ResizableBox } from 'react-resizable'
-import { Virtuoso } from 'react-virtuoso'
-import { getAccount, removeTimeline, updateColumnColor, updateColumnOrder, updateColumnStack, updateColumnWidth } from 'utils/storage'
 import alert from '../utils/alert'
 import Conversation from './conversation/Conversation'
 
@@ -131,7 +130,7 @@ const Conversations: React.FC<Props> = (props) => {
 	const backToTop = () => {
 		scrollerRef.current.scrollTo({
 			top: 0,
-			behavior: 'smooth',
+			behavior: 'smooth'
 		})
 	}
 	const columnWidthSet = (widthRaw: number) => {
@@ -163,7 +162,7 @@ const Conversations: React.FC<Props> = (props) => {
 										paddingRight: '8px',
 										paddingLeft: '8px',
 										paddingBottom: '6px',
-										width: '42px',
+										width: '42px'
 									}}
 								>
 									<Icon as={BsEnvelope} />
@@ -177,7 +176,7 @@ const Conversations: React.FC<Props> = (props) => {
 										overflow: 'hidden',
 										textOverflow: 'ellipsis',
 										whiteSpace: 'nowrap',
-										width: 'calc(100% - 42px)',
+										width: 'calc(100% - 42px)'
 									}}
 									title={`${timelineName(props.timeline.kind, props.timeline.name, formatMessage)}@${props.server.domain}`}
 								>

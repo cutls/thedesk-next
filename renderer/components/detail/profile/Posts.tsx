@@ -1,13 +1,13 @@
+import type { Entity, MegalodonInterface } from '@cutls/megalodon'
+import { useRouter } from 'next/router'
+import { useEffect, useImperativeHandle, useState } from 'react'
+import { List, Loader } from 'rsuite'
 import Status from '@/components/timelines/status/Status'
 import { TIMELINE_STATUSES_COUNT } from '@/defaults'
 import type { Account } from '@/entities/account'
 import type { CustomEmojiCategory } from '@/entities/emoji'
 import type { Server } from '@/entities/server'
 import { mapCustomEmojiCategory } from '@/utils/emojiData'
-import type { Entity, MegalodonInterface } from '@cutls/megalodon'
-import { useRouter } from 'next/router'
-import { useEffect, useImperativeHandle, useState } from 'react'
-import { List, Loader } from 'rsuite'
 
 export type FuncProps = {
 	loadMore: () => Promise<void>
@@ -62,7 +62,7 @@ const Posts: React.ForwardRefRenderFunction<FuncProps, ArgProps> = (props, ref) 
 			} finally {
 				setLoadingMore(false)
 			}
-		},
+		}
 	}))
 
 	const updateStatus = (status: Entity.Status) => {

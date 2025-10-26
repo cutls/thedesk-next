@@ -9,12 +9,12 @@ type Props = {
 }
 
 const initValue: CustomProviderProps = {
-	theme: 'dark',
+	theme: 'dark'
 }
 
 export const Context = createContext(initValue)
 export const ContextLoadTheme = createContext({
-	loadTheme: async () => {},
+	loadTheme: async () => {}
 })
 
 export const RsuiteProviderWrapper: React.FC<Props> = (props) => {

@@ -1,6 +1,6 @@
-import { Color } from '@/entities/timeline'
 import type { Entity } from '@cutls/megalodon'
 import { BsEnvelope, BsGlobe, BsLock, BsPeople, BsUnlock } from 'react-icons/bs'
+import { Color } from '@/entities/timeline'
 
 export type ParsedAccount = {
 	username: string
@@ -97,7 +97,7 @@ export function parseMastodonAccount(accountURL: string): ParsedAccount | null {
 	return {
 		username: accountName,
 		acct: `${accountName}@${domainName}`,
-		url: accountURL,
+		url: accountURL
 	}
 }
 
@@ -111,7 +111,7 @@ export function parsePleromaAccount(accountURL: string): ParsedAccount | null {
 	return {
 		username: `@${accountName}`,
 		acct: `@${accountName}@${domainName}`,
-		url: accountURL,
+		url: accountURL
 	}
 }
 

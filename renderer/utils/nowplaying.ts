@@ -1,4 +1,5 @@
 import { open } from '@/utils/openBrowser'
+
 const apiGateway = 'https://ep9jquu2w4.execute-api.ap-northeast-1.amazonaws.com/thedesk/spotify'
 async function spotifyApi(url: string, showToaster: (message: string) => void) {
 	const token = localStorage.getItem('spotifyV2Token')

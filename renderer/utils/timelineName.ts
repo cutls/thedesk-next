@@ -1,5 +1,5 @@
-import type { TimelineKind } from '@/entities/timeline'
 import type { MessageDescriptor } from 'react-intl'
+import type { TimelineKind } from '@/entities/timeline'
 
 const timelineName = (timelineKind: TimelineKind, name: string, formatMessage: (descriptor: MessageDescriptor, values?: any, opt?: any) => string) => {
 	switch (timelineKind) {

@@ -1,11 +1,10 @@
 import type { Entity } from '@cutls/megalodon'
 import { Icon } from '@rsuite/icons'
+import { useState } from 'react'
 import { BsPaperclip } from 'react-icons/bs'
 import { Avatar, Badge, Button, FlexboxGrid } from 'rsuite'
-
 import Time from '@/components/utils/Time'
 import emojify from '@/utils/emojify'
-import { useState } from 'react'
 import Body from '../status/Body'
 
 type Props = {

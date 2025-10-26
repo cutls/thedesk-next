@@ -1,9 +1,9 @@
-import type { Account } from '@/entities/account'
-import type { Server } from '@/entities/server'
 import generator, { type Entity, type MegalodonInterface } from '@cutls/megalodon'
 import { useEffect, useState } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { Button, Carousel, Modal } from 'rsuite'
+import type { Account } from '@/entities/account'
+import type { Server } from '@/entities/server'
 
 type Props = {
 	opened: boolean

@@ -1,7 +1,8 @@
+import generator, { detector, type OAuth } from '@cutls/megalodon'
 import type { Account } from '@/entities/account'
 import type { Server } from '@/entities/server'
-import generator, { type OAuth, detector } from '@cutls/megalodon'
 import { open } from './openBrowser'
+
 const misskeyPremission = [
 	'read:account',
 	'write:account',
@@ -44,7 +45,7 @@ const misskeyPremission = [
 	'write:clip-favorite',
 	'read:clip-favorite',
 	'read:federation',
-	'write:report-abuse',
+	'write:report-abuse'
 ]
 export async function addApplication({ url, redirectUrl }: { url: string; redirectUrl: string }): Promise<OAuth.AppData> {
 	const sns = await detector(url)
@@ -73,7 +74,7 @@ export async function authorizeCode({ server, app, code }: { server: Server; app
 		client_secret: app.client_secret,
 		access_token: token.access_token,
 		refresh_token: token.refresh_token,
-		usual: false,
+		usual: false
 	}
 	accounts.push(account)
 	localStorage.setItem('accounts', JSON.stringify(accounts))

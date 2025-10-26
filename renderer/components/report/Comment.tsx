@@ -1,7 +1,7 @@
-import { TheDeskContext } from '@/context'
 import { useContext, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Button, Input, Modal, Toggle } from 'rsuite'
+import { TheDeskContext } from '@/context'
 
 type Props = {
 	next: (comment: string, forward: boolean) => void
@@ -14,7 +14,7 @@ export default function Comment(props: Props) {
 	const { setFocused } = useContext(TheDeskContext)
 	const focusAttr = {
 		onFocus: () => setFocused(true),
-		onBlur: () => setFocused(false),
+		onBlur: () => setFocused(false)
 	}
 
 	return (

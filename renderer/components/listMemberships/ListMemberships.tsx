@@ -1,11 +1,11 @@
-import { TheDeskContext } from '@/context'
-import emojify from '@/utils/emojify'
 import type { Entity, MegalodonInterface } from '@cutls/megalodon'
 import { Icon } from '@rsuite/icons'
 import { useContext, useEffect, useState } from 'react'
 import { BsCheck2, BsX } from 'react-icons/bs'
 import { FormattedMessage } from 'react-intl'
 import { Avatar, Button, FlexboxGrid, Input, InputPicker, List, Modal } from 'rsuite'
+import { TheDeskContext } from '@/context'
+import emojify from '@/utils/emojify'
 
 type Props = {
 	opened: boolean
@@ -23,7 +23,7 @@ export default function ListMemberships(props: Props) {
 	const { setFocused } = useContext(TheDeskContext)
 	const focusAttr = {
 		onFocus: () => setFocused(true),
-		onBlur: () => setFocused(false),
+		onBlur: () => setFocused(false)
 	}
 
 	useEffect(() => {

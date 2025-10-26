@@ -1,12 +1,12 @@
-import Time from '@/components/utils/Time'
-import { TheDeskContext } from '@/context'
-import emojify from '@/utils/emojify'
 import type { Entity } from '@cutls/megalodon'
 import { Icon } from '@rsuite/icons'
 import { useContext } from 'react'
 import { BsBag } from 'react-icons/bs'
 import { useIntl } from 'react-intl'
 import { Avatar, FlexboxGrid } from 'rsuite'
+import Time from '@/components/utils/Time'
+import { TheDeskContext } from '@/context'
+import emojify from '@/utils/emojify'
 
 type Props = {
 	notification: Entity.Notification
@@ -59,7 +59,7 @@ const actionText = (notification: Entity.Notification) => {
 				<span
 					style={{ color: 'var(--rs-text-secondary)' }}
 					dangerouslySetInnerHTML={{
-						__html: emojify(formatMessage({ id: 'timeline.notification.move.body' }, { user: notification.account.display_name }), notification.account.emojis),
+						__html: emojify(formatMessage({ id: 'timeline.notification.move.body' }, { user: notification.account.display_name }), notification.account.emojis)
 					}}
 				/>
 			)

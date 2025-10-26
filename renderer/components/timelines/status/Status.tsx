@@ -1,3 +1,9 @@
+import type { Entity, MegalodonInterface } from '@cutls/megalodon'
+import { Icon } from '@rsuite/icons'
+import { type HTMLAttributes, type MouseEventHandler, useContext, useEffect, useState } from 'react'
+import { BsArrowRepeat, BsPin } from 'react-icons/bs'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { Avatar, Button, FlexboxGrid, Notification, useToaster } from 'rsuite'
 import Reply from '@/components/compose/Status'
 import Time from '@/components/utils/Time'
 import { TheDeskContext } from '@/context'
@@ -5,21 +11,15 @@ import { TIMELINE_STATUSES_COUNT } from '@/defaults'
 import type { Account } from '@/entities/account'
 import type { CustomEmojiCategory } from '@/entities/emoji'
 import type { Server } from '@/entities/server'
+import type { Settings } from '@/entities/settings'
 import type { ColumnWidth } from '@/entities/timeline'
 import emojify from '@/utils/emojify'
 import { open } from '@/utils/openBrowser'
-import { type ParsedAccount, accountMatch, findAccount, findLink, findTag, privacyColor, privacyIcon } from '@/utils/statusParser'
-import type { Entity, MegalodonInterface } from '@cutls/megalodon'
-import { Icon } from '@rsuite/icons'
-import { type HTMLAttributes, type MouseEventHandler, useContext, useEffect, useState } from 'react'
-import { BsArrowRepeat, BsPin } from 'react-icons/bs'
-import { FormattedMessage, useIntl } from 'react-intl'
-import { Avatar, Button, FlexboxGrid, Notification, useToaster } from 'rsuite'
+import { accountMatch, findAccount, findLink, findTag, type ParsedAccount, privacyColor, privacyIcon } from '@/utils/statusParser'
 import Actions from './Actions'
 import Attachments from './Attachments'
 import Body from './Body'
 import Poll from './Poll'
-import { Settings } from '@/entities/settings'
 
 type Props = {
 	status: Entity.Status
@@ -104,9 +104,9 @@ const Status: React.FC<Props> = (props) => {
 						() => {
 							open(parsedAccount.url)
 							toaster.remove(confirmToaster)
-						},
+						}
 					),
-					{ placement: 'topCenter', duration: 0 },
+					{ placement: 'topCenter', duration: 0 }
 				)
 			}
 			return
@@ -254,7 +254,7 @@ const pinnedHeader = (pinned?: boolean) => {
 							overflow: 'hidden',
 							textOverflow: 'ellipsis',
 							whiteSpace: 'nowrap',
-							width: 'calc(100% - 32px)',
+							width: 'calc(100% - 32px)'
 						}}
 					>
 						<FormattedMessage id="timeline.status.pinned_post" />
@@ -279,7 +279,7 @@ const rebloggedHeader = (status: Entity.Status) => {
 							overflow: 'hidden',
 							textOverflow: 'ellipsis',
 							whiteSpace: 'nowrap',
-							width: 'calc(100% - 32px)',
+							width: 'calc(100% - 32px)'
 						}}
 					>
 						<span dangerouslySetInnerHTML={{ __html: emojify(status.account.display_name, status.account.emojis) }} />

@@ -1,14 +1,3 @@
-import alert from '@/components/utils/alert'
-import { TheDeskContext, TimelineRefreshContext } from '@/context'
-import type { Account } from '@/entities/account'
-import { Instruction } from '@/entities/instruction'
-import type { Marker } from '@/entities/marker'
-import type { Server, ServerSet } from '@/entities/server'
-import { type Settings, defaultSetting } from '@/entities/settings'
-import { type Timeline, colorList } from '@/entities/timeline'
-import type { Unread } from '@/entities/unread'
-import type { ReceiveNotificationPayload } from '@/payload'
-import FailoverImg from '@/utils/failoverImg'
 import generator, { type Entity } from '@cutls/megalodon'
 import { Icon } from '@rsuite/icons'
 import { useRouter } from 'next/router'
@@ -30,12 +19,24 @@ import {
 	BsPencilSquare,
 	BsPerson,
 	BsPlus,
-	BsSearch,
+	BsSearch
 } from 'react-icons/bs'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { Avatar, Badge, Button, Dropdown, FlexboxGrid, IconButton, Popover, Sidebar, Sidenav, Stack, Text, Whisper, useToaster } from 'rsuite'
+import { Avatar, Badge, Button, Dropdown, FlexboxGrid, IconButton, Popover, Sidebar, Sidenav, Stack, Text, useToaster, Whisper } from 'rsuite'
 import { addTimeline, getServer, listAccounts, listTimelines, readSettings, removeServer, updateAccountColor } from 'utils/storage'
+import alert from '@/components/utils/alert'
+import { TheDeskContext, TimelineRefreshContext } from '@/context'
+import type { Account } from '@/entities/account'
+import { Instruction } from '@/entities/instruction'
+import type { Marker } from '@/entities/marker'
+import type { Server, ServerSet } from '@/entities/server'
+import { defaultSetting, type Settings } from '@/entities/settings'
+import { colorList, type Timeline } from '@/entities/timeline'
+import type { Unread } from '@/entities/unread'
+import type { ReceiveNotificationPayload } from '@/payload'
+import FailoverImg from '@/utils/failoverImg'
 import Notifications from './timelines/Notifications'
+
 type ImitateFormattedMessage = ({ id }: { id: string }) => string
 
 type NavigatorProps = {
@@ -104,7 +105,7 @@ const Navigator: React.FC<NavigatorProps> = (props): ReactElement => {
 					const count = unreadCount(marker.notifications, notifications)
 					if (count > 0 && timelineConfig.notification !== 'no')
 						new window.Notification(`TheDesk: ${set.account.username}@${set.server.domain}`, {
-							body: formatMessage({ id: 'timeline.notification.unread' }, { count }),
+							body: formatMessage({ id: 'timeline.notification.unread' }, { count })
 						}).onclick = () => read(notifications[0].id)
 					const target = props.unreads.find((u) => u.server_id === set.server.id)
 					if (target) {
@@ -114,7 +115,7 @@ const Navigator: React.FC<NavigatorProps> = (props): ReactElement => {
 									return Object.assign({}, u, { count: count })
 								}
 								return u
-							}),
+							})
 						)
 					} else {
 						props.setUnreads((unreads) => unreads.concat({ server_id: set.server.id, count: count }))
@@ -219,9 +220,9 @@ const Navigator: React.FC<NavigatorProps> = (props): ReactElement => {
 											openNotification,
 											unreads: props.unreads,
 											setUnreads: props.setUnreads,
-											formatMessage: formatMessage as ImitateFormattedMessage,
+											formatMessage: formatMessage as ImitateFormattedMessage
 										},
-										ref,
+										ref
 									)
 								}
 							>
@@ -259,9 +260,9 @@ const Navigator: React.FC<NavigatorProps> = (props): ReactElement => {
 									top,
 									onClose,
 									openThirdparty,
-									openSettings,
+									openSettings
 								},
-								ref,
+								ref
 							)
 						}
 					>
@@ -299,7 +300,7 @@ type ServerMenuProps = {
 
 const serverMenu = (
 	{ className, left, top, onClose, server, openAuthorize, openAnnouncements, openNotification, unreads, setUnreads, formatMessage }: ServerMenuProps,
-	ref: React.RefCallback<HTMLElement>,
+	ref: React.RefCallback<HTMLElement>
 ): ReactElement => {
 	const router = useRouter()
 	const { timelineRefresh } = useContext(TimelineRefreshContext)
@@ -370,7 +371,11 @@ const serverMenu = (
 				</Stack>
 			</FlexboxGrid>
 			<div style={{ height: '50vh', padding: 5 }}>
-				{server.server.account_id ? <Notifications server={server.server} unreads={unreads} setUnreads={setUnreads} openMedia={() => {}} openReport={() => {}} openFromOtherAccount={() => {}} wrapIndex={-1} /> : <FormattedMessage id="navigator.servers.requires_login" />}
+				{server.server.account_id ? (
+					<Notifications server={server.server} unreads={unreads} setUnreads={setUnreads} openMedia={() => {}} openReport={() => {}} openFromOtherAccount={() => {}} wrapIndex={-1} />
+				) : (
+					<FormattedMessage id="navigator.servers.requires_login" />
+				)}
 			</div>
 		</Popover>
 	)

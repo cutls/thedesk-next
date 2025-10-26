@@ -1,9 +1,9 @@
-import type { Account } from '@/entities/account'
-import type { Server } from '@/entities/server'
-import { listAccounts } from '@/utils/storage'
 import { useEffect, useState } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { Button, Modal, Radio, RadioGroup } from 'rsuite'
+import type { Account } from '@/entities/account'
+import type { Server } from '@/entities/server'
+import { listAccounts } from '@/utils/storage'
 
 type Props = {
 	next: (server: Server, account: Account) => void

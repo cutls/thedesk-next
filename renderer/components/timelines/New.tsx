@@ -1,12 +1,12 @@
-import { time } from 'console'
-import { TheDeskContext, TimelineRefreshContext } from '@/context'
 import generator, { type Entity } from '@cutls/megalodon'
 import { Icon } from '@rsuite/icons'
+import { time } from 'console'
 import { useContext, useEffect, useState } from 'react'
 import { BsBell, BsBookmark, BsChevronLeft, BsEnvelope, BsGlobe2, BsHouseDoor, BsListUl, BsPeople, BsPlus, BsStar } from 'react-icons/bs'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Button, ButtonToolbar, Container, Content, Dropdown, FlexboxGrid, Header, IconButton, List, Loader, Popover, Whisper } from 'rsuite'
 import { addTimeline, getAccount } from 'utils/storage'
+import { TheDeskContext, TimelineRefreshContext } from '@/context'
 import { Account } from '../../entities/account'
 import { Instruction } from '../../entities/instruction'
 import type { Server, ServerSet } from '../../entities/server'
@@ -169,7 +169,7 @@ const New: React.FC<Props> = (props) => {
 				minWidth: '240px',
 				display: 'flex',
 				justifyContent: 'center',
-				alignItems: 'center',
+				alignItems: 'center'
 			}}
 		>
 			{walkthrough && (

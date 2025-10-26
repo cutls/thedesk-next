@@ -1,8 +1,8 @@
-import alert from '@/components/utils/alert'
 import type { Entity, MegalodonInterface } from '@cutls/megalodon'
 import { useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Loader, Modal, Placeholder, useToaster } from 'rsuite'
+import alert from '@/components/utils/alert'
 import Category from './Category'
 import Comment from './Comment'
 import Rules from './Rules'
@@ -42,11 +42,11 @@ export default function Report(props: Props) {
 				category: category,
 				status_ids: statuses,
 				comment: comment,
-				forward: forward,
+				forward: forward
 			}
 			if (rules !== null) {
 				options = Object.assign({}, options, {
-					rule_ids: rules.map((r) => Number.parseInt(r)),
+					rule_ids: rules.map((r) => Number.parseInt(r))
 				})
 			}
 			await props.client.report(props.status.account.id, options)

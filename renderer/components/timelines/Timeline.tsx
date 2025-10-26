@@ -1,18 +1,20 @@
 import generator, { type Entity, type MegalodonInterface } from '@cutls/megalodon'
 import { Icon } from '@rsuite/icons'
+import { useRouter } from 'next/router'
 import parse from 'parse-link-header'
 import { type CSSProperties, forwardRef, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { BsArrowClockwise, BsBookmark, BsChevronLeft, BsChevronRight, BsGlobe2, BsHash, BsHouseDoor, BsListUl, BsPeople, BsSliders, BsSquare, BsStar, BsViewStacked, BsX } from 'react-icons/bs'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { Virtuoso } from 'react-virtuoso'
-import { Avatar, Button, Container, Content, Divider, FlexboxGrid, Header, List, Loader, Popover, Radio, RadioGroup, Stack, Whisper, useToaster } from 'rsuite'
-
+import { Avatar, Button, Container, Content, Divider, FlexboxGrid, Header, List, Loader, Popover, Radio, RadioGroup, Stack, useToaster, Whisper } from 'rsuite'
+import { getAccount, removeTimeline, updateColumnColor, updateColumnMediaOnly, updateColumnOrder, updateColumnStack, updateColumnTts, updateColumnWidth } from 'utils/storage'
 import alert from '@/components/utils/alert'
 import { TheDeskContext, TimelineRefreshContext } from '@/context'
 import { TIMELINE_MAX_STATUSES, TIMELINE_STATUSES_COUNT } from '@/defaults'
 import type { Account } from '@/entities/account'
 import type { CustomEmojiCategory } from '@/entities/emoji'
 import type { Server } from '@/entities/server'
-import { type ColumnWidth, type Timeline, type TimelineKind, colorList, columnWidth as columnWidthCalc, columnWidthSet } from '@/entities/timeline'
+import { type ColumnWidth, colorList, columnWidth as columnWidthCalc, columnWidthSet, type Timeline, type TimelineKind } from '@/entities/timeline'
 import type {
 	DeleteHomeStatusPayload,
 	DeleteTimelineStatusPayload,
@@ -24,9 +26,6 @@ import type {
 import { mapCustomEmojiCategory } from '@/utils/emojiData'
 import FailoverImg from '@/utils/failoverImg'
 import timelineName from '@/utils/timelineName'
-import { useRouter } from 'next/router'
-import { FormattedMessage, useIntl } from 'react-intl'
-import { getAccount, removeTimeline, updateColumnColor, updateColumnMediaOnly, updateColumnOrder, updateColumnStack, updateColumnTts, updateColumnWidth } from 'utils/storage'
 import Status from './status/Status'
 
 type Props = {

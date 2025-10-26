@@ -1,14 +1,3 @@
-import NumberForm from '@/components/settings/form/NumberForm'
-import RadioBoolean from '@/components/settings/form/RadioBooleanForm'
-import RadioForm from '@/components/settings/form/RadioForm'
-import SelectForm from '@/components/settings/form/SelectForm'
-import alert from '@/components/utils/alert'
-import { TheDeskContext } from '@/context'
-import { type Settings as SettingsType, defaultSetting } from '@/entities/settings'
-import { Context as i18nContext } from '@/i18n'
-import { ContextLoadTheme } from '@/theme'
-import { getSpotifyPlaylist, nowplayingCode, nowplayingDisconnect, nowplayingInit, spotifyTemplateReplace } from '@/utils/nowplaying'
-import { readSettings, saveSetting } from '@/utils/storage'
 import { Icon } from '@rsuite/icons'
 import dayjs from 'dayjs'
 import Head from 'next/head'
@@ -17,29 +6,41 @@ import { type CSSProperties, useContext, useEffect, useState } from 'react'
 import { BsCheck2, BsChevronLeft } from 'react-icons/bs'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Badge, Button, Content, Divider, Heading, Input, Loader, SelectPicker, Stack, useToaster } from 'rsuite'
+import NumberForm from '@/components/settings/form/NumberForm'
+import RadioBoolean from '@/components/settings/form/RadioBooleanForm'
+import RadioForm from '@/components/settings/form/RadioForm'
+import SelectForm from '@/components/settings/form/SelectForm'
+import alert from '@/components/utils/alert'
+import { TheDeskContext } from '@/context'
+import { defaultSetting, type Settings as SettingsType } from '@/entities/settings'
+import { Context as i18nContext } from '@/i18n'
+import { ContextLoadTheme } from '@/theme'
+import { getSpotifyPlaylist, nowplayingCode, nowplayingDisconnect, nowplayingInit, spotifyTemplateReplace } from '@/utils/nowplaying'
+import { readSettings, saveSetting } from '@/utils/storage'
+
 const languages = [
 	{
 		label: 'English',
-		value: 'en',
+		value: 'en'
 	},
 	{
 		label: '日本語',
-		value: 'ja',
-	},
+		value: 'ja'
+	}
 ]
 const themes = [
 	{
 		label: 'Dark',
-		value: 'dark',
+		value: 'dark'
 	},
 	{
 		label: 'Light',
-		value: 'light',
+		value: 'light'
 	},
 	{
 		label: 'HighContrast',
-		value: 'high-contrast',
-	},
+		value: 'high-contrast'
+	}
 ]
 const time = ['relative', 'absolute', '12h']
 const afterPost = ['close', 'stay']
@@ -77,7 +78,7 @@ function App() {
 		readSettings(lang).then((res) => {
 			setStyle({
 				fontSize: `${res.appearance.font_size}px`,
-				fontFamily: res.appearance.font,
+				fontFamily: res.appearance.font
 			})
 			switchLang(res.appearance.language)
 			dayjs.locale(res.appearance.language)
@@ -105,7 +106,7 @@ function App() {
 		const settings: SettingsType = {
 			appearance,
 			timeline: timelineConfig,
-			compose,
+			compose
 		}
 		await saveSetting({ obj: settings })
 		localStorage.setItem('spotifyTemplate', spotifyTemp)
@@ -244,7 +245,10 @@ function App() {
 						hint={formatMessage({ id: 'settings.settings.timeline.cropImage.hint' })}
 						value={timelineConfig.cropImage}
 						onChange={(value) => updateTimeline('cropImage', value)}
-						data={[{ label: 'Cover', value: 'cover' }, { label: 'Contain', value: 'contain' }]}
+						data={[
+							{ label: 'Cover', value: 'cover' },
+							{ label: 'Contain', value: 'contain' }
+						]}
 						fontSize="1.1em"
 					/>
 					<RadioForm
@@ -264,7 +268,7 @@ function App() {
 							max={65535}
 							step={1}
 							unit=""
-						fontSize="1.1em"
+							fontSize="1.1em"
 						/>
 					)}
 					<Divider />
@@ -352,7 +356,7 @@ function App() {
 						<FormattedMessage id="settings.settings.open_appData_folder" />
 					</Button>
 
-					<Button appearance="primary" color="red" onClick={() => deleteAllData()} style={{ marginLeft: '1em'}}>
+					<Button appearance="primary" color="red" onClick={() => deleteAllData()} style={{ marginLeft: '1em' }}>
 						<FormattedMessage id="settings.settings.delete_allData" />
 					</Button>
 					<p style={{ fontSize: 10, margin: 10 }}>

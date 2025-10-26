@@ -1,8 +1,7 @@
+import type { Entity, MegalodonInterface } from '@cutls/megalodon'
 import { useRouter } from 'next/router'
 import { type Dispatch, useEffect, useState } from 'react'
 import { Animation, Container } from 'rsuite'
-
-import type { Entity, MegalodonInterface } from '@cutls/megalodon'
 import FollowedHashtags from './FollowedHashtags'
 import ListDetail from './List'
 import ListsDetail from './Lists'

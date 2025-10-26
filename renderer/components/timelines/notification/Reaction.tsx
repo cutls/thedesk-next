@@ -1,3 +1,9 @@
+import type { Entity, MegalodonInterface } from '@cutls/megalodon'
+import { Icon } from '@rsuite/icons'
+import { type MouseEventHandler, useState } from 'react'
+import { BsArrowRepeat, BsHouseDoor, BsMenuUp, BsPaperclip, BsPencil, BsStar } from 'react-icons/bs'
+import { useIntl } from 'react-intl'
+import { Avatar, Button, FlexboxGrid, Notification, toaster } from 'rsuite'
 import Reply from '@/components/compose/Status'
 import Time from '@/components/utils/Time'
 import { TIMELINE_STATUSES_COUNT } from '@/defaults'
@@ -6,13 +12,7 @@ import type { CustomEmojiCategory } from '@/entities/emoji'
 import type { Server } from '@/entities/server'
 import emojify from '@/utils/emojify'
 import { open } from '@/utils/openBrowser'
-import { type ParsedAccount, accountMatch, findAccount, findLink, findTag } from '@/utils/statusParser'
-import type { Entity, MegalodonInterface } from '@cutls/megalodon'
-import { Icon } from '@rsuite/icons'
-import { type MouseEventHandler, useState } from 'react'
-import { BsArrowRepeat, BsHouseDoor, BsMenuUp, BsPaperclip, BsPencil, BsStar } from 'react-icons/bs'
-import { useIntl } from 'react-intl'
-import { Avatar, Button, FlexboxGrid, Notification, toaster } from 'rsuite'
+import { accountMatch, findAccount, findLink, findTag, type ParsedAccount } from '@/utils/statusParser'
 import Actions from '../status/Actions'
 import Body from '../status/Body'
 import Poll from '../status/Poll'
@@ -71,7 +71,7 @@ const actionText = (notification: Entity.Notification, setAccountDetail: (accoun
 				<span
 					style={{ color: 'var(--rs-text-secondary)', cursor: 'pointer' }}
 					dangerouslySetInnerHTML={{
-						__html: emojify(formatMessage({ id: 'timeline.notification.favourite.body' }, { user: useName }), notification.account.emojis),
+						__html: emojify(formatMessage({ id: 'timeline.notification.favourite.body' }, { user: useName }), notification.account.emojis)
 					}}
 					onClick={() => setAccountDetail(notification.account)}
 				/>
@@ -81,7 +81,7 @@ const actionText = (notification: Entity.Notification, setAccountDetail: (accoun
 				<span
 					style={{ color: 'var(--rs-text-secondary)', cursor: 'pointer' }}
 					dangerouslySetInnerHTML={{
-						__html: emojify(formatMessage({ id: 'timeline.notification.reblog.body' }, { user: useName }), notification.account.emojis),
+						__html: emojify(formatMessage({ id: 'timeline.notification.reblog.body' }, { user: useName }), notification.account.emojis)
 					}}
 					onClick={() => setAccountDetail(notification.account)}
 				/>
@@ -91,7 +91,7 @@ const actionText = (notification: Entity.Notification, setAccountDetail: (accoun
 				<span
 					style={{ color: 'var(--rs-text-secondary)', cursor: 'pointer' }}
 					dangerouslySetInnerHTML={{
-						__html: emojify(formatMessage({ id: 'timeline.notification.poll_expired.body' }, { user: useName }), notification.account.emojis),
+						__html: emojify(formatMessage({ id: 'timeline.notification.poll_expired.body' }, { user: useName }), notification.account.emojis)
 					}}
 					onClick={() => setAccountDetail(notification.account)}
 				/>
@@ -101,7 +101,7 @@ const actionText = (notification: Entity.Notification, setAccountDetail: (accoun
 				<span
 					style={{ color: 'var(--rs-text-secondary)', cursor: 'pointer' }}
 					dangerouslySetInnerHTML={{
-						__html: emojify(formatMessage({ id: 'timeline.notification.poll_vote.body' }, { user: useName }), notification.account.emojis),
+						__html: emojify(formatMessage({ id: 'timeline.notification.poll_vote.body' }, { user: useName }), notification.account.emojis)
 					}}
 					onClick={() => setAccountDetail(notification.account)}
 				/>
@@ -111,7 +111,7 @@ const actionText = (notification: Entity.Notification, setAccountDetail: (accoun
 				<span
 					style={{ color: 'var(--rs-text-secondary)', cursor: 'pointer' }}
 					dangerouslySetInnerHTML={{
-						__html: emojify(formatMessage({ id: 'timeline.notification.quote.body' }, { user: useName }), notification.account.emojis),
+						__html: emojify(formatMessage({ id: 'timeline.notification.quote.body' }, { user: useName }), notification.account.emojis)
 					}}
 					onClick={() => setAccountDetail(notification.account)}
 				/>
@@ -121,7 +121,7 @@ const actionText = (notification: Entity.Notification, setAccountDetail: (accoun
 				<span
 					style={{ color: 'var(--rs-text-secondary)', cursor: 'pointer' }}
 					dangerouslySetInnerHTML={{
-						__html: emojify(formatMessage({ id: 'timeline.notification.status.body' }, { user: useName }), notification.account.emojis),
+						__html: emojify(formatMessage({ id: 'timeline.notification.status.body' }, { user: useName }), notification.account.emojis)
 					}}
 					onClick={() => setAccountDetail(notification.account)}
 				/>
@@ -131,7 +131,7 @@ const actionText = (notification: Entity.Notification, setAccountDetail: (accoun
 				<span
 					style={{ color: 'var(--rs-text-secondary)', cursor: 'pointer' }}
 					dangerouslySetInnerHTML={{
-						__html: emojify(formatMessage({ id: 'timeline.notification.update.body' }, { user: useName }), notification.account.emojis),
+						__html: emojify(formatMessage({ id: 'timeline.notification.update.body' }, { user: useName }), notification.account.emojis)
 					}}
 					onClick={() => setAccountDetail(notification.account)}
 				/>
@@ -142,7 +142,7 @@ const actionText = (notification: Entity.Notification, setAccountDetail: (accoun
 				<span
 					style={{ color: 'var(--rs-text-secondary)', cursor: 'pointer' }}
 					dangerouslySetInnerHTML={{
-						__html: emojify(formatMessage({ id: 'timeline.notification.emoji_reaction.body' }, { user: useName }), notification.account.emojis),
+						__html: emojify(formatMessage({ id: 'timeline.notification.emoji_reaction.body' }, { user: useName }), notification.account.emojis)
 					}}
 					onClick={() => setAccountDetail(notification.account)}
 				/>
@@ -186,9 +186,9 @@ const Reaction: React.FC<Props> = (props) => {
 						() => {
 							open(parsedAccount.url)
 							toaster.remove(confirmToaster)
-						},
+						}
 					),
-					{ placement: 'topCenter', duration: 0 },
+					{ placement: 'topCenter', duration: 0 }
 				)
 			}
 			return

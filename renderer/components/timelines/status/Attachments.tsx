@@ -1,9 +1,3 @@
-import { TheDeskContext } from '@/context'
-import { defaultSetting, Settings } from '@/entities/settings'
-import type { ColumnWidth } from '@/entities/timeline'
-import failoverImg from '@/utils/failoverImg'
-import { open } from '@/utils/openBrowser'
-import { readSettings } from '@/utils/storage'
 import type { Entity } from '@cutls/megalodon'
 import { Icon } from '@rsuite/icons'
 import Image from 'next/image'
@@ -12,6 +6,12 @@ import { Blurhash } from 'react-blurhash'
 import { BsBoxArrowUpRight, BsCaretRightFill, BsEyeSlash, BsVolumeUp } from 'react-icons/bs'
 import { FormattedMessage } from 'react-intl'
 import { Button, IconButton } from 'rsuite'
+import { TheDeskContext } from '@/context'
+import { defaultSetting, Settings } from '@/entities/settings'
+import type { ColumnWidth } from '@/entities/timeline'
+import failoverImg from '@/utils/failoverImg'
+import { open } from '@/utils/openBrowser'
+import { readSettings } from '@/utils/storage'
 
 type Props = {
 	attachments: Array<Entity.Attachment>

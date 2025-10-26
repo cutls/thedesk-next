@@ -1,9 +1,9 @@
-import { open } from '@/utils/openBrowser'
 import { Icon } from '@rsuite/icons'
 import Image from 'next/image'
 import { BsGithub } from 'react-icons/bs'
 import { FormattedMessage } from 'react-intl'
 import { Button, FlexboxGrid, Heading, List, Modal } from 'rsuite'
+import { open } from '@/utils/openBrowser'
 import desk from '../../../assets/desk.png'
 import { packages, thirdparty } from '../../thirdparty'
 
@@ -55,7 +55,7 @@ const Thirdparty: React.FC<Props> = (props) => {
 								justifyContent: 'space-between',
 								alignItems: 'center',
 								backgroundColor: 'var(--rs-border-secondary)',
-								boxShadow: '0 -1px 0 var(--rs-border-primary),0 1px 0 var(--rs-border-primary)',
+								boxShadow: '0 -1px 0 var(--rs-border-primary),0 1px 0 var(--rs-border-primary)'
 							}}
 							key={l.package_name}
 						>

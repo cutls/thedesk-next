@@ -5,16 +5,16 @@ import { Loader } from 'rsuite'
 
 function App() {
 	const router = useRouter()
-    const params = useSearchParams()
-    const servers = params.get('servers')
-    const accounts = params.get('accounts')
-    const timelinesV2 = params.get('timelinesV2')
-    useEffect(() => {
-        if (servers) localStorage.setItem('servers', servers)
-        if (accounts) localStorage.setItem('accounts', accounts)
-        if (timelinesV2) localStorage.setItem('timelinesV2', timelinesV2)
-        router.replace('/')
-    }, [servers, accounts, timelinesV2])
+	const params = useSearchParams()
+	const servers = params.get('servers')
+	const accounts = params.get('accounts')
+	const timelinesV2 = params.get('timelinesV2')
+	useEffect(() => {
+		if (servers) localStorage.setItem('servers', servers)
+		if (accounts) localStorage.setItem('accounts', accounts)
+		if (timelinesV2) localStorage.setItem('timelinesV2', timelinesV2)
+		router.replace('/')
+	}, [servers, accounts, timelinesV2])
 
 	return (
 		<div>

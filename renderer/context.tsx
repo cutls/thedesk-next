@@ -1,8 +1,8 @@
-import generator, { type WebSocketInterface, detector, type Entity } from '@cutls/megalodon'
+import generator, { detector, type Entity, type WebSocketInterface } from '@cutls/megalodon'
 import { createContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import type { Server } from './entities/server'
-import { type Settings, defaultSetting } from './entities/settings'
+import { defaultSetting, type Settings } from './entities/settings'
 import type { Timeline, TimelineKind } from './entities/timeline'
 import { getAccount, listServers, listTimelines } from './utils/storage'
 
@@ -58,7 +58,7 @@ export const TheDeskProviderWrapper: React.FC = (props) => {
 				for (const [timeline, server] of timelines) {
 					if (!server || !server.account_id) continue
 
-					let streaming: StreamingArray = undefined
+					let streaming: StreamingArray
 					try {
 						const accountId = server.account_id
 						const [account] = await getAccount({ id: accountId })

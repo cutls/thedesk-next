@@ -2,14 +2,13 @@ import generator, { type MegalodonInterface } from '@cutls/megalodon'
 import { Icon } from '@rsuite/icons'
 import { useEffect, useState } from 'react'
 import { BsX } from 'react-icons/bs'
+import { FormattedMessage } from 'react-intl'
 import { Avatar, Button, Container, Content, Dropdown, FlexboxGrid, Header } from 'rsuite'
-
 import { USER_AGENT } from '@/defaults'
 import type { Account } from '@/entities/account'
 import type { Server, ServerSet } from '@/entities/server'
 import failoverImg from '@/utils/failoverImg'
 import { getUsualAccount, listAccounts, setUsualAccount } from '@/utils/storage'
-import { FormattedMessage } from 'react-intl'
 import Status from './Status'
 
 export const renderAccountIcon = (props: any, ref: any, account: [Account, Server] | undefined) => {

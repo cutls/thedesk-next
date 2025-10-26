@@ -3,6 +3,7 @@ import Picker from '@emoji-mart/react'
 import { Icon } from '@rsuite/icons'
 import { type ChangeEvent, forwardRef, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { BsClock, BsEmojiLaughing, BsEnvelope, BsGlobe, BsLock, BsMenuButtonWide, BsMusicNoteBeamed, BsPaperclip, BsPencil, BsSpotify, BsUnlock, BsX, BsXCircle } from 'react-icons/bs'
+import { FormattedMessage, useIntl } from 'react-intl'
 import {
 	Button,
 	ButtonToolbar,
@@ -21,16 +22,15 @@ import {
 	Schema,
 	SelectPicker,
 	Toggle,
-	Whisper,
 	useToaster,
+	Whisper
 } from 'rsuite'
-
 import alert from '@/components/utils/alert'
 import { TheDeskContext } from '@/context'
 import type { Account } from '@/entities/account'
 import type { CustomEmojiCategory } from '@/entities/emoji'
 import type { Server } from '@/entities/server'
-import { type Settings, defaultSetting } from '@/entities/settings'
+import { defaultSetting, type Settings } from '@/entities/settings'
 import { Context } from '@/theme'
 import { data, mapCustomEmojiCategory } from '@/utils/emojiData'
 import languages from '@/utils/languages'
@@ -38,7 +38,6 @@ import { getUnknownAA, nowplaying } from '@/utils/nowplaying'
 import { open } from '@/utils/openBrowser'
 import { privacyColor, privacyIcon } from '@/utils/statusParser'
 import { readSettings } from '@/utils/storage'
-import { FormattedMessage, useIntl } from 'react-intl'
 import AutoCompleteTextarea, { type ArgProps as AutoCompleteTextareaProps } from './AutoCompleteTextarea'
 import EditMedia from './EditMedia'
 
@@ -76,7 +75,7 @@ const model = Schema.Model({
 	poll: Schema.Types.ObjectType().shape({
 		options: Schema.Types.ArrayType().of(Schema.Types.StringType().isRequired('Required')).minLength(2, 'Minimum 2 choices required'),
 		expires_in: Schema.Types.NumberType().isRequired('Required'),
-		multiple: Schema.Types.BooleanType().isRequired('Required'),
+		multiple: Schema.Types.BooleanType().isRequired('Required')
 	}),
 	scheduled_at: Schema.Types.DateType().addRule((value, _data) => {
 		const limit = new Date()
@@ -85,7 +84,7 @@ const model = Schema.Model({
 			return false
 		}
 		return true
-	}, 'Must be at least 5 minutes in the future'),
+	}, 'Must be at least 5 minutes in the future')
 })
 const Status: React.FC<Props> = (props) => {
 	const { formatMessage } = useIntl()
@@ -93,12 +92,12 @@ const Status: React.FC<Props> = (props) => {
 	const { focused, setFocused } = useContext(TheDeskContext)
 	const focusAttr = {
 		onFocus: () => setFocused(true),
-		onBlur: () => setFocused(false),
+		onBlur: () => setFocused(false)
 	}
 
 	const [formValue, setFormValue] = useState<FormValue>({
 		spoiler: '',
-		status: '',
+		status: ''
 	})
 	const [formError, setFormError] = useState<any>({})
 	const [customEmojis, setCustomEmojis] = useState<Array<CustomEmojiCategory>>([])
@@ -160,17 +159,17 @@ const Status: React.FC<Props> = (props) => {
 
 				let value = {
 					spoiler: res.data.spoiler_text,
-					status: res.data.text,
+					status: res.data.text
 				}
 
 				if (target.sensitive) {
 					value = Object.assign(value, {
-						nsfw: target.sensitive,
+						nsfw: target.sensitive
 					})
 				}
 				if (target.media_attachments.length > 0) {
 					value = Object.assign(value, {
-						attachments: target.media_attachments,
+						attachments: target.media_attachments
 					})
 				}
 				setFormValue(value)
@@ -197,8 +196,8 @@ const Status: React.FC<Props> = (props) => {
 		if (props.defaultNSFW) {
 			setFormValue((current) =>
 				Object.assign({}, current, {
-					nsfw: props.defaultNSFW,
-				}),
+					nsfw: props.defaultNSFW
+				})
 			)
 		}
 	}, [props.defaultNSFW])
@@ -232,45 +231,45 @@ const Status: React.FC<Props> = (props) => {
 			let options = { visibility: useVis || visibility }
 			if (props.in_reply_to) {
 				options = Object.assign({}, options, {
-					in_reply_to_id: props.in_reply_to.id,
+					in_reply_to_id: props.in_reply_to.id
 				})
 			}
 			if (formValue.attachments) {
 				options = Object.assign({}, options, {
-					media_ids: formValue.attachments.map((m) => m.id),
+					media_ids: formValue.attachments.map((m) => m.id)
 				})
 			}
 			if (formValue.nsfw !== undefined) {
 				options = Object.assign({}, options, {
-					sensitive: formValue.nsfw,
+					sensitive: formValue.nsfw
 				})
 			}
 			if (language) {
 				options = Object.assign({}, options, {
-					language: language,
+					language: language
 				})
 			}
 			if (formValue.spoiler.length > 0) {
 				options = Object.assign({}, options, {
-					spoiler_text: formValue.spoiler,
+					spoiler_text: formValue.spoiler
 				})
 			}
 			if (formValue.poll !== undefined && formValue.poll.options.length > 0) {
 				options = Object.assign({}, options, {
-					poll: formValue.poll,
+					poll: formValue.poll
 				})
 			}
 			if (formValue.scheduled_at !== undefined) {
 				options = Object.assign({}, options, {
-					scheduled_at: formValue.scheduled_at.toISOString(),
+					scheduled_at: formValue.scheduled_at.toISOString()
 				})
 			}
 			if (props.edit_target) {
 				await props.client.editStatus(
 					props.edit_target.id,
 					Object.assign({}, options, {
-						status: formValue.status,
-					}),
+						status: formValue.status
+					})
 				)
 			} else {
 				await props.client.postStatus(formValue.status, options)
@@ -305,7 +304,7 @@ const Status: React.FC<Props> = (props) => {
 				}
 			}
 		},
-		[handleSubmit],
+		[handleSubmit]
 	)
 
 	useEffect(() => {
@@ -319,7 +318,7 @@ const Status: React.FC<Props> = (props) => {
 	const clear = (finished: boolean) => {
 		setFormValue({
 			spoiler: '',
-			status: '',
+			status: ''
 		})
 		setCW(false)
 		setSearchAA('')
@@ -334,15 +333,15 @@ const Status: React.FC<Props> = (props) => {
 		if (emoji.native) {
 			setFormValue((current) =>
 				Object.assign({}, current, {
-					status: `${current.status.slice(0, cursor)}${emoji.native} ${current.status.slice(cursor)}`,
-				}),
+					status: `${current.status.slice(0, cursor)}${emoji.native} ${current.status.slice(cursor)}`
+				})
 			)
 		} else if (emoji.shortcodes) {
 			// Custom emojis don't have native code
 			setFormValue((current) =>
 				Object.assign({}, current, {
-					status: `${current.status.slice(0, cursor)}${emoji.shortcodes} ${current.status.slice(cursor)}`,
-				}),
+					status: `${current.status.slice(0, cursor)}${emoji.shortcodes} ${current.status.slice(cursor)}`
+				})
 			)
 		}
 		emojiPickerRef?.current.close()
@@ -395,8 +394,8 @@ const Status: React.FC<Props> = (props) => {
 	const removeAttachment = (index: number) => {
 		setFormValue((current) =>
 			Object.assign({}, current, {
-				attachments: current.attachments.filter((_, i) => i !== index),
-			}),
+				attachments: current.attachments.filter((_, i) => i !== index)
+			})
 		)
 	}
 
@@ -409,14 +408,14 @@ const Status: React.FC<Props> = (props) => {
 		if (formValue.poll) {
 			setFormValue((current) =>
 				Object.assign({}, current, {
-					poll: undefined,
-				}),
+					poll: undefined
+				})
 			)
 		} else {
 			setFormValue((current) =>
 				Object.assign({}, current, {
-					poll: defaultPoll(),
-				}),
+					poll: defaultPoll()
+				})
 			)
 		}
 	}
@@ -425,14 +424,14 @@ const Status: React.FC<Props> = (props) => {
 		if (formValue.scheduled_at) {
 			setFormValue((current) =>
 				Object.assign({}, current, {
-					scheduled_at: undefined,
-				}),
+					scheduled_at: undefined
+				})
 			)
 		} else {
 			setFormValue((current) =>
 				Object.assign({}, current, {
-					scheduled_at: new Date(),
-				}),
+					scheduled_at: new Date()
+				})
 			)
 		}
 	}
@@ -513,7 +512,7 @@ const Status: React.FC<Props> = (props) => {
 			if (ret.file) coreUploader(ret.file)
 			setFormValue({
 				spoiler: formValue.spoiler,
-				status: ret.text,
+				status: ret.text
 			})
 			onClose()
 		}
@@ -672,7 +671,7 @@ const Status: React.FC<Props> = (props) => {
 										objectFit: 'cover',
 										borderRadius: '8px',
 										boxSizing: 'border-box',
-										marginBottom: '4px',
+										marginBottom: '4px'
 									}}
 								/>
 							</div>
@@ -718,7 +717,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, AutoCompleteTextareaProps>(Auto
 const defaultPoll = () => ({
 	options: ['', ''],
 	expires_in: 86400,
-	multiple: false,
+	multiple: false
 })
 
 const PollInputControl: FormControlProps<Poll, any> = ({ value, onChange, fieldError, onFocus, onBlur }) => {
@@ -734,7 +733,7 @@ const PollInputControl: FormControlProps<Poll, any> = ({ value, onChange, fieldE
 		{ label: formatMessage({ id: 'compose.poll.6h' }), value: 21600 },
 		{ label: formatMessage({ id: 'compose.poll.1d' }), value: 86400 },
 		{ label: formatMessage({ id: 'compose.poll.3d' }), value: 259200 },
-		{ label: formatMessage({ id: 'compose.poll.7d' }), value: 604800 },
+		{ label: formatMessage({ id: 'compose.poll.7d' }), value: 604800 }
 	]
 
 	const handleChangePoll = (nextPoll: Poll) => {
@@ -748,7 +747,7 @@ const PollInputControl: FormControlProps<Poll, any> = ({ value, onChange, fieldE
 			options: current.options.map((v, i) => {
 				if (i === index) return value
 				return v
-			}),
+			})
 		})
 		handleChangePoll(next)
 	}
@@ -756,7 +755,7 @@ const PollInputControl: FormControlProps<Poll, any> = ({ value, onChange, fieldE
 	const addOption = () => {
 		const current = poll
 		const next = Object.assign({}, current, {
-			options: [...current.options, ''],
+			options: [...current.options, '']
 		})
 		const currentFocused = focused
 		currentFocused.push(0)
@@ -767,7 +766,7 @@ const PollInputControl: FormControlProps<Poll, any> = ({ value, onChange, fieldE
 	const removeOption = (index: number) => {
 		const current = poll
 		const next = Object.assign({}, current, {
-			options: current.options.filter((_, i) => i !== index),
+			options: current.options.filter((_, i) => i !== index)
 		})
 		const currentFocused = focused
 		setFocused(currentFocused.splice(index, 1))
@@ -804,8 +803,8 @@ const PollInputControl: FormControlProps<Poll, any> = ({ value, onChange, fieldE
 							onChange={(value) =>
 								setPoll((current) =>
 									Object.assign({}, current, {
-										multiple: value,
-									}),
+										multiple: value
+									})
 								)
 							}
 						/>

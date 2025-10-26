@@ -32,8 +32,8 @@ const generateNotification = (notification: Entity.Notification, formatMessage: 
 				`${notification.account.acct}`,
 				sanitizeHtml(notification.status!.content, {
 					allowedTags: [],
-					allowedAttributes: false,
-				}),
+					allowedAttributes: false
+				})
 			]
 		default:
 			return ['', '']
