@@ -90,7 +90,7 @@ function App() {
 		setFonts(['sans-serif', ...JSON.parse(localStorage.getItem('fonts') || '[]')])
 		if (location.protocol !== 'http:') setCurrentPath(location.href.replace('setting.html', ''))
 		loadAppearance()
-		setSpotifyTemp(localStorage.getItem('spotifyTemplate') || '#NowPlaying {song} / {album} / {artist}\n{url} #SpotifyWithTheDesk')
+		setSpotifyTemp(localStorage.getItem('spotifyTemplate') || '#NowPlaying {song} / {album} / {artist}\n{url} #{source}WithTheDesk')
 		const f = async () => {
 			const settings = await readSettings()
 			setAppearance((current) => Object.assign({}, current, settings.appearance))
@@ -333,7 +333,7 @@ function App() {
 					</p>
 					<Input as="textarea" rows={3} value={spotifyTemp} onChange={(e) => setSpotifyTemp(e)} onFocus={() => getDemoTrack()} />
 					<p style={{ fontSize: 10, margin: 10 }}>
-						<FormattedMessage id="settings.settings.spotify.tag" />: {'{song} {album} {artist} {url} {composer} {hz} {bitRate} {lyricist} {bpm} {genre}'}
+						<FormattedMessage id="settings.settings.spotify.tag" />: {'{song} {album} {artist} {url} {composer} {hz} {bitRate} {lyricist} {bpm} {genre} {source}'}
 					</p>
 					{(!!demoTrack || demoTrackLoading) && (
 						<div style={{ padding: 5, backgroundColor: 'var(--rs-input-bg)' }}>

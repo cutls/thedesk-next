@@ -20,7 +20,7 @@ async function spotifyApi(url: string, showToaster: (message: string) => void) {
 	}
 }
 export function spotifyTemplateReplace(item: any, template: string) {
-	let content = template === 'null' || !template ? '#NowPlaying {song} / {album} / {artist}\n{url} #SpotifyWithTheDesk' : template
+	let content = template === 'null' || !template ? '#NowPlaying {song} / {album} / {artist}\n{url} #{soource}WithTheDesk' : template
 	const regExp1 = /{song}/g
 	content = content.replace(regExp1, item.name)
 	const regExp2 = /{album}/g
@@ -41,6 +41,8 @@ export function spotifyTemplateReplace(item: any, template: string) {
 	content = content.replace(regExp9, '')
 	const regExp0 = /{genre}/g
 	content = content.replace(regExp0, '')
+	const regExpS = /{source}/g
+	content = content.replace(regExpS, 'Spotify')
 	return content
 }
 export async function nowplaying(key: 'spotify' | 'appleMusic', showToaster: (message: string) => void) {
@@ -74,7 +76,7 @@ export async function nowplaying(key: 'spotify' | 'appleMusic', showToaster: (me
 				const item = itemRaw.type === 'dock' ? await getUnknownData(itemRaw.data) : itemRaw
 				const contentRaw = localStorage.getItem('nowplayingTemplate')
 				const artwork = item.artwork ? new File([Buffer.from(item.artwork, 'base64')], 'cover.jpg', { type: 'image/jpeg' }) : null
-				let content = contentRaw === 'null' || !contentRaw ? '#NowPlaying {song} / {album} / {artist}\n{url} #SpotifyWithTheDesk' : contentRaw
+				let content = contentRaw === 'null' || !contentRaw ? '#NowPlaying {song} / {album} / {artist}\n{url} #{source}WithTheDesk' : contentRaw
 				const regExp1 = /{song}/g
 				content = content.replace(regExp1, item.name)
 				const regExp2 = /{album}/g
@@ -95,6 +97,8 @@ export async function nowplaying(key: 'spotify' | 'appleMusic', showToaster: (me
 				content = content.replace(regExp9, '')
 				const regExp0 = /{genre}/g
 				content = content.replace(regExp0, '')
+				const regExpS = /{source}/g
+				content = content.replace(regExpS, 'AppleMusic')
 				resolve({ text: content, file: artwork, title: `${item.name} ${item.album} ${item.artist}` })
 			})
 		)
