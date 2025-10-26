@@ -173,7 +173,7 @@ function App() {
 						label={formatMessage({ id: 'settings.settings.appearance.font_size' })}
 						value={appearance.font_size}
 						onChange={(value) => updateAppearance('font_size', value)}
-						min={14}
+						min={5}
 						max={22}
 						step={1}
 						unit="px"
