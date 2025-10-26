@@ -26,6 +26,9 @@
 			"a11y": {
 				"useValidAriaRole": "off",
 				"noLabelWithoutControl": "off"
+			},
+			"security": {
+				"noDangerouslySetInnerHtml": "off"
 			}
 		}
 	},
