@@ -92,7 +92,6 @@ export default function TimelineColumn(props: Props) {
 		}
 		f()
 		setColumnWidth(columnWidthCalc(props.timeline.column_width))
-
 		if (props.timeline.kind === 'home') {
 			listenUser<ReceiveHomeStatusPayload>(
 				'receive-home-status',
