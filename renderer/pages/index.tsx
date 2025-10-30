@@ -90,7 +90,7 @@ function App() {
 		if (latestTimelineRefreshed > 0) allClose()
 		const timelines = await listTimelines()
 		console.log('start', timelines)
-		await start(timelines.flat())
+		const fn = await start(timelines.flat())
 		const widths = timelines.map((tl) => columnWidthCalc(tl[0][0].column_width))
 		setColumnWidths(widths)
 		setTimelines(timelines)
@@ -103,6 +103,7 @@ function App() {
 				})
 			}
 		})
+		return fn
 	}
 
 	useEffect(() => {
@@ -147,6 +148,7 @@ function App() {
 		}
 	}, [])
 	const timelineRefresh = async () => {
+		allClose()
 		loadTimelines()
 		listServers().then((res) => {
 			if (res.length === 0) {
@@ -164,7 +166,10 @@ function App() {
 		})
 	}
 	useEffect(() => {
-		loadTimelines()
+		const fn = loadTimelines()
+		return () => {
+			fn.then((close) => close())
+		}
 	}, [])
 	useEffect(() => {
 		localStorage.setItem('composePosition', composePosition.join(','))

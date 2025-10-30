@@ -23,10 +23,13 @@ type Props = {
 const Attachments: React.FC<Props> = (props) => {
 	const [sensitive, setSensitive] = useState<boolean>(props.sensitive)
 	const { timelineConfig } = useContext(TheDeskContext)
+	const changeSensitive = () => {
+		setSensitive((current) => !current)
+	}
 
 	return (
 		<div style={{ display: 'flex', flexWrap: 'wrap' }}>
-			<AttachmentBox attachments={props.attachments} openMedia={props.openMedia} sensitive={sensitive} cropImage={timelineConfig.cropImage} columnWidth={props.columnWidth} />
+			<AttachmentBox attachments={props.attachments} changeSensitive={changeSensitive} openMedia={props.openMedia} sensitive={sensitive} cropImage={timelineConfig.cropImage} columnWidth={props.columnWidth} />
 		</div>
 	)
 }
@@ -34,6 +37,7 @@ const Attachments: React.FC<Props> = (props) => {
 type AttachmentBoxProps = {
 	attachments: Array<Entity.Attachment>
 	openMedia: (media: Array<Entity.Attachment>, index: number) => void
+	changeSensitive: () => void
 	cropImage: 'cover' | 'contain'
 	sensitive: boolean
 	columnWidth: number
@@ -48,7 +52,7 @@ function AttachmentBox(props: AttachmentBoxProps) {
 			{attachments.map((media, index) => (
 				// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
 				<div key={media.id + index} style={{ margin: '1px', width: imageWidth }}>
-					<Attachment media={media} width={imageWidth} sensitive={props.sensitive} cropImage={props.cropImage} openMedia={() => props.openMedia(attachments, index)} />
+					<Attachment media={media} changeSensitive={props.changeSensitive} width={imageWidth} sensitive={props.sensitive} cropImage={props.cropImage} openMedia={() => props.openMedia(attachments, index)} />
 				</div>
 			))}
 		</div>
@@ -58,19 +62,21 @@ function AttachmentBox(props: AttachmentBoxProps) {
 type AttachmentProps = {
 	media: Entity.Attachment
 	openMedia: (media: Entity.Attachment) => void
+	changeSensitive: () => void
 	cropImage: 'cover' | 'contain'
 	sensitive: boolean
 	width?: number
 }
 
 const Attachment: React.FC<AttachmentProps> = (props) => {
-	const { media, cropImage, sensitive, width } = props
+	const { media, cropImage, changeSensitive, sensitive, width } = props
 	const externalWindow = async (url: string) => {
 		open(url)
 	}
 
 	return (
 		<div style={{ position: 'relative' }}>
+			<IconButton icon={<Icon as={BsEyeSlash} />} size="sm" appearance="subtle" onClick={changeSensitive} style={{ position: 'absolute', bottom: '4px', right: '4px', zIndex: 2 }} />
 			<IconButton icon={<Icon as={BsBoxArrowUpRight} />} size="sm" appearance="subtle" onClick={() => externalWindow(media.url)} style={{ position: 'absolute', top: '4px', right: '4px' }} />
 			{(media.type === 'gifv' || media.type === 'video') && (
 				<IconButton icon={<Icon as={BsCaretRightFill} />} circle onClick={() => props.openMedia(media)} style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }} />

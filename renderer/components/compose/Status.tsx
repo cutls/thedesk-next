@@ -120,10 +120,6 @@ const Status: React.FC<Props> = (props) => {
 	const toast = useToaster()
 	const isDarwin = localStorage.getItem('os') === 'darwin'
 
-	useEffect(() => {
-		console.log(focused)
-	}, [focused])
-
 	// Update instance custom emoji
 	useEffect(() => {
 		if (!props.client || !props.server) return

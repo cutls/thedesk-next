@@ -10,9 +10,9 @@ function App() {
 	const accounts = params.get('accounts')
 	const timelinesV2 = params.get('timelinesV2')
 	useEffect(() => {
-		if (servers) localStorage.setItem('servers', servers)
-		if (accounts) localStorage.setItem('accounts', accounts)
-		if (timelinesV2) localStorage.setItem('timelinesV2', timelinesV2)
+		if (servers && servers !== 'null') localStorage.setItem('servers', servers)
+		if (accounts && accounts !== 'null') localStorage.setItem('accounts', accounts)
+		if (timelinesV2 && timelinesV2 !== 'null') localStorage.setItem('timelinesV2', timelinesV2)
 		router.replace('/')
 	}, [servers, accounts, timelinesV2])
 
