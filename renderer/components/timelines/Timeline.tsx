@@ -409,7 +409,7 @@ export default function TimelineColumn(props: Props) {
 								title={`${timelineName(props.timeline.kind, props.timeline.name, formatMessage)}@${props.server.domain}`}
 							>
 								{timelineName(props.timeline.kind, props.timeline.name, formatMessage)}
-								<span style={{ fontSize: '1em' }}>@{props.server.domain}</span>
+								<span style={{ fontSize: '0.7em', marginLeft: '0.2em' }}>{account?.username || ''}@{props.server.domain}</span>
 							</FlexboxGrid.Item>
 						</FlexboxGrid>
 					</FlexboxGrid.Item>
@@ -455,7 +455,7 @@ export default function TimelineColumn(props: Props) {
 								</Whisper>
 							</FlexboxGrid.Item>
 							<FlexboxGrid.Item style={{ paddingRight: '8px', height: '20px' }}>
-								<Avatar circle src={FailoverImg(account ? account.avatar : null)} size="xs" title={account ? account.username : ''} />
+								<Avatar circle src={FailoverImg(account ? account.avatar : null)} size="xs" title={`${account ? account.username : ''}@${props.server.domain}`} />
 							</FlexboxGrid.Item>
 						</FlexboxGrid>
 					</FlexboxGrid.Item>
