@@ -42,6 +42,7 @@ type Props = {
 export default function TimelineColumn(props: Props) {
 	const { formatMessage } = useIntl()
 	const { timelineConfig } = useContext(TheDeskContext)
+	const { timelineRefresh } = useContext(TimelineRefreshContext)
 
 	const [statuses, setStatuses] = useState<Array<Entity.Status>>([])
 	const [unreadStatuses, setUnreadStatuses] = useState<Array<Entity.Status>>([])
@@ -265,6 +266,7 @@ export default function TimelineColumn(props: Props) {
 		try {
 			setLoading(true)
 			const res = await loadTimeline(props.timeline, client)
+			timelineRefresh(true)
 			setStatuses(res)
 		} catch (err) {
 			console.error(err)
