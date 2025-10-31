@@ -24,11 +24,11 @@ export const start = async (timelines: Array<[Timeline, Server, Account]>, gener
 				const noStreaming = server.no_streaming
 				try {
 					const sns = await detector(server.base_url)
-					if (!account || !account.access_token) continue
-					const client = generator(sns, server.base_url, account.access_token)
-					const streaming = !noStreaming ? await client.userStreamingSubscription() : undefined
+					const client = generator(sns, server.base_url, account?.access_token)
+					const streaming = (!noStreaming) ? await client.userStreamingSubscription() : undefined
 					userStreamings.push([server.id, streaming, 'home'])
-				} catch {
+				} catch (e) {
+					console.error(e)
 					console.error('skipped user streaming')
 				}
 			}
@@ -37,12 +37,12 @@ export const start = async (timelines: Array<[Timeline, Server, Account]>, gener
 		const streamings: StreamingArray[] = []
 		let i = 0
 		for (const [timeline, server] of timelines) {
-			if (!server || !server.account_id) continue
+			if (!server) continue
 
 			let streaming: StreamingArray
 			try {
 				const accountId = server.account_id
-				const [account] = await getAccount({ id: accountId })
+				const [account] = accountId ? await getAccount({ id: accountId }) : [null]
 				const sns = await detector(server.base_url)
 				const client = generator(sns, server.base_url, account?.access_token, 'TheDesk(Desktop)')
 				const noStreaming = server.no_streaming

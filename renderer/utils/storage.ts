@@ -26,7 +26,7 @@ export async function listTimelines(): Promise<[Timeline, Server, Account | null
 			oneColumn
 				.map((timeline) => {
 					const server = servers.find((server) => server.id === timeline.server_id)
-					return [timeline, server, (accounts.find((acct) => acct.id === server.account_id) || null)]
+					return [timeline, server, (accounts.find((acct) => acct.id === server?.account_id) || null)]
 				})
 				.filter((pair) => pair[1] !== undefined)
 		)

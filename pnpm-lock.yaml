@@ -13,8 +13,8 @@ importers:
   .:
     dependencies:
       '@cutls/megalodon':
-        specifier: 6.2.5
-        version: 6.2.5
+        specifier: 6.2.6
+        version: 6.2.6
       '@emoji-mart/react':
         specifier: ^1.1.1
         version: 1.1.1(emoji-mart@5.6.0)(react@18.2.0)
@@ -203,8 +203,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@cutls/megalodon@6.2.5':
-    resolution: {integrity: sha512-YWBqvclU9hwap4S4KJDQNWttIMU0LChmVEmwXCJUVBdDVqtI4BxluM37uwtNFqFny3T/NRk1vDsEdT6CyAFoYA==}
+  '@cutls/megalodon@6.2.6':
+    resolution: {integrity: sha512-W1MRW6iKLs/p9gOvh9nVTApT5zW9xd2tb7clle2Q3gg5xg3eQRdBhswW5L/BSpL0YycPNqutADMP8al9yfQHxQ==}
     engines: {node: '>=22.16.0'}
 
   '@develar/schema-utils@2.6.5':
@@ -2445,7 +2445,7 @@ snapshots:
   '@biomejs/cli-win32-x64@2.2.7':
     optional: true
 
-  '@cutls/megalodon@6.2.5':
+  '@cutls/megalodon@6.2.6':
     dependencies:
       '@badgateway/oauth2-client': 2.4.2
       '@types/ws': 8.18.1
