@@ -46,3 +46,4 @@ thirdparty.json
 
 ban.js
 *.p8
+*.provisionprofile

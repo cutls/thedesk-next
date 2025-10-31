@@ -1,7 +1,6 @@
 {
   "productName": "TheDesk",
   "appId": "next.top.thedesk",
-  "afterSign": "build-tool/notarize.js",
   "asarUnpack": [
     "native/**"
   ],
@@ -10,9 +9,24 @@
     "renderer/out",
     "native"
   ],
+  "mas": {
+    "type": "distribution",
+    "entitlements": "plist/parent.plist",
+    "entitlementsInherit": "plist/child.plist",
+    "entitlementsLoginHelper": "plist/loginhelper.plist",
+    "hardenedRuntime": false,
+    "gatekeeperAssess": false,
+    "extendInfo": {
+      "ITSAppUsesNonExemptEncryption": "false"
+    },
+    "provisioningProfile": "buiild-tool/thedesk_MAS.provisionprofile",
+    "minimumSystemVersion": "14.0"
+  },
   "mac": {
     "icon": "assets/icon.icns",
-    "target": ["mas"],
+    "target": [
+      "mas"
+    ],
     "hardenedRuntime": true,
     "gatekeeperAssess": false,
     "entitlements": "build-tool/entitlements.mac.plist",

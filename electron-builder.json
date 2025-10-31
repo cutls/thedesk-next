@@ -19,7 +19,7 @@
 	},
 	"appx": {
 		"identityName": "53491Cutls.TheDesk-PC",
-		"applicationId": "Cutls.TheDesk",
+		"applicationId": "Cutls.TheDesk-PC",
 		"publisherDisplayName": "Cutls",
 		"publisher": "CN=629757F5-A5EE-474F-9562-B304A89A9FD1",
 		"languages": [
