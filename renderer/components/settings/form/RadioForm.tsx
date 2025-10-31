@@ -16,7 +16,7 @@ function RadioForm({ value, onChange, data, label, hint, fontSize }: Props) {
 			{hint && <p style={{ marginBottom: 10 }}>{hint}</p>}
 			{data.map((item) => (
 				<Radio key={item.value} checked={value === item.value} onChange={() => onChange(item.value)}>
-					<FormattedMessage id={item.label} />
+					{item.label.match(/\./) ? <FormattedMessage id={item.label} /> : item.label}
 				</Radio>
 			))}
 		</>
