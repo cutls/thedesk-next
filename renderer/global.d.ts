@@ -19,5 +19,6 @@ declare global {
 		electronAPI: IElectronAPI
 		streamings: StreamingArray[]
 		userStreamings: StreamingArray[]
+		settingAudio: HTMLAudioElement
 	}
 }

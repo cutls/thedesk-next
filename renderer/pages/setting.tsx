@@ -3,9 +3,9 @@ import dayjs from 'dayjs'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { type CSSProperties, useContext, useEffect, useState } from 'react'
-import { BsCheck2, BsChevronLeft } from 'react-icons/bs'
+import { BsCheck2, BsChevronLeft, BsFillPauseCircleFill, BsFillPlayCircleFill } from 'react-icons/bs'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { Badge, Button, Content, Divider, Heading, Input, Loader, SelectPicker, Stack, useToaster } from 'rsuite'
+import { Badge, Button, Content, Divider, Heading, Input, Loader, Progress, SelectPicker, Stack, useToaster } from 'rsuite'
 import NumberForm from '@/components/settings/form/NumberForm'
 import RadioBoolean from '@/components/settings/form/RadioBooleanForm'
 import RadioForm from '@/components/settings/form/RadioForm'
@@ -55,6 +55,8 @@ function App() {
 	const { saveTimelineConfig } = useContext(TheDeskContext)
 	const [style, setStyle] = useState<CSSProperties>({})
 	const [fonts, setFonts] = useState<string[]>([])
+	const [isPlaying, setIsPlaying] = useState(false)
+	const [progressPlaying, setProgressPlaying] = useState(0)
 	const [voices, setVoices] = useState<{ value: string; label: string }[]>([])
 	const [appearance, setAppearance] = useState<SettingsType['appearance']>(defaultSetting.appearance)
 	const [timelineConfig, setTimelineConfig] = useState<SettingsType['timeline']>(defaultSetting.timeline)
@@ -143,6 +145,10 @@ function App() {
 		try {
 			const track = await getSpotifyPlaylist(appearance.language, showToaster)
 			setDemoTrack(track)
+			window.settingAudio?.pause()
+			window.settingAudio = null
+			setIsPlaying(false)
+			setTimeout(() => setProgressPlaying(0), 500)
 		} finally {
 			setDemoTrackLoading(false)
 		}
@@ -176,6 +182,19 @@ function App() {
 			console.log('setting', { pitch: utter.pitch, rate: utter.rate, volume: utter.volume, voice: utter.voice })
 			synthApi.speak(utter)
 		}
+	}
+	const play = (url: string) => {
+		const audio = window.settingAudio || new Audio(url)
+		window.settingAudio = audio
+		if (audio.paused) {
+			audio.play()
+			setIsPlaying(true)
+		} else {
+			audio.pause()
+			setIsPlaying(false)
+		}
+		audio.onended = () => setIsPlaying(false)
+		audio.ontimeupdate = () => setProgressPlaying((audio.currentTime / audio.duration) * 100)
 	}
 
 	return (
@@ -338,13 +357,7 @@ function App() {
 								<FormattedMessage id="settings.settings.timeline.ttsVoice.title" />
 							</p>
 							<div style={{ display: 'flex', alignItems: 'center', marginBottom: 10 }}>
-								<SelectPicker
-									value={timelineConfig.ttsVoice}
-									data={voices}
-									searchable={true}
-									style={{ width: '100%' }}
-									onChange={(value) => updateTimeline('ttsVoice', value)}
-								/>
+								<SelectPicker value={timelineConfig.ttsVoice} data={voices} searchable={true} style={{ width: '100%' }} onChange={(value) => updateTimeline('ttsVoice', value)} />
 								<Button onClick={() => testSpeech()} style={{ marginLeft: 5 }}>
 									<FormattedMessage id="settings.settings.timeline.testSpeech" />
 								</Button>
@@ -422,19 +435,45 @@ function App() {
 					{(!!demoTrack || demoTrackLoading) && (
 						<div style={{ padding: 5, backgroundColor: 'var(--rs-input-bg)' }}>
 							<Badge color="blue" content={formatMessage({ id: 'settings.settings.spotify.demo' })} style={{ marginBottom: 5 }} />
-							{demoTrackLoading ? (
-								<p>
-									<Loader />
-								</p>
-							) : (
-								<p>{spotifyTemplateReplace(demoTrack, spotifyTemp)}</p>
-							)}
+							<div style={{ display: 'flex' }}>
+								{demoTrack && !demoTrackLoading && (
+									<div
+										style={{
+											height: 80,
+											width: 80,
+											marginRight: 10,
+											backgroundImage: `url(${demoTrack.album.images[0]?.url || ''})`,
+											backgroundSize: 'cover',
+											backgroundPosition: 'center',
+											borderRadius: 10,
+											overflow: 'hidden'
+										}}
+									>
+										<Icon
+											onClick={() => play(demoTrack.preview_url)}
+											as={isPlaying ? BsFillPauseCircleFill : BsFillPlayCircleFill}
+											style={{ fontSize: 30, marginTop: 25, marginLeft: 25, cursor: 'pointer' }}
+											className="play-pause-button"
+										/>
+										<Progress.Line percent={progressPlaying} status="active" showInfo={false} />
+									</div>
+								)}
+								{demoTrackLoading ? (
+									<p>
+										<Loader />
+									</p>
+								) : (
+									<div style={{ width: 'calc(100% - 80px)' }}>{spotifyTemplateReplace(demoTrack, spotifyTemp)}</div>
+								)}
+							</div>
 						</div>
 					)}
 					<Divider />
-					{isElectron && <Button appearance="ghost" onClick={() => window.electronAPI.openAppDataFolder()}>
-						<FormattedMessage id="settings.settings.open_appData_folder" />
-					</Button>}
+					{isElectron && (
+						<Button appearance="ghost" onClick={() => window.electronAPI.openAppDataFolder()}>
+							<FormattedMessage id="settings.settings.open_appData_folder" />
+						</Button>
+					)}
 
 					<Button appearance="primary" color="red" onClick={() => deleteAllData()} style={{ marginLeft: '1em' }}>
 						<FormattedMessage id="settings.settings.delete_allData" />

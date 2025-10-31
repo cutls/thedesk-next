@@ -181,12 +181,13 @@ export async function nowplayingInit(isDev: boolean, showToaster: (m: string) =>
 	if (!isDev) open(`${apiGateway}?state=connect`)
 	if (isDev) open(`${apiGateway}?state=connectDev2`)
 
-	if (window.electronAPI) window.electronAPI.customUrl(async (_, data) => {
-		if (data[0] === 'spotifyv2') {
-			const code = data[1]
-			nowplayingCode(code, showToaster)
-		}
-	})
+	if (window.electronAPI)
+		window.electronAPI.customUrl(async (_, data) => {
+			if (data[0] === 'spotifyv2') {
+				const code = data[1]
+				nowplayingCode(code, showToaster)
+			}
+		})
 }
 export async function nowplayingCode(code: string, showToaster: (m: string) => void) {
 	const api = await fetch(`${apiGateway}?state=auth&code=${code.replace(/\n/g, '')}`, {
@@ -645,5 +646,12 @@ export async function getSpotifyPlaylist(lang: 'ja' | 'en', showToaster: (m: str
 	const playlist = lang === 'ja' ? jaPlaylist : enPlaylist
 	const start = `https://api.spotify.com/v1/playlists/${playlist}/tracks`
 	const json = await spotifyApi(start, showToaster)
-	return json.items[0].track
+	const songs = json.items
+	for (let i = songs.length - 1; i > 0; i--) {
+		const r = Math.floor(Math.random() * (i + 1))
+		const tmp = songs[i]
+		songs[i] = songs[r]
+		songs[r] = tmp
+	}
+	return songs[0].track
 }
