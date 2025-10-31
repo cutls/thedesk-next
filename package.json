@@ -86,8 +86,18 @@
 			"native"
 		],
 		"win": {
-			"target": "msi",
+			"target": ["msi", "appx"],
 			"icon": "assets/desk.ico"
+		},
+		"appx": {
+			"identityName": "53491Cutls.TheDesk",
+			"applicationId": "Cutls.TheDesk",
+			"publisherDisplayName": "Cutls",
+			"publisher": "CN=629757F5-A5EE-474F-9562-B304A89A9FD1",
+			"languages": [
+				"JA-JP",
+				"EN-US"
+			]
 		},
 		"msi": {
 			"oneClick": false
