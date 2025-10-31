@@ -104,13 +104,17 @@ export async function addServer({ domain }: { domain: string }): Promise<Server>
 	const serverMaxId = servers.reduce((max, server) => (server.id > max ? server.id : max), 0)
 	const sns = await detector(`https://${domain}`)
 	if (sns === 'gotosocial' || sns === 'pixelfed') return
+	const noStreaming = sns === 'friendica'
+	const noSubscribe = sns === 'pleroma' || sns === 'firefish'
 	const server = {
 		id: serverMaxId + 1,
 		domain: domain,
 		base_url: `https://${domain}`,
 		sns,
 		favicon: null,
-		account_id: null
+		account_id: null,
+		no_streaming: noStreaming,
+		cannot_subscribe: noSubscribe
 	}
 	servers.push(server)
 	localStorage.setItem('servers', JSON.stringify(servers))

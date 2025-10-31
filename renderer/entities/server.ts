@@ -8,6 +8,7 @@ export type Server = {
 	favicon: string | null
 	account_id: number | null
 	no_streaming?: boolean
+	cannot_subscribe?: boolean
 }
 
 export type ServerSet = {

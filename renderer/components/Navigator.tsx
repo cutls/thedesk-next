@@ -316,7 +316,7 @@ const serverMenu = (
 				break
 			case 'remove':
 				removeServer({ id: server.server.id })
-				timelineRefresh(false)
+				timelineRefresh(true)
 				break
 			case 'announcements':
 				openAnnouncements(server.server, server.account)

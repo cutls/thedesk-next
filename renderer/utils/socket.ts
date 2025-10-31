@@ -22,10 +22,11 @@ export const start = async (timelines: Array<[Timeline, Server, Account]>, gener
 			const servers = await listServers()
 			for (const [server, account] of servers) {
 				const noStreaming = server.no_streaming
+				const isSubscribable = !server.cannot_subscribe
 				try {
 					const sns = await detector(server.base_url)
 					const client = generator(sns, server.base_url, account?.access_token)
-					const streaming = (!noStreaming) ? await client.userStreamingSubscription() : undefined
+					const streaming = (!noStreaming && (isSubscribable || account)) ? await client.userStreamingSubscription() : undefined
 					userStreamings.push([server.id, streaming, 'home'])
 				} catch (e) {
 					console.error(e)
@@ -46,17 +47,20 @@ export const start = async (timelines: Array<[Timeline, Server, Account]>, gener
 				const sns = await detector(server.base_url)
 				const client = generator(sns, server.base_url, account?.access_token, 'TheDesk(Desktop)')
 				const noStreaming = server.no_streaming
+				const isSubscribable = !server.cannot_subscribe
+				if (noStreaming) continue
 				const targetSocket = userStreamings.find(([id]) => id === server.id)[1]
-				if (!noStreaming && timeline.kind === 'public') await client.publicStreamingSubscription(targetSocket)
-				if (!noStreaming && timeline.kind === 'local') await client.localStreamingSubscription(targetSocket)
-				if (!noStreaming && timeline.kind === 'direct') await client.directStreamingSubscription(targetSocket)
-				if (!noStreaming && timeline.kind === 'list') await client.listStreamingSubscription(targetSocket, timeline.list_id)
-				if (!noStreaming && timeline.kind === 'tag') await client.tagStreamingSubscription(targetSocket, timeline.name)
-				if (!noStreaming && timeline.kind === 'public') streaming = [timeline.id, targetSocket, 'public']
-				if (!noStreaming && timeline.kind === 'local') streaming = [timeline.id, targetSocket, 'public:local']
-				if (!noStreaming && timeline.kind === 'direct') streaming = [timeline.id, targetSocket, 'direct']
-				if (!noStreaming && timeline.kind === 'list') streaming = [timeline.id, targetSocket, 'list']
-				if (!noStreaming && timeline.kind === 'tag') streaming = [timeline.id, targetSocket, 'tag']
+				let newStreaming: WebSocketInterface
+				if (timeline.kind === 'public') newStreaming = await client.publicStreamingSubscription(targetSocket)
+				if (timeline.kind === 'local') newStreaming = await client.localStreamingSubscription(targetSocket)
+				if (timeline.kind === 'direct') newStreaming = await client.directStreamingSubscription(targetSocket)
+				if (timeline.kind === 'list') newStreaming = await client.listStreamingSubscription(targetSocket, timeline.list_id)
+				if (timeline.kind === 'tag') newStreaming = await client.tagStreamingSubscription(targetSocket, timeline.name)
+				if (timeline.kind === 'public') streaming = [timeline.id, isSubscribable ? targetSocket : newStreaming, 'public']
+				if (timeline.kind === 'local') streaming = [timeline.id, isSubscribable ? targetSocket : newStreaming, 'public:local']
+				if (timeline.kind === 'direct') streaming = [timeline.id, isSubscribable ? targetSocket : newStreaming, 'direct']
+				if (timeline.kind === 'list') streaming = [timeline.id, isSubscribable ? targetSocket : newStreaming, 'list']
+				if (timeline.kind === 'tag') streaming = [timeline.id, isSubscribable ? targetSocket : newStreaming, 'tag']
 			} catch {
 				console.error('skipped')
 			}
