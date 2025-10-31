@@ -90,8 +90,10 @@ function App() {
 	}
 	useEffect(() => {
 		setFonts(['sans-serif', ...JSON.parse(localStorage.getItem('fonts') || '[]')])
-		const voices = window.speechSynthesis.getVoices().map((voice) => ({ value: voice.voiceURI, label: `${voice.name} (${voice.lang})` }))
-		setVoices([{ value: '', label: formatMessage({ id: 'settings.settings.timeline.ttsVoice.default' }) }, ...voices])
+		window.speechSynthesis.onvoiceschanged = () => {
+			const voices = window.speechSynthesis.getVoices().map((voice) => ({ value: voice.voiceURI, label: `${voice.name} (${voice.lang})` }))
+			setVoices([{ value: '', label: formatMessage({ id: 'settings.settings.timeline.ttsVoice.default' }) }, ...voices])
+		}
 		if (location.protocol !== 'http:') setCurrentPath(location.href.replace('setting.html', ''))
 		loadAppearance()
 		setSpotifyTemp(localStorage.getItem('spotifyTemplate') || '#NowPlaying {song} / {album} / {artist}\n{url} #{Source}WithTheDesk')
@@ -170,6 +172,7 @@ function App() {
 				const voice = synthApi.getVoices().find((v) => v.voiceURI === timelineConfig.ttsVoice)
 				if (voice) utter.voice = voice
 			}
+			console.log('setting', { pitch: utter.pitch, rate: utter.rate, volume: utter.volume, voice: utter.voice })
 			synthApi.speak(utter)
 		}
 	}
@@ -334,8 +337,16 @@ function App() {
 								<FormattedMessage id="settings.settings.timeline.ttsVoice.title" />
 							</p>
 							<div style={{ display: 'flex', alignItems: 'center', marginBottom: 10 }}>
-								<SelectPicker value={timelineConfig.ttsVoice} data={voices} searchable={true} style={{ width: '100%' }} onChange={(value) => updateTimeline('ttsVoice', value)} />
-								<Button onClick={() => testSpeech()} style={{ marginLeft: 5 }}><FormattedMessage id="settings.settings.timeline.testSpeech" /></Button>
+								<SelectPicker
+									value={timelineConfig.ttsVoice}
+									data={voices}
+									searchable={true}
+									style={{ width: '100%' }}
+									onChange={(value) => updateTimeline('ttsVoice', value)}
+								/>
+								<Button onClick={() => testSpeech()} style={{ marginLeft: 5 }}>
+									<FormattedMessage id="settings.settings.timeline.testSpeech" />
+								</Button>
 							</div>
 						</>
 					)}
