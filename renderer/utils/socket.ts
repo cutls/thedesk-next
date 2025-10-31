@@ -15,6 +15,18 @@ const stripForVoice = (html: string) => {
 }
 // 'home' | 'notifications' | 'local' | 'public' | 'favourites' | 'list' | 'bookmarks' | 'direct' | 'tag'
 type StreamingArray = [number, WebSocketInterface, string]
+export const speech = (text: string, timelineConfig: Settings['timeline']) => {
+	const synthApi = window.speechSynthesis
+	const utter = new SpeechSynthesisUtterance(text)
+	utter.pitch = timelineConfig.ttsPitch
+	utter.rate = timelineConfig.ttsRate
+	utter.volume = timelineConfig.ttsVolume / 100
+	if (timelineConfig.ttsVoice) {
+		const voice = synthApi.getVoices().find((v) => v.voiceURI === timelineConfig.ttsVoice)
+		if (voice) utter.voice = voice
+	}
+	synthApi.speak(utter)
+}
 export const start = async (timelines: Array<[Timeline, Server, Account]>, generateStreaming: boolean) => {
 	const fn = async () => {
 		const userStreamings: StreamingArray[] = !generateStreaming ? window.userStreamings : []
@@ -26,7 +38,7 @@ export const start = async (timelines: Array<[Timeline, Server, Account]>, gener
 				try {
 					const sns = await detector(server.base_url)
 					const client = generator(sns, server.base_url, account?.access_token)
-					const streaming = (!noStreaming && (isSubscribable || account)) ? await client.userStreamingSubscription() : undefined
+					const streaming = !noStreaming && (isSubscribable || account) ? await client.userStreamingSubscription() : undefined
 					userStreamings.push([server.id, streaming, 'home'])
 				} catch (e) {
 					console.error(e)
@@ -100,9 +112,7 @@ export const listenTimeline = async <T>(channel: string, callback: (a: { payload
 							console.error('Cannot TTS')
 						}
 					} else {
-						const synthApi = window.speechSynthesis
-						const utter = new SpeechSynthesisUtterance(b)
-						synthApi.speak(utter)
+						speech(b, timelineConfig)
 					}
 				}
 				if (!ch || ch.includes(timelineKind)) callback({ payload: { status: status, timeline_id: useStreaming[i][0] } as T, kind: ch })
@@ -162,9 +172,7 @@ export const listenUser = async <T>(channel: string, callback: (a: { payload: T 
 							console.error('Cannot TTS')
 						}
 					} else {
-						const synthApi = window.speechSynthesis
-						const utter = new SpeechSynthesisUtterance(b)
-						synthApi.speak(utter)
+						speech(b, timelineConfig)
 					}
 				}
 				if (!ch || ch.includes('user')) callback({ payload: { status: status, server_id: userStreamings[i][0] } as T })

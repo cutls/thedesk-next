@@ -139,7 +139,25 @@
 					"title": "How to display attached images",
 					"hint": "Cover crops to fit the column width, Contain displays the whole image regardless of the column width."
 				},
-				"ttsPort": " HTTP Port"
+				"ttsPort": " HTTP Port",
+				"ttsPitch": {
+					"title": "Pitch",
+					"hint": "Standard is 1. Set between 0 and 2"
+				},
+				"ttsRate": {
+					"title": "Rate",
+					"hint": "Standard is 1. Set between 0.1 and 10"
+				},
+				"ttsVolume": {
+					"title": "Volume",
+					"hint": "Standard is 100. Set between 0 and 100"
+				},
+				"ttsVoice": {
+					"title": "Voice",
+					"default": "Default"
+				},
+				"testSpeech": "Test Speech",
+				"testSpeechManuscript": "Hello. This is a test of text to speech functionality."
 			},
 			"compose": {
 				"title": "Compose",

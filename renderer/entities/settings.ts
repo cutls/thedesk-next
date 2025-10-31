@@ -16,6 +16,10 @@ export type Settings = {
 		ttsProvider: 'system' | 'bouyomi'
 		ttsPort: number
 		cropImage: 'cover' | 'contain'
+		ttsPitch: number
+		ttsRate: number
+		ttsVolume: number
+		ttsVoice: string
 	}
 	compose: {
 		btnPosition: 'left' | 'right'
@@ -40,7 +44,11 @@ export const defaultSetting: Settings = {
 		notification: 'yes',
 		ttsProvider: 'system',
 		ttsPort: 50080,
-		cropImage: 'cover'
+		cropImage: 'cover',
+		ttsPitch: 1,
+		ttsRate: 1,
+		ttsVolume: 100,
+		ttsVoice: ''
 	},
 	compose: {
 		btnPosition: 'right',

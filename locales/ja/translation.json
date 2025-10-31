@@ -135,11 +135,29 @@
 				},
 				"ttsProvider": {
 					"title": "TTSのプロバイダ",
-					"hint": "棒読みちゃん連携を利用する場合はHTTP連携を利用します",
+					"hint": "棒読みちゃん連携を利用する場合はHTTP連携(デフォルトでオン)を利用します",
 					"system": "システム標準",
 					"bouyomi": "棒読みちゃん"
 				},
-				"ttsPort": "棒読みちゃん HTTPポート"
+				"ttsPort": "棒読みちゃん HTTPポート",
+				"ttsPitch": {
+					"title": "読み上げ音程",
+					"hint": "標準値は1。0から2の間で設定してください。"
+				},
+				"ttsRate": {
+					"title": "読み上げ速度",
+					"hint": "標準値は1。0.1から10の間で設定してください。"
+				},
+				"ttsVolume": {
+					"title": "読み上げ音量",
+					"hint": "標準値は100。0から100の間で設定してください。"
+				},
+				"ttsVoice": {
+					"title": "読み上げ音声",
+					"default": "システム標準"
+				},
+				"testSpeech": "テスト再生",
+				"testSpeechManuscript": "こんにちは。これは音声読み上げのテストです。"
 			},
 			"compose": {
 				"title": "投稿",

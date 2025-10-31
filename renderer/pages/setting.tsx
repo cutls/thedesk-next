@@ -55,6 +55,7 @@ function App() {
 	const { saveTimelineConfig } = useContext(TheDeskContext)
 	const [style, setStyle] = useState<CSSProperties>({})
 	const [fonts, setFonts] = useState<string[]>([])
+	const [voices, setVoices] = useState<{ value: string; label: string }[]>([])
 	const [appearance, setAppearance] = useState<SettingsType['appearance']>(defaultSetting.appearance)
 	const [timelineConfig, setTimelineConfig] = useState<SettingsType['timeline']>(defaultSetting.timeline)
 	const [compose, setCompose] = useState<SettingsType['compose']>(defaultSetting.compose)
@@ -89,6 +90,8 @@ function App() {
 	}
 	useEffect(() => {
 		setFonts(['sans-serif', ...JSON.parse(localStorage.getItem('fonts') || '[]')])
+		const voices = window.speechSynthesis.getVoices().map((voice) => ({ value: voice.voiceURI, label: `${voice.name} (${voice.lang})` }))
+		setVoices([{ value: '', label: formatMessage({ id: 'settings.settings.timeline.ttsVoice.default' }) }, ...voices])
 		if (location.protocol !== 'http:') setCurrentPath(location.href.replace('setting.html', ''))
 		loadAppearance()
 		setSpotifyTemp(localStorage.getItem('spotifyTemplate') || '#NowPlaying {song} / {album} / {artist}\n{url} #{Source}WithTheDesk')
@@ -146,6 +149,28 @@ function App() {
 		if (confirm(formatMessage({ id: 'settings.settings.delete_allData_confirm' }))) {
 			localStorage.clear()
 			location.href = './'
+		}
+	}
+	const testSpeech = () => {
+		const isBouyomi = timelineConfig.ttsProvider === 'bouyomi'
+		const testText = formatMessage({ id: 'settings.settings.timeline.testSpeechManuscript' })
+		if (isBouyomi) {
+			try {
+				fetch(`http://localhost:${timelineConfig.ttsPort}/Talk?text=${encodeURIComponent(testText)}`)
+			} catch {
+				console.error('Cannot TTS')
+			}
+		} else {
+			const synthApi = window.speechSynthesis
+			const utter = new SpeechSynthesisUtterance(testText)
+			utter.pitch = timelineConfig.ttsPitch
+			utter.rate = timelineConfig.ttsRate
+			utter.volume = timelineConfig.ttsVolume / 100
+			if (timelineConfig.ttsVoice) {
+				const voice = synthApi.getVoices().find((v) => v.voiceURI === timelineConfig.ttsVoice)
+				if (voice) utter.voice = voice
+			}
+			synthApi.speak(utter)
 		}
 	}
 
@@ -259,7 +284,7 @@ function App() {
 						data={labelValueBuilder('timeline.ttsProvider', ['system', 'bouyomi'])}
 						fontSize="1.1em"
 					/>
-					{timelineConfig.ttsProvider === 'bouyomi' && (
+					{timelineConfig.ttsProvider === 'bouyomi' ? (
 						<NumberForm
 							label={formatMessage({ id: 'settings.settings.timeline.ttsPort' })}
 							value={timelineConfig.ttsPort}
@@ -270,6 +295,49 @@ function App() {
 							unit=""
 							fontSize="1.1em"
 						/>
+					) : (
+						<>
+							<NumberForm
+								label={formatMessage({ id: 'settings.settings.timeline.ttsPitch.title' })}
+								hint={formatMessage({ id: 'settings.settings.timeline.ttsPitch.hint' })}
+								value={timelineConfig.ttsPitch}
+								onChange={(value) => updateTimeline('ttsPitch', value)}
+								min={0.1}
+								max={2}
+								step={0.1}
+								unit=""
+								fontSize="1.1em"
+							/>
+							<NumberForm
+								label={formatMessage({ id: 'settings.settings.timeline.ttsRate.title' })}
+								hint={formatMessage({ id: 'settings.settings.timeline.ttsRate.hint' })}
+								value={timelineConfig.ttsRate}
+								onChange={(value) => updateTimeline('ttsRate', value)}
+								min={0.1}
+								max={10}
+								step={0.1}
+								unit=""
+								fontSize="1.1em"
+							/>
+							<NumberForm
+								label={formatMessage({ id: 'settings.settings.timeline.ttsVolume.title' })}
+								hint={formatMessage({ id: 'settings.settings.timeline.ttsVolume.hint' })}
+								value={timelineConfig.ttsVolume}
+								onChange={(value) => updateTimeline('ttsVolume', value)}
+								min={1}
+								max={100}
+								step={1}
+								unit=""
+								fontSize="1.1em"
+							/>
+							<p style={{ marginTop: 15, marginBottom: 5, fontSize: '1.1em' }}>
+								<FormattedMessage id="settings.settings.timeline.ttsVoice.title" />
+							</p>
+							<div style={{ display: 'flex', alignItems: 'center', marginBottom: 10 }}>
+								<SelectPicker value={timelineConfig.ttsVoice} data={voices} searchable={true} style={{ width: '100%' }} onChange={(value) => updateTimeline('ttsVoice', value)} />
+								<Button onClick={() => testSpeech()} style={{ marginLeft: 5 }}><FormattedMessage id="settings.settings.timeline.testSpeech" /></Button>
+							</div>
+						</>
 					)}
 					<Divider />
 					<p style={{ fontSize: '1.3em', marginTop: 12, fontWeight: 'bold' }}>
