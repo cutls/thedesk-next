@@ -88,7 +88,7 @@ export default function ListDetail(props: Props) {
 	const addTimelineFn = async () => {
 		if (list) {
 			await addTimeline(server, { kind: 'list', name: list.title, listId: list.id, columnWidth: 'sm' })
-			timelineRefresh()
+			timelineRefresh(true)
 		}
 	}
 

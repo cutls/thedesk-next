@@ -1,8 +1,9 @@
-import { Timeline } from "@/entities/timeline"
-import generator, { detector, WebSocketInterface } from "@cutls/megalodon"
-import { listServers, getAccount } from "./storage"
+import type { Timeline } from '@/entities/timeline'
+import generator, { detector, type WebSocketInterface } from '@cutls/megalodon'
+import { listServers, getAccount } from './storage'
 import type { Server } from '@/entities/server'
-import { Settings } from "@/entities/settings"
+import type { Settings } from '@/entities/settings'
+import { Account } from '@/entities/account'
 
 const stripForVoice = (html: string) => {
 	const div = document.createElement('div')
@@ -14,7 +15,7 @@ const stripForVoice = (html: string) => {
 }
 // 'home' | 'notifications' | 'local' | 'public' | 'favourites' | 'list' | 'bookmarks' | 'direct' | 'tag'
 type StreamingArray = [number, WebSocketInterface, string]
-export const start = async (timelines: Array<[Timeline, Server]>, generateStreaming: boolean) => {
+export const start = async (timelines: Array<[Timeline, Server, Account]>, generateStreaming: boolean) => {
 	const fn = async () => {
 		const userStreamings: StreamingArray[] = !generateStreaming ? window.userStreamings : []
 		if (generateStreaming) {
@@ -72,7 +73,7 @@ export const start = async (timelines: Array<[Timeline, Server]>, generateStream
 		return null
 	}
 }
-export const listenTimeline = async <T>(channel: string, callback: (a: { payload: T, kind?: string }) => void, timelineConfig: Settings['timeline'], tts: boolean) => {
+export const listenTimeline = async <T>(channel: string, callback: (a: { payload: T; kind?: string }) => void, timelineConfig: Settings['timeline'], tts: boolean) => {
 	const useStreaming = window.streamings
 	// while (!useStreaming || useStreaming.length === 0) {
 	// 	console.log('waiting1')
@@ -135,7 +136,7 @@ export const listenTimeline = async <T>(channel: string, callback: (a: { payload
 	}
 }
 export const listenUser = async <T>(channel: string, callback: (a: { payload: T }) => void, timelineConfig: Settings['timeline'], tts: boolean) => {
-    // <T>(channel: string, callback: (a: { payload: T }) => void, tts?: boolean) => {}
+	// <T>(channel: string, callback: (a: { payload: T }) => void, tts?: boolean) => {}
 	const userStreamings = window.userStreamings
 	// while (!userStreamings || userStreamings.length === 0) {
 	// 	console.log('waiting2 for', channel)
@@ -195,13 +196,17 @@ export const listenUser = async <T>(channel: string, callback: (a: { payload: T 
 	}
 }
 export const allUnsubscribe = async () => {
-    const streamingState = window.userStreamings
-    for (const streaming of streamingState) {
-        const chs = streaming[1]?._channelSubscriptions
-        for (const ch of chs) {
-            if (ch.stream !== 'user') streaming[1]?._client.send(JSON.stringify({ type: 'unsubscribe', stream: ch.stream }))
-        }
-    }
+	const streamingState = window.userStreamings
+	for (const streaming of streamingState) {
+		const str: WebSocketInterface = streaming[1]
+		if (!str) continue
+		const chs = str.channelSubscriptions || []
+		for (const ch of chs) {
+			if (ch.stream !== 'user') str.unsubscribe(ch.stream)
+		}
+	}
+	if (streamingState.length === 0) return
+	for (const streaming of streamingState) streaming[1]?.removeAllListeners()
 }
 export const allClose = async () => {
 	const streamingState = window.streamings

@@ -13,7 +13,7 @@ export const TheDeskContext = createContext({
 	setFocused: (focused: boolean) => {}
 })
 export const TimelineRefreshContext = createContext({
-	timelineRefresh: (_str?: boolean) => {}
+	timelineRefresh: (_str: boolean) => {}
 })
 export const TheDeskProviderWrapper: React.FC = (props) => {
 	const [focused, setFocused] = useState(false)

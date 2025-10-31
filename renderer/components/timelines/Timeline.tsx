@@ -32,6 +32,7 @@ import { listenTimeline, listenUser } from '@/utils/socket'
 type Props = {
 	timeline: Timeline
 	server: Server
+	account: Account | null
 	openMedia: (media: Array<Entity.Attachment>, index: number) => void
 	openReport: (status: Entity.Status, client: MegalodonInterface) => void
 	openFromOtherAccount: (status: Entity.Status) => void
@@ -45,7 +46,6 @@ export default function TimelineColumn(props: Props) {
 	const [statuses, setStatuses] = useState<Array<Entity.Status>>([])
 	const [unreadStatuses, setUnreadStatuses] = useState<Array<Entity.Status>>([])
 	const [firstItemIndex, setFirstItemIndex] = useState(TIMELINE_MAX_STATUSES)
-	const [account, setAccount] = useState<Account | null>(null)
 	const [client, setClient] = useState<MegalodonInterface>()
 	const [loading, setLoading] = useState<boolean>(false)
 	// This parameter is used only favourite. Because it is not receive streaming, and max_id in link header is required for favourite.
@@ -61,15 +61,14 @@ export default function TimelineColumn(props: Props) {
 	const toast = useToaster()
 	const router = useRouter()
 	const appending = useRef(true)
+	const account = props.account
 	const uniqueTimelineKey = `${props.server.id}-${props.timeline.kind}`
 	useEffect(() => {
 		const f = async () => {
 			setLoading(true)
 			let client: MegalodonInterface
 			if (props.server.account_id) {
-				const [account, _] = await getAccount({ id: props.server.account_id })
-				setAccount(account)
-				client = generator(props.server.sns, props.server.base_url, account.access_token, 'TheDesk(Desktop)')
+				client = generator(props.server.sns, props.server.base_url, account?.access_token || '', 'TheDesk(Desktop)')
 				setClient(client)
 				const f = await loadFilter(props.timeline, client)
 				setFilters(f)
@@ -584,7 +583,6 @@ const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: ()
 	const updateColumnColorFn = async (timeline: Timeline, color: string) => {
 		await updateColumnColor({ id: timeline.id, color })
 		timelineRefresh(false)
-		props.close()
 	}
 
 	const updateColumnTtsFn = async (timeline: Timeline, tts: boolean) => {

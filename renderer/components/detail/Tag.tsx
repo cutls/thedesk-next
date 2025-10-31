@@ -95,7 +95,7 @@ export default function TagDetail(props: Props) {
 			return
 		}
 		await addTimeline(server, { kind: 'tag', name: tag, listId: null, columnWidth: 'sm' })
-		timelineRefresh()
+		timelineRefresh(true)
 	}
 
 	const followHashtag = async () => {

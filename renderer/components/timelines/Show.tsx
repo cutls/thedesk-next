@@ -9,12 +9,14 @@ import type { Timeline } from '@/entities/timeline'
 import type { Unread } from '@/entities/unread'
 import { updateColumnHeight } from '@/utils/storage'
 import { useWindowSize } from '@/utils/useWindowSize'
+import { Account } from '@/entities/account'
 
 type Props = {
 	isLast: boolean
 	stackLength: number
 	timeline: Timeline
 	server: Server
+	account: Account | null
 	unreads: Array<Unread>
 	setUnreads: (a: Array<Unread>) => void
 	openMedia: (media: Array<Entity.Attachment>, index: number) => void
@@ -68,6 +70,7 @@ const Show: React.FC<Props> = (props) => {
 			wrapIndex={props.wrapIndex}
 			timeline={props.timeline}
 			server={props.server}
+			account={props.account}
 			openMedia={props.openMedia}
 			openReport={props.openReport}
 			openFromOtherAccount={props.openFromOtherAccount}

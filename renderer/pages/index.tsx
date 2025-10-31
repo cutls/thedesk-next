@@ -44,7 +44,7 @@ function App() {
 	const { saveTimelineConfig, timelineConfig } = useContext(TheDeskContext)
 	const { loadTheme } = useContext(ContextLoadTheme)
 	const [servers, setServers] = useState<ServerSet[]>([])
-	const [timelines, setTimelines] = useState<[Timeline, Server][][]>([])
+	const [timelines, setTimelines] = useState<[Timeline, Server, Account | null][][]>([])
 	const [columnWidths, setColumnWidths] = useState<number[]>([])
 	const [unreads, setUnreads] = useState<Unread[]>([])
 	const [composeOpened, setComposeOpened] = useState<boolean>(false)
@@ -156,6 +156,11 @@ function App() {
 		if (streaming) {
 			allUnsubscribe()
 			loadTimelines(false)
+		} else {
+			const timelines = await listTimelines()
+			const widths = timelines.map((tl) => columnWidthCalc(tl[0][0].column_width))
+			setColumnWidths(widths)
+			setTimelines(timelines)
 		}
 		listServers().then((res) => {
 			if (res.length === 0) {
@@ -319,6 +324,7 @@ function App() {
 								resizeHandles={['e']}
 								onResizeStop={(_, e) => columnWidthSet(i, e.size.width)}
 							>
+								{/** biome-ignore lint/complexity/noUselessFragments: <To resize> */}
 								<>
 									{tls.map((timeline, j) => (
 										<ShowTimeline
@@ -327,6 +333,7 @@ function App() {
 											isLast={j === tls.length - 1}
 											timeline={timeline[0]}
 											server={timeline[1]}
+											account={timeline[2]}
 											unreads={unreads}
 											setUnreads={setUnreads}
 											key={timeline[0].id}

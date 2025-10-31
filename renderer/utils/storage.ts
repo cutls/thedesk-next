@@ -14,14 +14,23 @@ export function migrateTimelineV1toV2() {
 		localStorage.setItem('timelinesV2', JSON.stringify(newTimeline))
 	}
 }
-export async function listTimelines(): Promise<[Timeline, Server][][]> {
+export async function listTimelines(): Promise<[Timeline, Server, Account | null][][]> {
 	const timelinesStr = localStorage.getItem('timelinesV2')
 	const timelines: Timeline[][] = JSON.parse(timelinesStr || '[]')
 	const serversStr = localStorage.getItem('servers')
 	const servers: Server[] = JSON.parse(serversStr || '[]')
+	const accountsStr = localStorage.getItem('accounts')
+	const accounts: Account[] = JSON.parse(accountsStr || '[]')
 	return timelines
-		.map((oneColumn) => oneColumn.map((timeline) => [timeline, servers.find((server) => server.id === timeline.server_id)]).filter((pair) => pair[1] !== undefined))
-		.filter((d) => d.length) as [Timeline, Server][][]
+		.map((oneColumn) =>
+			oneColumn
+				.map((timeline) => {
+					const server = servers.find((server) => server.id === timeline.server_id)
+					return [timeline, server, (accounts.find((acct) => acct.id === server.account_id) || null)]
+				})
+				.filter((pair) => pair[1] !== undefined)
+		)
+		.filter((d) => d.length) as [Timeline, Server, Account | null][][]
 }
 
 export async function listAccounts(): Promise<[Account, Server][]> {

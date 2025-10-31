@@ -413,25 +413,24 @@ const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: ()
 	const newRef = useRef()
 	const removeTimelineFn = async (timeline: Timeline) => {
 		await removeTimeline(timeline)
-		timelineRefresh()
-		//await invoke('remove_timeline', { id: timeline.id })
+		timelineRefresh(true)
 	}
 
 	const switchLeftTimeline = async (timeline: Timeline) => {
 		await updateColumnOrder({ id: timeline.id, direction: 'left' })
-		timelineRefresh()
+		timelineRefresh(true)
 		props.close()
 	}
 
 	const switchRightTimeline = async (timeline: Timeline) => {
 		await updateColumnOrder({ id: timeline.id, direction: 'left' })
-		timelineRefresh()
+		timelineRefresh(true)
 		props.close()
 	}
 	const stackTimeline = async (timeline: Timeline) => {
 		const res = await updateColumnStack({ id: timeline.id, stack: !timeline.stacked })
 		if (!res) return
-		timelineRefresh()
+		timelineRefresh(true)
 		props.close()
 	}
 
@@ -439,13 +438,13 @@ const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: ()
 	const updateColumnWidthFn = async (timeline: Timeline, columnWidth: string) => {
 		if (!isColumnWidthGuard(columnWidth)) return
 		await updateColumnWidth({ id: timeline.id, columnWidth: columnWidthCalc(columnWidth) })
-		timelineRefresh()
+		timelineRefresh(false)
 		props.close()
 	}
 
 	const updateColumnColorFn = async (timeline: Timeline, color: string) => {
 		await updateColumnColor({ id: timeline.id, color })
-		timelineRefresh()
+		timelineRefresh(false)
 		props.close()
 	}
 
