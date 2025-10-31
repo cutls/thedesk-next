@@ -19,7 +19,7 @@
     "extendInfo": {
       "ITSAppUsesNonExemptEncryption": "false"
     },
-    "provisioningProfile": "buiild-tool/thedesk_MAS.provisionprofile",
+    "provisioningProfile": "build-tool/thedesk_MAS.provisionprofile",
     "minimumSystemVersion": "14.0"
   },
   "mac": {
