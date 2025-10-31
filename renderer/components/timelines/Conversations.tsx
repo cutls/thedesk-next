@@ -19,6 +19,7 @@ import FailoverImg from '@/utils/failoverImg'
 import timelineName from '@/utils/timelineName'
 import alert from '../utils/alert'
 import Conversation from './conversation/Conversation'
+import { listenTimeline } from '@/utils/socket'
 
 type Props = {
 	server: Server
@@ -29,7 +30,7 @@ type Props = {
 
 const Conversations: React.FC<Props> = (props) => {
 	const { formatMessage } = useIntl()
-	const { listenTimeline } = useContext(TheDeskContext)
+	const { timelineConfig } = useContext(TheDeskContext)
 	const [account, setAccount] = useState<Account | null>(null)
 	const [client, setClient] = useState<MegalodonInterface>()
 	const [conversations, setConversations] = useState<Array<Entity.Conversation>>([])
@@ -67,20 +68,25 @@ const Conversations: React.FC<Props> = (props) => {
 		f()
 		setColumnWidth(columnWidthCalc(props.timeline.column_width))
 
-		listenTimeline<ReceiveTimelineConversationPayload>('receive-timeline-conversation', (ev) => {
-			if (ev.payload.timeline_id !== props.timeline.id) {
-				return
-			}
+		listenTimeline<ReceiveTimelineConversationPayload>(
+			'receive-timeline-conversation',
+			(ev) => {
+				if (ev.payload.timeline_id !== props.timeline.id) {
+					return
+				}
 
-			if (scrollerRef.current && scrollerRef.current.scrollTop > 10) {
-				// When scrolling, prepend and update unreads, and update conversations
-				setUnreadConversations((current) => prependConversation(current, ev.payload.conversation))
-				setConversations((current) => updateConversation(current, ev.payload.conversation))
-			} else {
-				// When top, prepend and update conversations
-				setConversations((current) => prependConversation(current, ev.payload.conversation))
-			}
-		})
+				if (scrollerRef.current && scrollerRef.current.scrollTop > 10) {
+					// When scrolling, prepend and update unreads, and update conversations
+					setUnreadConversations((current) => prependConversation(current, ev.payload.conversation))
+					setConversations((current) => updateConversation(current, ev.payload.conversation))
+				} else {
+					// When top, prepend and update conversations
+					setConversations((current) => prependConversation(current, ev.payload.conversation))
+				}
+			},
+			timelineConfig,
+			false
+		)
 	}, [props.timeline])
 
 	const loadConversations = async (client: MegalodonInterface, maxId?: string): Promise<Array<Entity.Conversation>> => {

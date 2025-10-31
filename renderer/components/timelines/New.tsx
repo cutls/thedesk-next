@@ -202,7 +202,7 @@ const New: React.FC<Props> = (props) => {
 	const select = async (tl: TimelineKind, name: string, list_id: string | null) => {
 		await addTimeline(server, { kind: tl, name: name, listId: list_id, columnWidth: 'sm' })
 		setServer(null)
-		timelineRefresh()
+		timelineRefresh(true)
 	}
 
 	const back = async () => {

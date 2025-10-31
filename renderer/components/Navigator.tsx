@@ -62,7 +62,7 @@ const diceCt = (dice: number) => {
 }
 const Navigator: React.FC<NavigatorProps> = (props): ReactElement => {
 	const { formatMessage } = useIntl()
-	const { timelineConfig, listenUser } = useContext(TheDeskContext)
+	const { timelineConfig } = useContext(TheDeskContext)
 	const { timelineRefresh } = useContext(TimelineRefreshContext)
 	const { servers, openAuthorize, openAnnouncements, openThirdparty, openSettings } = props
 	const [awake, setAwake] = useState(0)
@@ -148,7 +148,7 @@ const Navigator: React.FC<NavigatorProps> = (props): ReactElement => {
 		if (target === undefined || target === null) {
 			await addTimeline(set.server, { kind: 'notifications', name: 'Notifications', columnWidth: 'sm' })
 			const timelines = (await listTimelines()).flat()
-			timelineRefresh()
+			timelineRefresh(false)
 			target = timelines.find((t) => t[1].id === set.server.id && t[0].kind === 'notifications')
 			if (target === undefined || target === null) {
 				toaster.push(alert('error', formatMessage({ id: 'alert.notifications_not_found' })), { placement: 'topStart' })
@@ -316,7 +316,7 @@ const serverMenu = (
 				break
 			case 'remove':
 				removeServer({ id: server.server.id })
-				timelineRefresh()
+				timelineRefresh(false)
 				break
 			case 'announcements':
 				openAnnouncements(server.server, server.account)
@@ -334,7 +334,7 @@ const serverMenu = (
 	}
 	const updateAccountColorFn = (id: number, color: string) => {
 		updateAccountColor({ id, color })
-		timelineRefresh()
+		timelineRefresh(false)
 	}
 	return (
 		<Popover ref={ref} className={className} style={{ left, top, padding: 0, marginLeft: 10 }}>

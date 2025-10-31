@@ -27,6 +27,7 @@ import { mapCustomEmojiCategory } from '@/utils/emojiData'
 import FailoverImg from '@/utils/failoverImg'
 import timelineName from '@/utils/timelineName'
 import Status from './status/Status'
+import { listenTimeline, listenUser } from '@/utils/socket'
 
 type Props = {
 	timeline: Timeline
@@ -39,7 +40,7 @@ type Props = {
 
 export default function TimelineColumn(props: Props) {
 	const { formatMessage } = useIntl()
-	const { listenTimeline, listenUser } = useContext(TheDeskContext)
+	const { timelineConfig } = useContext(TheDeskContext)
 
 	const [statuses, setStatuses] = useState<Array<Entity.Status>>([])
 	const [unreadStatuses, setUnreadStatuses] = useState<Array<Entity.Status>>([])
@@ -60,7 +61,7 @@ export default function TimelineColumn(props: Props) {
 	const toast = useToaster()
 	const router = useRouter()
 	const appending = useRef(true)
-
+	const uniqueTimelineKey = `${props.server.id}-${props.timeline.kind}`
 	useEffect(() => {
 		const f = async () => {
 			setLoading(true)
@@ -91,6 +92,8 @@ export default function TimelineColumn(props: Props) {
 			}
 		}
 		f()
+	}, [uniqueTimelineKey])
+	useEffect(() => {
 		setColumnWidth(columnWidthCalc(props.timeline.column_width))
 		if (props.timeline.kind === 'home') {
 			listenUser<ReceiveHomeStatusPayload>(
@@ -108,26 +111,37 @@ export default function TimelineColumn(props: Props) {
 
 					setStatuses((last) => appendStatus(last, ev.payload.status))
 				},
+				timelineConfig,
 				props.timeline.tts
 			)
 
-			listenUser<ReceiveHomeStatusUpdatePayload>('receive-home-status-update', (ev) => {
-				console.log('receive-home-status-update', ev.payload.server_id, props.server.id)
-				if (ev.payload.server_id !== props.server.id) {
-					return
-				}
+			listenUser<ReceiveHomeStatusUpdatePayload>(
+				'receive-home-status-update',
+				(ev) => {
+					console.log('receive-home-status-update', ev.payload.server_id, props.server.id)
+					if (ev.payload.server_id !== props.server.id) {
+						return
+					}
 
-				setUnreadStatuses((last) => updateStatus(last, ev.payload.status))
-				setStatuses((last) => updateStatus(last, ev.payload.status))
-			})
+					setUnreadStatuses((last) => updateStatus(last, ev.payload.status))
+					setStatuses((last) => updateStatus(last, ev.payload.status))
+				},
+				timelineConfig,
+				false
+			)
 
-			listenUser<DeleteHomeStatusPayload>('delete-home-status', (ev) => {
-				if (ev.payload.server_id !== props.server.id) {
-					return
-				}
-				setUnreadStatuses((last) => deleteStatus(last, ev.payload.status_id))
-				setStatuses((last) => deleteStatus(last, ev.payload.status_id))
-			})
+			listenUser<DeleteHomeStatusPayload>(
+				'delete-home-status',
+				(ev) => {
+					if (ev.payload.server_id !== props.server.id) {
+						return
+					}
+					setUnreadStatuses((last) => deleteStatus(last, ev.payload.status_id))
+					setStatuses((last) => deleteStatus(last, ev.payload.status_id))
+				},
+				timelineConfig,
+				false
+			)
 		} else {
 			listenTimeline<ReceiveTimelineStatusPayload>(
 				'receive-timeline-status',
@@ -143,17 +157,23 @@ export default function TimelineColumn(props: Props) {
 
 					setStatuses((last) => appendStatus(last, ev.payload.status))
 				},
+				timelineConfig,
 				props.timeline.tts
 			)
 
-			listenTimeline<ReceiveTimelineStatusUpdatePayload>('receive-timeline-status-update', (ev) => {
-				if (ev.payload.timeline_id !== props.timeline.id) {
-					return
-				}
+			listenTimeline<ReceiveTimelineStatusUpdatePayload>(
+				'receive-timeline-status-update',
+				(ev) => {
+					if (ev.payload.timeline_id !== props.timeline.id) {
+						return
+					}
 
-				setUnreadStatuses((last) => updateStatus(last, ev.payload.status))
-				setStatuses((last) => updateStatus(last, ev.payload.status))
-			})
+					setUnreadStatuses((last) => updateStatus(last, ev.payload.status))
+					setStatuses((last) => updateStatus(last, ev.payload.status))
+				},
+				timelineConfig,
+				false
+			)
 
 			listenTimeline<DeleteTimelineStatusPayload>('delete-timeline-status', (ev) => {
 				if (ev.payload.timeline_id !== props.timeline.id) {
@@ -161,7 +181,7 @@ export default function TimelineColumn(props: Props) {
 				}
 				setUnreadStatuses((last) => deleteStatus(last, ev.payload.status_id))
 				setStatuses((last) => deleteStatus(last, ev.payload.status_id))
-			})
+			}, timelineConfig, false)
 		}
 	}, [props.timeline])
 
@@ -409,7 +429,9 @@ export default function TimelineColumn(props: Props) {
 								title={`${timelineName(props.timeline.kind, props.timeline.name, formatMessage)}@${props.server.domain}`}
 							>
 								{timelineName(props.timeline.kind, props.timeline.name, formatMessage)}
-								<span style={{ fontSize: '0.7em', marginLeft: '0.2em' }}>{account?.username || ''}@{props.server.domain}</span>
+								<span style={{ fontSize: '0.7em', marginLeft: '0.2em' }}>
+									{account?.username || ''}@{props.server.domain}
+								</span>
 							</FlexboxGrid.Item>
 						</FlexboxGrid>
 					</FlexboxGrid.Item>
@@ -530,25 +552,24 @@ const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: ()
 	const isFirst = props.wrapIndex === 0
 	const removeTimelineFn = async (timeline: Timeline) => {
 		await removeTimeline(timeline)
-		timelineRefresh()
-		//await invoke('remove_timeline', { id: timeline.id })
+		timelineRefresh(true)
 	}
 
 	const switchLeftTimeline = async (timeline: Timeline) => {
 		await updateColumnOrder({ id: timeline.id, direction: 'left' })
-		timelineRefresh()
+		timelineRefresh(true)
 		props.close()
 	}
 
 	const switchRightTimeline = async (timeline: Timeline) => {
 		await updateColumnOrder({ id: timeline.id, direction: 'right' })
-		timelineRefresh()
+		timelineRefresh(true)
 		props.close()
 	}
 	const stackTimeline = async (timeline: Timeline) => {
 		const res = await updateColumnStack({ id: timeline.id, stack: !timeline.stacked })
 		if (!res) return
-		timelineRefresh()
+		timelineRefresh(true)
 		props.close()
 	}
 
@@ -556,25 +577,25 @@ const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: ()
 	const updateColumnWidthFn = async (timeline: Timeline, columnWidth: string) => {
 		if (!isColumnWidthGuard(columnWidth)) return
 		await updateColumnWidth({ id: timeline.id, columnWidth: columnWidthCalc(columnWidth) })
-		timelineRefresh()
+		timelineRefresh(false)
 		props.close()
 	}
 
 	const updateColumnColorFn = async (timeline: Timeline, color: string) => {
 		await updateColumnColor({ id: timeline.id, color })
-		timelineRefresh()
+		timelineRefresh(false)
 		props.close()
 	}
 
 	const updateColumnTtsFn = async (timeline: Timeline, tts: boolean) => {
 		await updateColumnTts({ id: timeline.id, toggle: tts })
-		timelineRefresh()
+		timelineRefresh(true)
 		props.close()
 	}
 
 	const updateColumnMediaOnlyFn = async (timeline: Timeline, mediaOnly: boolean) => {
 		await updateColumnMediaOnly({ id: timeline.id, toggle: mediaOnly })
-		timelineRefresh()
+		timelineRefresh(false)
 		props.close()
 	}
 

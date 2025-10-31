@@ -22,6 +22,7 @@ import { mapCustomEmojiCategory } from '@/utils/emojiData'
 import FailoverImg from '@/utils/failoverImg'
 import timelineName from '@/utils/timelineName'
 import Notification from './notification/Notification'
+import { listenUser } from '@/utils/socket'
 
 type Props = {
 	timeline?: Timeline
@@ -35,7 +36,7 @@ type Props = {
 }
 const Notifications: React.FC<Props> = (props) => {
 	const { formatMessage } = useIntl()
-	const { listenUser, timelineConfig } = useContext(TheDeskContext)
+	const { timelineConfig } = useContext(TheDeskContext)
 	const [account, setAccount] = useState<Account>()
 	const [client, setClient] = useState<MegalodonInterface>()
 	const [notifications, setNotifications] = useState<Array<Entity.Notification>>([])
@@ -94,7 +95,7 @@ const Notifications: React.FC<Props> = (props) => {
 					if (last.find((n) => n.id === ev.payload.notification.id)) return last
 					return [ev.payload.notification].concat(last).slice(0, TIMELINE_STATUSES_COUNT)
 				})
-			})
+			}, timelineConfig, false)
 		}
 		f()
 		setColumnWidth(columnWidthCalc(props.timeline?.column_width || 'sm'))

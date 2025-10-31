@@ -33,6 +33,7 @@ import { Context as i18nContext } from '@/i18n'
 import type { ReceiveNotificationPayload } from '@/payload'
 import { ContextLoadTheme } from '@/theme'
 import { useWindowSize } from '@/utils/useWindowSize'
+import { allClose, allUnsubscribe, listenUser, start } from '@/utils/socket'
 
 const { scrollLeft } = DOMHelper
 
@@ -40,7 +41,7 @@ function App() {
 	const { formatMessage } = useIntl()
 	const router = useRouter()
 	const [width, height] = useWindowSize()
-	const { start, latestTimelineRefreshed, allClose, saveTimelineConfig, listenUser, timelineConfig } = useContext(TheDeskContext)
+	const { saveTimelineConfig, timelineConfig } = useContext(TheDeskContext)
 	const { loadTheme } = useContext(ContextLoadTheme)
 	const [servers, setServers] = useState<ServerSet[]>([])
 	const [timelines, setTimelines] = useState<[Timeline, Server][][]>([])
@@ -86,23 +87,27 @@ function App() {
 		}
 	}
 
-	const loadTimelines = async () => {
-		if (latestTimelineRefreshed > 0) allClose()
+	const loadTimelines = async (streaming: boolean) => {
 		const timelines = await listTimelines()
-		console.log('start', timelines)
-		const fn = await start(timelines.flat())
+		console.log('start', streaming ? 'with streaming' : 'without streaming', timelines)
+		const fn = await start(timelines.flat(), streaming)
 		const widths = timelines.map((tl) => columnWidthCalc(tl[0][0].column_width))
 		setColumnWidths(widths)
 		setTimelines(timelines)
-		listenUser<ReceiveNotificationPayload>('receive-notification', async (ev) => {
-			const accounts = await listAccounts()
-			const [account, server] = accounts.find(([_a, s]) => s.id === ev.payload.server_id)
-			if (timelineConfig.notification !== 'no') {
-				new window.Notification(`TheDesk: ${account.username}@${server.domain}`, {
-					body: actionText(ev.payload.notification)
-				})
-			}
-		})
+		listenUser<ReceiveNotificationPayload>(
+			'receive-notification',
+			async (ev) => {
+				const accounts = await listAccounts()
+				const [account, server] = accounts.find(([_a, s]) => s.id === ev.payload.server_id)
+				if (timelineConfig.notification !== 'no') {
+					new window.Notification(`TheDesk: ${account.username}@${server.domain}`, {
+						body: actionText(ev.payload.notification)
+					})
+				}
+			},
+			timelineConfig,
+			false
+		)
 		return fn
 	}
 
@@ -147,9 +152,11 @@ function App() {
 			document.removeEventListener('keydown', handleKeyPress)
 		}
 	}, [])
-	const timelineRefresh = async () => {
-		allClose()
-		loadTimelines()
+	const timelineRefresh = async (streaming?: boolean) => {
+		if (streaming) {
+			allUnsubscribe()
+			loadTimelines(false)
+		}
 		listServers().then((res) => {
 			if (res.length === 0) {
 				console.debug('There is no server')
@@ -166,7 +173,7 @@ function App() {
 		})
 	}
 	useEffect(() => {
-		const fn = loadTimelines()
+		const fn = loadTimelines(true)
 		return () => {
 			fn.then((close) => close())
 		}
