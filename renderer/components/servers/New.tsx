@@ -60,7 +60,7 @@ const New: React.FC<Props> = (props) => {
 	async function addApplicationFn() {
 		setLoading(true)
 		try {
-			const redirectUrl = useAuto ? 'thedesk://login' : 'urn:ietf:wg:oauth:2.0:oob'
+			const redirectUrl = (useAuto && isElectron) ? 'thedesk://login' : 'urn:ietf:wg:oauth:2.0:oob'
 			const res = await addApplication({ url: server.base_url, redirectUrl })
 			setApp(res)
 			if (window.electronAPI) window.electronAPI.customUrl(async (_, data) => {
