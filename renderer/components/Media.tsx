@@ -34,7 +34,8 @@ const Media: React.FC<Props> = (props) => {
 		const srcs = media.map((m) => {
 			return { src: m.url }
 		})
-		return <Viewer onClose={() => props.close()} onMaskClick={() => props.close()} visible={true} images={srcs} customToolbar={(toolbar) => [...toolbar, ...customToolbar]} />
+		const toolBar = window.electronAPI ? [...customToolbar] : []
+		return <Viewer onClose={() => props.close()} onMaskClick={() => props.close()} visible={true} images={srcs} customToolbar={(toolbar) => [...toolbar, ...toolBar]} />
 	}
 	const [index, setIndex] = useState<number>(0)
 

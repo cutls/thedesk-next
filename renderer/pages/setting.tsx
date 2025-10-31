@@ -67,7 +67,7 @@ function App() {
 	const [spotifyConnected, setSpotifyConnected] = useState(false)
 	const [spotifyInitiating, setSpotifyInitiating] = useState(false)
 	const [spotifyConnecting, setSpotifyConnecting] = useState(false)
-	const [templateFocused, setTemplateFocused] = useState(false)
+	const [isElectron, setIsElectron] = useState(false)
 	const [demoTrack, setDemoTrack] = useState<any>(null)
 	const [demoTrackLoading, setDemoTrackLoading] = useState(false)
 	const [spotifyCode, setSpotifyCode] = useState('')
@@ -89,6 +89,7 @@ function App() {
 		})
 	}
 	useEffect(() => {
+		setIsElectron(!!window.electronAPI)
 		setFonts(['sans-serif', ...JSON.parse(localStorage.getItem('fonts') || '[]')])
 		window.speechSynthesis.onvoiceschanged = () => {
 			const voices = window.speechSynthesis.getVoices().map((voice) => ({ value: voice.voiceURI, label: `${voice.name} (${voice.lang})` }))
@@ -431,9 +432,9 @@ function App() {
 						</div>
 					)}
 					<Divider />
-					<Button appearance="ghost" onClick={() => window.electronAPI.openAppDataFolder()}>
+					{isElectron && <Button appearance="ghost" onClick={() => window.electronAPI.openAppDataFolder()}>
 						<FormattedMessage id="settings.settings.open_appData_folder" />
-					</Button>
+					</Button>}
 
 					<Button appearance="primary" color="red" onClick={() => deleteAllData()} style={{ marginLeft: '1em' }}>
 						<FormattedMessage id="settings.settings.delete_allData" />

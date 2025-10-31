@@ -1,2 +1,8 @@
-export const open = (url: string) => window.electronAPI.openBrowser(url)
-export const writeText = (text: string) => window.electronAPI.openBrowser(text)
+export const open = (url: string) => {
+    if (window.electronAPI) window.electronAPI.openBrowser(url)
+    if (!window.electronAPI) window.open(url, '_blank')
+}
+export const writeText = (text: string) => {
+    if (window.electronAPI) window.electronAPI.openBrowser(text)
+    if (!window.electronAPI) navigator.clipboard.writeText(text)
+}

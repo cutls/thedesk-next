@@ -24,6 +24,7 @@ const New: React.FC<Props> = (props) => {
 	const [app, setApp] = useState<OAuth.AppData>()
 	const [loading, setLoading] = useState<boolean>(false)
 	const [useAuto, setUseAuto] = useState<boolean>(true)
+	const [isElectron, setIsElectron] = useState<boolean>(false)
 	const [domain, setDomain] = useState('')
 	const [code, setCode] = useState('')
 	const { setFocused } = useContext(TheDeskContext)
@@ -35,6 +36,7 @@ const New: React.FC<Props> = (props) => {
 	const toast = useToaster()
 
 	useEffect(() => {
+		setIsElectron(!!window.electronAPI)
 		if (props.initialServer) {
 			setServer(props.initialServer)
 			setDomain(props.initialServer.domain)
@@ -61,7 +63,7 @@ const New: React.FC<Props> = (props) => {
 			const redirectUrl = useAuto ? 'thedesk://login' : 'urn:ietf:wg:oauth:2.0:oob'
 			const res = await addApplication({ url: server.base_url, redirectUrl })
 			setApp(res)
-			window.electronAPI.customUrl(async (_, data) => {
+			if (window.electronAPI) window.electronAPI.customUrl(async (_, data) => {
 				if (data[0] === 'login') {
 					const useCode = data[1]
 					try {
@@ -156,9 +158,9 @@ const New: React.FC<Props> = (props) => {
 						<Form.Group>
 							<Input value={domain} {...focusAttr} readOnly />
 						</Form.Group>
-						<Checkbox style={{ marginBottom: '5px' }} checked={useAuto} value="useAuto" onChange={() => setUseAuto(!useAuto)}>
+						{isElectron && <Checkbox style={{ marginBottom: '5px' }} checked={useAuto} value="useAuto" onChange={() => setUseAuto(!useAuto)}>
 							<FormattedMessage id="servers.new.auto_login" />
-						</Checkbox>
+						</Checkbox>}
 
 						<Form.Group>
 							<ButtonToolbar>

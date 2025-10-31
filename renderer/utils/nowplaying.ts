@@ -181,7 +181,7 @@ export async function nowplayingInit(isDev: boolean, showToaster: (m: string) =>
 	if (!isDev) open(`${apiGateway}?state=connect`)
 	if (isDev) open(`${apiGateway}?state=connectDev2`)
 
-	window.electronAPI.customUrl(async (_, data) => {
+	if (window.electronAPI) window.electronAPI.customUrl(async (_, data) => {
 		if (data[0] === 'spotifyv2') {
 			const code = data[1]
 			nowplayingCode(code, showToaster)

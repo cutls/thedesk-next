@@ -137,8 +137,8 @@ function App() {
 
 		// Push Notification
 		const isInit = !localStorage.getItem('servers')
-		window.electronAPI.requestInitialInfo(isInit)
-		window.electronAPI.onInitialInfo((_event, data) => {
+		if (window.electronAPI) window.electronAPI.requestInitialInfo(isInit)
+		if (window.electronAPI) window.electronAPI.onInitialInfo((_event, data) => {
 			localStorage.setItem('os', data.os)
 			localStorage.setItem('lang', data.lang)
 			localStorage.setItem('version', data.version)
