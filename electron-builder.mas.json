@@ -1,0 +1,23 @@
+{
+  "productName": "TheDesk",
+  "appId": "next.top.thedesk",
+  "afterSign": "build-tool/notarize.js",
+  "asarUnpack": [
+    "native/**"
+  ],
+  "files": [
+    "main-build",
+    "renderer/out",
+    "native"
+  ],
+  "mac": {
+    "icon": "assets/icon.icns",
+    "target": ["mas"],
+    "hardenedRuntime": true,
+    "gatekeeperAssess": false,
+    "entitlements": "build-tool/entitlements.mac.plist",
+    "entitlementsInherit": "build-tool/entitlements.mac.plist",
+    "notarize": false,
+    "category": "public.app-category.social-networking"
+  }
+}
