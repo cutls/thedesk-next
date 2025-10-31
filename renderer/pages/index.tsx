@@ -34,6 +34,7 @@ import type { ReceiveNotificationPayload } from '@/payload'
 import { ContextLoadTheme } from '@/theme'
 import { useWindowSize } from '@/utils/useWindowSize'
 import { allClose, allUnsubscribe, listenUser, start } from '@/utils/socket'
+import { updateAvatar } from '@/utils/oauth'
 
 const { scrollLeft } = DOMHelper
 
@@ -132,6 +133,7 @@ function App() {
 						account: r[1]
 					}))
 				)
+				updateAvatar(timelineConfig.animation === 'no')
 			}
 		})
 

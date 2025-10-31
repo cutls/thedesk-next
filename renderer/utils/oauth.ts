@@ -84,3 +84,25 @@ export async function authorizeCode({ server, app, code }: { server: Server; app
 	const newServer = servers.map((s, i) => (i === serverIndex ? { ...s, account_id: id } : s))
 	localStorage.setItem('servers', JSON.stringify(newServer))
 }
+export const updateAvatar = async (isStatic: boolean) => {
+	const serverStr = localStorage.getItem('servers')
+	if (!serverStr) return
+	const servers: Array<Server> = JSON.parse(serverStr)
+	const accountsStr = localStorage.getItem('accounts')
+	if (!accountsStr) return
+	const accounts: Array<Account> = JSON.parse(accountsStr)
+	for (const server of servers) {
+		const account = accounts.find((a) => a.id === server.account_id)
+		if (!account) continue
+		const client = generator(server.sns, server.base_url, account.access_token)
+		try {
+			const { data: accountData } = await client.verifyAccountCredentials()
+			if (account.avatar !== accountData.avatar) {
+				account.avatar = isStatic ? accountData.avatar_static : accountData.avatar
+			}
+		} catch (e) {
+			console.error(e)
+		}
+	}
+	localStorage.setItem('accounts', JSON.stringify(accounts))
+}
