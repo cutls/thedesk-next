@@ -35,6 +35,7 @@ import { ContextLoadTheme } from '@/theme'
 import { useWindowSize } from '@/utils/useWindowSize'
 import { allClose, allUnsubscribe, listenUser, start } from '@/utils/socket'
 import { updateAvatar } from '@/utils/oauth'
+import type { InitialInfo } from '@/entities/initialInfo'
 
 const { scrollLeft } = DOMHelper
 
@@ -140,11 +141,13 @@ function App() {
 		// Push Notification
 		const isInit = !localStorage.getItem('servers')
 		if (window.electronAPI) window.electronAPI.requestInitialInfo(isInit)
-		if (window.electronAPI) window.electronAPI.onInitialInfo((_event, data) => {
+		if (window.electronAPI) window.electronAPI.onInitialInfo((_event, data: InitialInfo) => {
+			console.log(data)
 			localStorage.setItem('os', data.os)
-			localStorage.setItem('lang', data.lang)
+			localStorage.setItem('lang', data.lang[0])
 			localStorage.setItem('version', data.version)
 			localStorage.setItem('fonts', JSON.stringify(data.fonts))
+			localStorage.setItem('isStore', data.isStore ? 'true' : 'false')
 			setVersion(data.version)
 			loadAppearance()
 			if (isInit && !data.isFirstRun) setMigrate(`file://${data.currentRendererAbsolutePath}/old.html?at=${location.href}`)

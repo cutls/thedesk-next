@@ -7,7 +7,7 @@
 		"email": "p@cutls.dev",
 		"url": "https://cutls.dev"
 	},
-	"version": "25.1.4",
+	"version": "25.1.5",
 	"codename": "Aiko",
 	"packageManager": "pnpm@10.5.2",
 	"scripts": {
@@ -20,6 +20,7 @@
 		"pack:mas": "electron-builder --mac --universal --config electron-builder.mas.json",
 		"pack:linux": "electron-builder --linux --x64",
 		"pack:win": "electron-builder --windows --x64",
+		"pack:appx": "electron-builder --windows --x64 --config electron-builder.appx.json",
 		"dist": "npm run build && electron-builder",
 		"type-check": "tsc -p ./renderer/tsconfig.json && tsc -p ./electron-src/tsconfig.json",
 		"lint:fix": "npx @biomejs/biome check --write ./",

@@ -107,14 +107,19 @@ app.on('ready', async () => {
 	mainWindow.on('moved', () => writePos(mainWindow))
 	mainWindow.on('minimize', () => writePos(mainWindow))
 	ipcMain.on('requestInitialInfo', async (_event) => {
-		mainWindow?.webContents.send('initialInfo', {
+		const info = {
 			os: process.platform,
 			lang: app.getPreferredSystemLanguages(),
 			version: app.getVersion(),
 			fonts: await getFonts({ disableQuoting: true }),
 			isFirstRun: firstRun,
-			currentRendererAbsolutePath: join(__dirname, '../renderer/out')
-		})
+			currentRendererAbsolutePath: join(__dirname, '../renderer/out'),
+			isStore: process.mas || app.getPath('exe').endsWith('appx'),
+			isMas: !!process.mas,
+			isAppx: app.getPath('exe').endsWith('appx'),
+			getPath: app.getPath('exe')
+		}
+		mainWindow?.webContents.send('initialInfo', info)
 	})
 	ipcMain.on('requestAppleMusic', async (_event: IpcMainEvent, { fallback }: { fallback: boolean }) => {
 		const fromDock = async () => {

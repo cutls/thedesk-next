@@ -11,9 +11,9 @@
   ],
   "mas": {
     "type": "distribution",
-    "entitlements": "plist/parent.plist",
-    "entitlementsInherit": "plist/child.plist",
-    "entitlementsLoginHelper": "plist/loginhelper.plist",
+    "entitlements": "build-tool/parent.plist",
+    "entitlementsInherit": "build-tool/child.plist",
+    "entitlementsLoginHelper": "build-tool/loginhelper.plist",
     "hardenedRuntime": false,
     "gatekeeperAssess": false,
     "extendInfo": {
@@ -29,8 +29,6 @@
     ],
     "hardenedRuntime": true,
     "gatekeeperAssess": false,
-    "entitlements": "build-tool/entitlements.mac.plist",
-    "entitlementsInherit": "build-tool/entitlements.mac.plist",
     "notarize": false,
     "category": "public.app-category.social-networking"
   }

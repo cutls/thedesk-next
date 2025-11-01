@@ -46,7 +46,7 @@ export function spotifyTemplateReplace(item: any, template: string) {
 	content = content.replace(regExpS, 'Spotify')
 	return content
 }
-export async function nowplaying(key: 'spotify' | 'appleMusic', showToaster: (message: string) => void) {
+export async function nowplaying(key: 'spotify' | 'appleMusic', showToaster: (message: string, duration?: number) => void) {
 	if (key === 'spotify') {
 		const start = 'https://api.spotify.com/v1/me/player/currently-playing'
 		try {
@@ -71,7 +71,7 @@ export async function nowplaying(key: 'spotify' | 'appleMusic', showToaster: (me
 				console.log(itemRaw)
 				if (itemRaw.data.error) {
 					if (itemRaw.data.error) showToaster(itemRaw.data.error)
-					showToaster('compose.nowplaying.accessibilityError')
+					showToaster('compose.nowplaying.accessibilityError', 10000)
 					return
 				}
 				const item = itemRaw.type === 'dock' ? await getUnknownData(itemRaw.data) : itemRaw

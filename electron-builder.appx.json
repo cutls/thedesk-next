@@ -1,0 +1,30 @@
+{
+	"productName": "TheDesk",
+	"appId": "next.top.thedesk",
+	"afterSign": "build-tool/notarize.js",
+	"artifactName": "${productName}-${version}-store-${os}-${arch}.${ext}",
+	"asarUnpack": [
+		"native/**"
+	],
+	"files": [
+		"main-build",
+		"renderer/out",
+		"native"
+	],
+	"win": {
+		"target": [
+			"appx"
+		],
+		"icon": "assets/desk.ico"
+	},
+	"appx": {
+		"identityName": "53491Cutls.TheDesk",
+		"applicationId": "Cutls.TheDesk",
+		"publisherDisplayName": "Cutls",
+		"publisher": "CN=629757F5-A5EE-474F-9562-B304A89A9FD1",
+		"languages": [
+			"JA-JP",
+			"EN-US"
+		]
+	}
+}

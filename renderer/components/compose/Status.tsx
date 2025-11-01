@@ -118,7 +118,7 @@ const Status: React.FC<Props> = (props) => {
 	const emojiPickerRef = useRef(null)
 	const uploaderRef = useRef<HTMLInputElement>()
 	const toast = useToaster()
-	const isDarwin = localStorage.getItem('os') === 'darwin'
+	const isStandaloneDarwin = localStorage.getItem('os') === 'darwin' && localStorage.getItem('isStore') === 'false'
 
 	// Update instance custom emoji
 	useEffect(() => {
@@ -501,7 +501,7 @@ const Status: React.FC<Props> = (props) => {
 	}
 	const NowPlayingDropdown = ({ onClose, left, top, className }, ref: any) => {
 		const handleSelect = async (key: string) => {
-			const showToaster = (message: string) => toast.push(alert('info', formatMessage({ id: message })), { placement: 'topStart' })
+			const showToaster = (message: string, duration?: number) => toast.push(alert('info', formatMessage({ id: message })), { placement: 'topStart', duration })
 			const ret = await nowplaying(key as 'spotify' | 'appleMusic', showToaster)
 			if (!ret) return toast.push(alert('info', formatMessage({ id: 'compose.nowplaying.error' })), { placement: 'topStart' })
 			if (!ret.file) setSearchAA(ret.title)
@@ -519,7 +519,7 @@ const Status: React.FC<Props> = (props) => {
 					<Dropdown.Item eventKey={'spotify'} icon={<Icon as={BsSpotify} />}>
 						Spotify
 					</Dropdown.Item>
-					{isDarwin && (
+					{isStandaloneDarwin && (
 						<Dropdown.Item eventKey={'appleMusic'} icon={<Icon as={BsMusicNoteBeamed} />}>
 							Apple Music
 						</Dropdown.Item>

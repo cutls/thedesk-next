@@ -17,6 +17,9 @@ export default ({ version }: { version: string }) => {
 		const isNext = hideRule && !!hide.match(/^[0-9]{1,2}\./)
 		if (hideRule && !isNext && Number.parseInt(hide, 10) > new Date().getTime()) return
 		const fn = async () => {
+			const isStoreStr = localStorage.getItem('isStore')
+			const isStore = isStoreStr === 'true' || !isStoreStr
+			if (isStore) return
 			if (!version) return
 			try {
 				const url = 'https://thedesk.top/ver.next.json'
