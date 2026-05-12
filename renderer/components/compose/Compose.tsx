@@ -101,7 +101,7 @@ const Compose: React.FC<Props> = (props) => {
 	const addStyle = props.disableDrag ? {} : { borderColor: 'var(--rs-border-primary)', borderWidth: '1px', borderStyle: 'solid', borderRadius: '8px' }
 
 	return (
-		<Container style={{ backgroundColor: 'var(--rs-border-secondary)', overflowY: 'auto', width: '320px', ...addStyle }}>
+		<Container style={{ backgroundColor: 'var(--background-overlay)', overflowY: 'auto', width: '320px', ...addStyle }}>
 			<Header style={{ borderBottom: '1px solid var(--rs-divider-border)', backgroundColor: 'var(--rs-state-hover-bg)', cursor: 'move' }} className="draggable">
 				<FlexboxGrid justify="space-between" align="middle">
 					<FlexboxGrid.Item style={{ paddingLeft: '12px' }}>
@@ -122,7 +122,7 @@ const Compose: React.FC<Props> = (props) => {
 					</FlexboxGrid.Item>
 				</FlexboxGrid>
 			</Header>
-			<Content style={{ height: '100%', margin: '12px', backgroundColor: 'var(--rs-border-secondary)' }}>
+			<Content style={{ height: '100%', margin: '12px', backgroundColor: 'var(--background-overlay)' }}>
 				<FlexboxGrid style={{ marginBottom: '12px' }}>
 					<FlexboxGrid.Item>
 						<Dropdown disabled={!!reply} renderToggle={(props, ref) => renderAccountIcon(props, ref, fromAccount)} onSelect={selectAccount}>

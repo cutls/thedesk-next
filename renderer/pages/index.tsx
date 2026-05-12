@@ -124,6 +124,7 @@ function App() {
 		migrateTimelineV1toV2()
 		loadAppearance()
 		document.addEventListener('keydown', handleKeyPress)
+		//document.getElementsByTagName('body').item(0).classList.add('customed-theme')
 		if (location.protocol !== 'http:') setCurrentPath(location.href.replace('index.html', ''))
 		const defaultPos = `${(window.screen.availWidth - 300) / 2},${(window.screen.availHeight - 300) / 2}`
 		const positionStr = localStorage.getItem('composePosition') || defaultPos
@@ -331,7 +332,7 @@ function App() {
 					>
 						{(props, ref) => (
 							<Draggable handle=".draggable" disabled={disableDrag} position={disableDrag ? { x: 0, y: 0 } : draggalePosition} onStop={(_e, data) => setComposePosition([data.x, data.y])}>
-								<div {...props} ref={ref} style={disableDrag ? { width: '320px', flexGrow: 1, backgroundColor: 'var(--rs-border-secondary)' } : { position: 'fixed', zIndex: 4, width: '320px' }}>
+								<div {...props} ref={ref} style={disableDrag ? { width: '320px', flexGrow: 1, backgroundColor: 'var(--background-overlay)' } : { position: 'fixed', zIndex: 4, width: '320px' }}>
 									<Compose setOpened={setComposeOpened} servers={servers} disableDrag={disableDrag} />
 								</div>
 							</Draggable>

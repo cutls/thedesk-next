@@ -52,14 +52,14 @@ const Thirdparty: React.FC<Props> = (props) => {
 
 				<div style={{ height: '25px' }} />
 				<Heading as="h4">LICENSE</Heading>
-				<List style={{ margin: '0 8px', backgroundColor: 'var(--rs-border-secondary)', padding: '15px' }}>
+				<List style={{ margin: '0 8px', backgroundColor: 'var(--background-overlay)', padding: '15px' }}>
 					{thirdparty.map((l) => (
 						<List.Item
 							style={{
 								display: 'flex',
 								justifyContent: 'space-between',
 								alignItems: 'center',
-								backgroundColor: 'var(--rs-border-secondary)',
+								backgroundColor: 'var(--background-overlay)',
 								boxShadow: '0 -1px 0 var(--rs-border-primary),0 1px 0 var(--rs-border-primary)'
 							}}
 							key={l.package_name}

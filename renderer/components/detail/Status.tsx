@@ -128,7 +128,7 @@ const StatusDetail: React.FC<Props> = (props) => {
 
 	return (
 		<>
-			<Header style={{ backgroundColor: 'var(--rs-border-secondary)' }}>
+			<Header style={{ backgroundColor: 'var(--background-overlay)' }}>
 				<FlexboxGrid justify="space-between">
 					<FlexboxGrid.Item>
 						<Button appearance="link" onClick={back}>
@@ -153,7 +153,7 @@ const StatusDetail: React.FC<Props> = (props) => {
 								style={{
 									paddingTop: '2px',
 									paddingBottom: '2px',
-									backgroundColor: 'var(--rs-border-secondary)',
+									backgroundColor: 'var(--background-overlay)',
 									boxShadow: '0 -1px 0 var(--rs-bg-well),0 1px 0 var(--rs-bg-well)'
 								}}
 							>
