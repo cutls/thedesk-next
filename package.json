@@ -7,7 +7,7 @@
 		"email": "p@cutls.dev",
 		"url": "https://cutls.dev"
 	},
-	"version": "25.4.0",
+	"version": "25.5.0",
 	"codename": "Aiko",
 	"homepage": "https://github.com/cutls/thedesk-next",
 	"packageManager": "pnpm@10.5.2",
