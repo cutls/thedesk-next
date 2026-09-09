@@ -340,6 +340,10 @@
 	},
 	"timeline": {
 		"reload": "再読み込み",
+		"minId": {
+			"show": "最後に読んだ位置以降の投稿を表示",
+			"restore": "元のタイムラインに戻る"
+		},
 		"settings": {
 			"title": "設定",
 			"unpin": "カラム削除",

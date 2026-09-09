@@ -13,7 +13,8 @@ export const TheDeskContext = createContext({
 	setLiveTag: (_tag: string | null) => {}
 })
 export const TimelineRefreshContext = createContext({
-	timelineRefresh: (_str: boolean) => {}
+	timelineRefresh: (_str: boolean) => {},
+	setTimelineStreamingPaused: async (_timelineId: number, _paused: boolean) => {}
 })
 export const TheDeskProviderWrapper: React.FC = (props) => {
 	const [focused, setFocused] = useState(false)

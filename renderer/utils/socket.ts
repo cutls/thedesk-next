@@ -232,18 +232,17 @@ export const allUnsubscribe = async () => {
 	window.streamings = []
 }
 export const allClose = async () => {
-	const streamingState = window.streamings
+	const streamingState = window.streamings || []
 	console.log('allClosed', streamingState)
-	if (streamingState.length === 0) return
 	for (const streaming of streamingState) streaming[1]?.removeAllListeners()
 	for (const streaming of streamingState) streaming[1]?.stop()
 	window.streamings = []
-	const userStreamingState = window.userStreamings
-	if (userStreamingState.length === 0) return
+	const userStreamingState = window.userStreamings || []
 	for (const streaming of userStreamingState) streaming[1]?.removeAllListeners()
 	for (const streaming of userStreamingState) streaming[1]?.stop()
 	window.userStreamings = []
 
+	if (streamingState.length === 0 && userStreamingState.length === 0) return
 	await new Promise((resolve) => setTimeout(resolve, 1000))
 	return
 }

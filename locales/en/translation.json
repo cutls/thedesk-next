@@ -340,6 +340,10 @@
 	},
 	"timeline": {
 		"reload": "Reload",
+		"minId": {
+			"show": "Show posts since the last read marker",
+			"restore": "Return to the previous timeline"
+		},
 		"settings": {
 			"title": "Settings",
 			"unpin": "Remove",

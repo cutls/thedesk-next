@@ -5,6 +5,8 @@ import parse from 'parse-link-header'
 import { type CSSProperties, forwardRef, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import {
 	BsArrowClockwise,
+	BsArrowReturnLeft,
+	BsArrowUpCircle,
 	BsBookmark,
 	BsBroadcast,
 	BsChevronLeft,
@@ -23,7 +25,7 @@ import {
 	BsX
 } from 'react-icons/bs'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { Virtuoso } from 'react-virtuoso'
+import { Virtuoso, type VirtuosoHandle } from 'react-virtuoso'
 import { Avatar, Button, Container, Content, Divider, FlexboxGrid, Header, List, Loader, Popover, Radio, RadioGroup, Stack, useToaster, Whisper } from 'rsuite'
 import { removeTimeline, updateColumnColor, updateColumnMediaOnly, updateColumnOrder, updateColumnStack, updateColumnTts, updateColumnWidth } from 'utils/storage'
 import alert from '@/components/utils/alert'
@@ -61,7 +63,7 @@ type Props = {
 export default function TimelineColumn(props: Props) {
 	const { formatMessage } = useIntl()
 	const { timelineConfig } = useContext(TheDeskContext)
-	const { timelineRefresh } = useContext(TimelineRefreshContext)
+	const { timelineRefresh, setTimelineStreamingPaused } = useContext(TimelineRefreshContext)
 	const { theme } = useContext(Context)
 	const isDark = theme === 'dark'
 
@@ -76,15 +78,42 @@ export default function TimelineColumn(props: Props) {
 	const [customEmojis, setCustomEmojis] = useState<Array<CustomEmojiCategory>>([])
 	const [filters, setFilters] = useState<Array<Entity.Filter>>([])
 	const [columnWidth, setColumnWidth] = useState(columnWidthCalc(props.timeline.column_width))
+	const [minIdMode, setMinIdMode] = useState(false)
 
 	const scrollerRef = useRef<HTMLElement | null>(null)
+	const virtuosoRef = useRef<VirtuosoHandle | null>(null)
 	const triggerRef = useRef(null)
 	const replyOpened = useRef<boolean>(false)
 	const toast = useToaster()
 	const router = useRouter()
 	const appending = useRef(true)
+	const minIdModeRef = useRef(false)
+	const loadingFromMinId = useRef(false)
+	const lastRequestedMinId = useRef<string | null>(null)
+	const markerMinId = useRef<string | null>(null)
+	const scrollToMinIdBoundary = useRef(false)
+	const previousView = useRef<{
+		statuses: Array<Entity.Status>
+		unreadStatuses: Array<Entity.Status>
+		firstItemIndex: number
+		scrollTop: number
+	} | null>(null)
 	const account = props.account
 	const uniqueTimelineKey = `${props.server.id}-${props.timeline.kind}`
+	useEffect(() => {
+		return () => {
+			if (minIdModeRef.current) void setTimelineStreamingPaused(props.timeline.id, false)
+		}
+	}, [props.timeline.id])
+	useEffect(() => {
+		if (loading || !minIdMode || !scrollToMinIdBoundary.current || statuses.length === 0) return
+
+		scrollToMinIdBoundary.current = false
+		const frame = requestAnimationFrame(() => {
+			virtuosoRef.current?.scrollToIndex({ index: statuses.length - 1, align: 'end' })
+		})
+		return () => cancelAnimationFrame(frame)
+	}, [loading, minIdMode, statuses])
 	useEffect(() => {
 		const f = async () => {
 			setLoading(true)
@@ -245,10 +274,13 @@ export default function TimelineColumn(props: Props) {
 		}
 	}
 
-	const loadTimeline = async (tl: Timeline, client: MegalodonInterface, maxId?: string): Promise<Array<Entity.Status>> => {
-		let options = { limit: TIMELINE_STATUSES_COUNT }
+	const loadTimeline = async (tl: Timeline, client: MegalodonInterface, maxId?: string, minId?: string): Promise<Array<Entity.Status>> => {
+		let options: { limit: number; max_id?: string; min_id?: string } = { limit: TIMELINE_STATUSES_COUNT }
 		if (maxId) {
 			options = Object.assign({}, options, { max_id: maxId })
+		}
+		if (minId) {
+			options = Object.assign({}, options, { min_id: minId })
 		}
 		switch (tl.kind) {
 			case 'home': {
@@ -301,8 +333,8 @@ export default function TimelineColumn(props: Props) {
 	const reload = useCallback(async () => {
 		try {
 			setLoading(true)
-			const res = await loadTimeline(props.timeline, client)
-			timelineRefresh(true)
+			const res = await loadTimeline(props.timeline, client, undefined, minIdMode ? markerMinId.current : undefined)
+			if (!minIdMode) timelineRefresh(true)
 			setStatuses(res)
 		} catch (err) {
 			console.error(err)
@@ -312,7 +344,97 @@ export default function TimelineColumn(props: Props) {
 		} finally {
 			setLoading(false)
 		}
-	}, [client, props.timeline])
+	}, [client, props.timeline, minIdMode])
+
+	const loadNewerFromMinId = useCallback(async () => {
+		const minId = statuses[0]?.id
+		if (!client || !minId || loadingFromMinId.current || lastRequestedMinId.current === minId) return
+
+		loadingFromMinId.current = true
+		lastRequestedMinId.current = minId
+		try {
+			const newer = await loadTimeline(props.timeline, client, undefined, minId)
+			setStatuses((current) => {
+				const currentIds = new Set(current.map((status) => status.id))
+				const unique = newer.filter((status) => !currentIds.has(status.id))
+				if (unique.length > 0) setFirstItemIndex((index) => index - unique.length)
+				return [...unique, ...current]
+			})
+		} catch (err) {
+			lastRequestedMinId.current = null
+			console.error(err)
+		} finally {
+			loadingFromMinId.current = false
+		}
+	}, [client, props.timeline, statuses])
+
+	const toggleMinIdMode = useCallback(async () => {
+		if (!client || loading || props.timeline.kind !== 'home') return
+		setLoading(true)
+
+		if (minIdMode) {
+			const savedView = previousView.current
+			minIdModeRef.current = false
+			setMinIdMode(false)
+			lastRequestedMinId.current = null
+			markerMinId.current = null
+			appending.current = true
+			if (savedView) {
+				setStatuses(savedView.statuses)
+				setUnreadStatuses(savedView.unreadStatuses)
+				setFirstItemIndex(savedView.firstItemIndex)
+			}
+			previousView.current = null
+			try {
+				await setTimelineStreamingPaused(props.timeline.id, false)
+			} catch (err) {
+				console.error(err)
+				toast.push(alert('error', formatMessage({ id: 'alert.failedLoad' }, { timeline: `${props.timeline.name} timeline` })), {
+					placement: 'topStart'
+				})
+			} finally {
+				setLoading(false)
+				if (savedView) setTimeout(() => scrollerRef.current?.scrollTo({ top: savedView.scrollTop }), 0)
+			}
+			return
+		}
+
+		previousView.current = {
+			statuses,
+			unreadStatuses,
+			firstItemIndex,
+			scrollTop: scrollerRef.current?.scrollTop || 0
+		}
+		minIdModeRef.current = true
+		setMinIdMode(true)
+		appending.current = true
+		try {
+			await setTimelineStreamingPaused(props.timeline.id, true)
+			const markers = await client.getMarkers(['home'])
+			const minId = (markers.data as Entity.Marker).home?.last_read_id
+			if (!minId) throw new Error('The home timeline marker does not contain a last_read_id')
+			markerMinId.current = minId
+			lastRequestedMinId.current = minId
+			const res = await loadTimeline(props.timeline, client, undefined, minId)
+			setUnreadStatuses([])
+			setFirstItemIndex(TIMELINE_MAX_STATUSES)
+			scrollToMinIdBoundary.current = true
+			setStatuses(res)
+		} catch (err) {
+			console.error(err)
+			minIdModeRef.current = false
+			setMinIdMode(false)
+			lastRequestedMinId.current = null
+			markerMinId.current = null
+			previousView.current = null
+			await setTimelineStreamingPaused(props.timeline.id, false)
+			toast.push(alert('error', formatMessage({ id: 'alert.failedLoad' }, { timeline: `${props.timeline.name} timeline` })), {
+				placement: 'topStart'
+			})
+		} finally {
+			setLoading(false)
+		}
+	}, [client, firstItemIndex, loading, minIdMode, props.timeline, statuses, unreadStatuses])
 
 	const timelineIcon = (kind: TimelineKind, isMisskeyAntenna: boolean) => {
 		if (isMisskeyAntenna) return <Icon as={BsBroadcast} />
@@ -387,7 +509,7 @@ export default function TimelineColumn(props: Props) {
 	}
 
 	const loadMore = useCallback(async () => {
-		if (!appending.current) return
+		if (!appending.current || statuses.length === 0) return
 		console.debug('appending', props.timeline)
 		let maxId = null
 		switch (props.timeline.kind) {
@@ -404,13 +526,13 @@ export default function TimelineColumn(props: Props) {
 		}
 
 		try {
-			const append = await loadTimeline(props.timeline, client, maxId)
+			const append = await loadTimeline(props.timeline, client, maxId, minIdMode ? markerMinId.current : undefined)
 			appending.current = append.length > 0
 			setStatuses((last) => [...last, ...append])
 		} catch (err) {
 			console.error(err)
 		}
-	}, [client, statuses, setStatuses, nextMaxId])
+	}, [client, statuses, setStatuses, nextMaxId, minIdMode])
 
 	const prependUnreads = useCallback(() => {
 		console.debug('prepending', props.timeline)
@@ -421,6 +543,17 @@ export default function TimelineColumn(props: Props) {
 		setStatuses(() => [...unreads, ...statuses])
 		return false
 	}, [firstItemIndex, statuses, setStatuses, unreadStatuses])
+	const handleAtTopStateChange = useCallback(
+		(atTop: boolean) => {
+			if (!atTop) return
+			if (minIdMode) {
+				void loadNewerFromMinId()
+				return
+			}
+			prependUnreads()
+		},
+		[minIdMode, loadNewerFromMinId, prependUnreads]
+	)
 
 	const backToTop = () => {
 		scrollerRef.current.scrollTo({
@@ -437,13 +570,14 @@ export default function TimelineColumn(props: Props) {
 		borderTopLeftRadius: 8,
 		borderTopRightRadius: 8
 	}
+	const showMinIdButton = props.timeline.kind === 'home'
 	if (!props.server) return null
 
 	return (
 		<Container style={{ height: '100%' }}>
 			<Header style={headerStyle}>
 				<FlexboxGrid align="middle" justify="space-between">
-					<FlexboxGrid.Item style={{ width: 'calc(100% - 80px)' }}>
+					<FlexboxGrid.Item style={{ width: `calc(100% - ${showMinIdButton ? 108 : 80}px)` }}>
 						<FlexboxGrid align="middle" onClick={backToTop} style={{ cursor: 'pointer' }}>
 							{/** icon **/}
 							<FlexboxGrid.Item
@@ -478,8 +612,20 @@ export default function TimelineColumn(props: Props) {
 							</FlexboxGrid.Item>
 						</FlexboxGrid>
 					</FlexboxGrid.Item>
-					<FlexboxGrid.Item style={{ width: '80px' }}>
+					<FlexboxGrid.Item style={{ width: showMinIdButton ? '108px' : '80px' }}>
 						<FlexboxGrid align="middle" justify="end">
+							{showMinIdButton && (
+								<FlexboxGrid.Item>
+									<Button
+										appearance={minIdMode ? 'primary' : 'subtle'}
+										onClick={toggleMinIdMode}
+										style={{ padding: '4px' }}
+										title={formatMessage({ id: minIdMode ? 'timeline.minId.restore' : 'timeline.minId.show' })}
+									>
+										<Icon as={minIdMode ? BsArrowReturnLeft : BsArrowUpCircle} />
+									</Button>
+								</FlexboxGrid.Item>
+							)}
 							<FlexboxGrid.Item>
 								<Button appearance="subtle" onClick={reload} style={{ padding: '4px' }} title={formatMessage({ id: 'timeline.reload' })}>
 									<Icon as={BsArrowClockwise} />
@@ -538,6 +684,7 @@ export default function TimelineColumn(props: Props) {
 						}}
 					>
 						<Virtuoso
+							ref={virtuosoRef}
 							style={{ height: '100%' }}
 							data={statuses}
 							scrollerRef={(ref) => {
@@ -545,7 +692,7 @@ export default function TimelineColumn(props: Props) {
 							}}
 							className="timeline-scrollable"
 							firstItemIndex={firstItemIndex}
-							atTopStateChange={prependUnreads}
+							atTopStateChange={handleAtTopStateChange}
 							endReached={loadMore}
 							overscan={TIMELINE_STATUSES_COUNT}
 							defaultItemHeight={44}

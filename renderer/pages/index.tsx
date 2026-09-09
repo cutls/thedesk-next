@@ -34,7 +34,7 @@ import { Context as i18nContext } from '@/i18n'
 import type { ReceiveNotificationPayload } from '@/payload'
 import { ContextLoadTheme } from '@/theme'
 import { useWindowSize } from '@/utils/useWindowSize'
-import { allUnsubscribe, listenUser, start } from '@/utils/socket'
+import { allClose, allUnsubscribe, listenUser, start } from '@/utils/socket'
 import { updateAvatar } from '@/utils/oauth'
 import type { InitialInfo } from '@/entities/initialInfo'
 
@@ -60,6 +60,7 @@ function App() {
 	const [currentPath, setCurrentPath] = useState<string | undefined>(undefined)
 	const [migrate, setMigrate] = useState<string | null>(null)
 	const [isMac, setIsMac] = useState(false)
+	const streamingPausedTimelineIds = useRef(new Set<number>())
 
 	const [modalState, dispatch] = useReducer(modalReducer, initialModalState)
 	const spaceRef = useRef<HTMLDivElement>()
@@ -198,6 +199,19 @@ function App() {
 			}
 		})
 	}
+	const setTimelineStreamingPaused = async (timelineId: number, paused: boolean) => {
+		const pausedTimelineIds = streamingPausedTimelineIds.current
+		if (paused) {
+			if (pausedTimelineIds.has(timelineId)) return
+			const shouldDisconnect = pausedTimelineIds.size === 0
+			pausedTimelineIds.add(timelineId)
+			if (shouldDisconnect) await allClose()
+			return
+		}
+
+		if (!pausedTimelineIds.delete(timelineId) || pausedTimelineIds.size > 0) return
+		await loadTimelines(true)
+	}
 	useEffect(() => {
 		const fn = loadTimelines(true)
 		return () => {
@@ -277,7 +291,7 @@ function App() {
 	const composeClass = disableDrag ? 'compose-left-' : 'compose-drag-'
 
 	return (
-		<TimelineRefreshContext.Provider value={{ timelineRefresh }}>
+		<TimelineRefreshContext.Provider value={{ timelineRefresh, setTimelineStreamingPaused }}>
 			<div className="container index" onDragEnter={() => setComposeOpened(true)} style={Object.assign({ backgroundColor: 'var(--rs-bg-well)', width: '100%', overflow: 'hidden' }, style)}>
 				<Head>
 					<title>TheDesk</title>
