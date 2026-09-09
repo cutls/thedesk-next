@@ -50,6 +50,9 @@ import { listenTimeline, listenUser, listenTimelineWaiter, listenUserWaiter } fr
 import { Context } from '@/theme'
 import Status from './status/Status'
 
+const HIDE_UNREAD_TIMELINE_POPOVER_KEY = 'hideUnreadTimelinePopover'
+let hasShownUnreadTimelinePopover = false
+
 type Props = {
 	timeline: Timeline
 	server: Server
@@ -102,6 +105,11 @@ export default function TimelineColumn(props: Props) {
 	statusesRef.current = statuses
 	const account = props.account
 	const uniqueTimelineKey = `${props.server.id}-${props.timeline.kind}`
+	useEffect(() => {
+		if (props.timeline.kind !== 'home' || !account || !client || hasShownUnreadTimelinePopover || localStorage.getItem(HIDE_UNREAD_TIMELINE_POPOVER_KEY) === 'true') return
+		hasShownUnreadTimelinePopover = true
+		setWalkthrough(true)
+	}, [account, client, props.timeline.kind])
 	useEffect(() => {
 		return () => {
 			if (minIdModeRef.current) void setTimelineStreamingPaused(props.timeline.id, false)
@@ -516,7 +524,14 @@ export default function TimelineColumn(props: Props) {
 
 	const closeWalkthrough = async () => {
 		setWalkthrough(false)
-		//await invoke('update_instruction', { step: 2 })
+	}
+	const neverShowWalkthrough = () => {
+		localStorage.setItem(HIDE_UNREAD_TIMELINE_POPOVER_KEY, 'true')
+		setWalkthrough(false)
+	}
+	const showUnreadTimelineFromWalkthrough = () => {
+		setWalkthrough(false)
+		void toggleMinIdMode()
 	}
 
 	const loadMore = useCallback(async () => {
@@ -581,14 +596,13 @@ export default function TimelineColumn(props: Props) {
 		borderTopLeftRadius: 8,
 		borderTopRightRadius: 8
 	}
-	const showMinIdButton = props.timeline.kind === 'home'
 	if (!props.server) return null
 
 	return (
 		<Container style={{ height: '100%' }}>
 			<Header style={headerStyle}>
 				<FlexboxGrid align="middle" justify="space-between">
-					<FlexboxGrid.Item style={{ width: `calc(100% - ${showMinIdButton ? 108 : 80}px)` }}>
+					<FlexboxGrid.Item style={{ width: 'calc(100% - 80px)' }}>
 						<FlexboxGrid align="middle" onClick={backToTop} style={{ cursor: 'pointer' }}>
 							{/** icon **/}
 							<FlexboxGrid.Item
@@ -623,20 +637,8 @@ export default function TimelineColumn(props: Props) {
 							</FlexboxGrid.Item>
 						</FlexboxGrid>
 					</FlexboxGrid.Item>
-					<FlexboxGrid.Item style={{ width: showMinIdButton ? '108px' : '80px' }}>
+					<FlexboxGrid.Item style={{ width: '80px' }}>
 						<FlexboxGrid align="middle" justify="end">
-							{showMinIdButton && (
-								<FlexboxGrid.Item>
-									<Button
-										appearance={minIdMode ? 'primary' : 'subtle'}
-										onClick={toggleMinIdMode}
-										style={{ padding: '4px' }}
-										title={formatMessage({ id: minIdMode ? 'timeline.minId.restore' : 'timeline.minId.show' })}
-									>
-										<Icon as={minIdMode ? BsArrowReturnLeft : BsArrowUpCircle} />
-									</Button>
-								</FlexboxGrid.Item>
-							)}
 							<FlexboxGrid.Item>
 								<Button appearance="subtle" onClick={reload} style={{ padding: '4px' }} title={formatMessage({ id: 'timeline.reload' })}>
 									<Icon as={BsArrowClockwise} />
@@ -646,19 +648,28 @@ export default function TimelineColumn(props: Props) {
 							<FlexboxGrid.Item>
 								{walkthrough && (
 									<div style={{ position: 'relative' }}>
-										<Popover arrow={false} visible={walkthrough} style={{ left: 0, top: 30 }}>
-											<div style={{ width: '120px' }}>
-												<h4 style={{ fontSize: '1.2em' }}>
-													<FormattedMessage id="walkthrough.timeline.settings.title" />
-												</h4>
-												<p>
-													<FormattedMessage id="walkthrough.timeline.settings.description" />
-												</p>
-											</div>
-											<FlexboxGrid justify="end">
-												<Button appearance="default" size="xs" onClick={closeWalkthrough}>
-													<FormattedMessage id="walkthrough.timeline.settings.ok" />
-												</Button>
+						<Popover arrow={false} visible={walkthrough} style={{ right: 0, top: 30, width: '86px', padding: '6px', zIndex: 900 }}>
+							<FlexboxGrid justify="center" align="middle" style={{ gap: '6px' }}>
+								<Button
+									appearance="link"
+									size="xs"
+									onClick={neverShowWalkthrough}
+									style={{ padding: '4px 8px' }}
+									title={formatMessage({ id: 'walkthrough.timeline.unread.never' })}
+									aria-label={formatMessage({ id: 'walkthrough.timeline.unread.never' })}
+								>
+									<Icon as={BsX} />
+								</Button>
+								<Button
+									appearance="primary"
+									size="xs"
+									onClick={showUnreadTimelineFromWalkthrough}
+									style={{ padding: '4px 8px' }}
+									title={formatMessage({ id: 'walkthrough.timeline.unread.show' })}
+									aria-label={formatMessage({ id: 'walkthrough.timeline.unread.show' })}
+								>
+									<Icon as={BsArrowUpCircle} />
+								</Button>
 											</FlexboxGrid>
 										</Popover>
 									</div>
@@ -669,7 +680,7 @@ export default function TimelineColumn(props: Props) {
 									controlId="option-popover"
 									ref={triggerRef}
 									onOpen={closeWalkthrough}
-									speaker={<OptionPopover timeline={props.timeline} close={closeOptionPopover} wrapIndex={props.wrapIndex} />}
+									speaker={<OptionPopover timeline={props.timeline} close={closeOptionPopover} wrapIndex={props.wrapIndex} minIdMode={minIdMode} toggleMinIdMode={toggleMinIdMode} />}
 								>
 									<Button appearance="subtle" style={{ padding: '4px 8px 4px 4px' }} title={formatMessage({ id: 'timeline.settings.title' })}>
 										<Icon as={BsSliders} />
@@ -744,7 +755,7 @@ export default function TimelineColumn(props: Props) {
 		</Container>
 	)
 }
-const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: () => void; wrapIndex: number }>((props, ref) => {
+const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: () => void; wrapIndex: number; minIdMode: boolean; toggleMinIdMode: () => Promise<void> }>((props, ref) => {
 	const { timelineRefresh } = useContext(TimelineRefreshContext)
 	const { liveTag, setLiveTag } = useContext(TheDeskContext)
 	const isComposeLiveTag = liveTag === props.timeline.name && props.timeline.kind === 'tag'
@@ -806,6 +817,21 @@ const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: ()
 	return (
 		<Popover ref={ref} style={{ opacity: 1 }}>
 			<div style={{ display: 'flex', flexDirection: 'column', width: '220px', padding: '5px' }}>
+				{props.timeline.kind === 'home' && (
+					<>
+						<Button
+							appearance={props.minIdMode ? 'primary' : 'subtle'}
+							onClick={() => void props.toggleMinIdMode()}
+							style={{ padding: '6px 8px' }}
+							startIcon={<Icon as={props.minIdMode ? BsArrowReturnLeft : BsArrowUpCircle} />}
+							title={formatMessage({ id: props.minIdMode ? 'timeline.minId.restore' : 'timeline.minId.show' })}
+							aria-label={formatMessage({ id: props.minIdMode ? 'timeline.minId.restore' : 'timeline.minId.show' })}
+						>
+							<FormattedMessage id="walkthrough.timeline.unread.title" />
+						</Button>
+						<Divider style={{ margin: '8px 0' }} />
+					</>
+				)}
 				{props.timeline.kind === 'tag' && (
 					<Button onClick={toggleLiveTagFn} style={{ padding: '4px' }} startIcon={<Icon as={BsMegaphone} />}>
 						<FormattedMessage id={isComposeLiveTag ? 'compose.liveTag.stop' : 'compose.liveTag.start'} />

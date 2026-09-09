@@ -40,6 +40,11 @@
 			}
 		},
 		"timeline": {
+			"unread": {
+				"title": "Unread timeline",
+				"show": "View unread",
+				"never": "Don't show again"
+			},
 			"settings": {
 				"title": "Timeline settings",
 				"description": "You can move and remove the timeline.",

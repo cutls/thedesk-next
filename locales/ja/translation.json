@@ -40,6 +40,11 @@
 			}
 		},
 		"timeline": {
+			"unread": {
+				"title": "未読タイムライン",
+				"show": "未読を見る",
+				"never": "今後表示しない"
+			},
 			"settings": {
 				"title": "タイムラインの設定",
 				"description": "タイムラインを移動および削除できます。",
