@@ -18,6 +18,11 @@ contextBridge.exposeInMainWorld('electronAPI', {
 	showAbout: (callback: (event: Electron.IpcRendererEvent) => void) => {
 		ipcRenderer.on('showAbout', callback)
 	},
+	onWindowBlur: (callback: () => void) => {
+		const listener = () => callback()
+		ipcRenderer.on('windowBlur', listener)
+		return () => ipcRenderer.removeListener('windowBlur', listener)
+	},
 	appleMusic: (callback: (event: Electron.IpcRendererEvent, data: any) => void) => {
 		ipcRenderer.once('appleMusic', callback)
 	},

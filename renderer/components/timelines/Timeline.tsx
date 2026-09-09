@@ -98,6 +98,8 @@ export default function TimelineColumn(props: Props) {
 		firstItemIndex: number
 		scrollTop: number
 	} | null>(null)
+	const statusesRef = useRef(statuses)
+	statusesRef.current = statuses
 	const account = props.account
 	const uniqueTimelineKey = `${props.server.id}-${props.timeline.kind}`
 	useEffect(() => {
@@ -114,6 +116,15 @@ export default function TimelineColumn(props: Props) {
 		})
 		return () => cancelAnimationFrame(frame)
 	}, [loading, minIdMode, statuses])
+	useEffect(() => {
+		if (props.timeline.kind !== 'home' || !client || !account || !window.electronAPI?.onWindowBlur) return
+
+		return window.electronAPI.onWindowBlur(() => {
+			const id = statusesRef.current[0]?.id
+			if (!id) return
+			void client.saveMarkers({ home: { last_read_id: id } }).catch((err) => console.error('failed to update home marker', err))
+		})
+	}, [account, client, props.timeline.kind])
 	useEffect(() => {
 		const f = async () => {
 			setLoading(true)

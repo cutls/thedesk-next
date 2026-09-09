@@ -110,6 +110,7 @@ app.on('ready', async () => {
 	mainWindow.on('resized', () => writePos(mainWindow))
 	mainWindow.on('moved', () => writePos(mainWindow))
 	mainWindow.on('minimize', () => writePos(mainWindow))
+	mainWindow.on('blur', () => mainWindow?.webContents.send('windowBlur'))
 	ipcMainWindow(mainWindow, ipcMain)
 	mainWindow.webContents.on('context-menu', (_e, props) => {
 		const { selectionText, isEditable } = props
