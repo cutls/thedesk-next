@@ -53,14 +53,20 @@ Because of `electron-builder`, use `shamefully-hoist` option to launch productio
 ```
 pnpm install
 npx electron-rebuild
-
 pnpm run build
-pnpm run pack:win # Windows(able to run on Windows)
-pnpm run pack:linux # Linux(able to run on any OS)
-pnpm run pack:mac # macOS(able to run on macOS)
+
+# choose your environment
+
+pnpm run pack:win # Windows(x64)
+pnpm run pack:winArm64 # Windows(arm64)
 
 pnpm run pack:appx # Windows Microsoft Store
-pnpm run pack:mas # macOS App Store
+pnpm run pack:linux # Linux(x64)
+
+pnpm run pack:mac # macOS(Universal; Intel & Apple Silicon)
+pnpm run pack:macArm64 # macOS(Apple Silicon)
+pnpm run pack:macX64 #macOS(Intel)
+pnpm run pack:mas # macOS App Store(Universal)
 ```
 
 ### Notarize(macOS)
@@ -70,4 +76,4 @@ If you want to notarize it by your certification, edit `.env.sample` and rename 
 
 ## Notice
 
-This app includes some product created by LLM (Cursor).
+This app includes some product created by LLM (Cursor, Codex).

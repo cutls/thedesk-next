@@ -51,14 +51,20 @@ pnpm run dev
 ```
 pnpm install
 npx electron-rebuild
-
 pnpm run build
-pnpm run pack:win # Windows(able to run on Windows)
-pnpm run pack:linux # Linux(able to run on any OS)
-pnpm run pack:mac # macOS(able to run on macOS)
+
+# 環境に合わせて以下を選択
+
+pnpm run pack:win # Windows(x64)
+pnpm run pack:winArm64 # Windows(arm64)
 
 pnpm run pack:appx # Windows Microsoft Store
-pnpm run pack:mas # macOS App Store
+pnpm run pack:linux # Linux(x64)
+
+pnpm run pack:mac # macOS(Universal; Intel & Apple Silicon)
+pnpm run pack:macArm64 # macOS(Apple Silicon)
+pnpm run pack:macX64 #macOS(Intel)
+pnpm run pack:mas # macOS App Store(Universal)
 
 ```
 
@@ -69,4 +75,4 @@ pnpm run pack:mas # macOS App Store
 
 ## お知らせ
 
-この製品にはLLM(Cursor)で作成された成果物が含まれています。
+この製品にはLLM(Cursor, Codex)で作成された成果物が含まれています。

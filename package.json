@@ -19,6 +19,7 @@
 		"build": "npm run thirdparty && npm run build-renderer && npm run build-electron && node scripts/toRelativePath.js",
 		"pack:mac": "electron-builder --mac --universal",
 		"pack:macArm64": "electron-builder --mac --arm64",
+		"pack:macX64": "electron-builder --mac --x64",
 		"pack:mas": "sh build/mas.delete.sh && electron-builder --mac --universal --config electron-builder.mas.json",
 		"pack:linux": "electron-builder --linux --x64",
 		"pack:win": "electron-builder --windows --x64",
