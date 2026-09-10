@@ -347,7 +347,9 @@
 		"reload": "Reload",
 		"minId": {
 			"show": "Show posts since the last read marker",
-			"restore": "Return to the previous timeline"
+			"restore": "Return to the previous timeline",
+			"turnOff": "Turn Off",
+			"unmarkUnread": "Unmark as Unread"
 		},
 		"settings": {
 			"title": "Settings",

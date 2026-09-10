@@ -596,13 +596,14 @@ export default function TimelineColumn(props: Props) {
 		borderTopLeftRadius: 8,
 		borderTopRightRadius: 8
 	}
+	const headerActionsWidth = minIdMode ? 220 : 80
 	if (!props.server) return null
 
 	return (
 		<Container style={{ height: '100%' }}>
 			<Header style={headerStyle}>
 				<FlexboxGrid align="middle" justify="space-between">
-					<FlexboxGrid.Item style={{ width: 'calc(100% - 80px)' }}>
+					<FlexboxGrid.Item style={{ width: `calc(100% - ${headerActionsWidth}px)` }}>
 						<FlexboxGrid align="middle" onClick={backToTop} style={{ cursor: 'pointer' }}>
 							{/** icon **/}
 							<FlexboxGrid.Item
@@ -637,8 +638,22 @@ export default function TimelineColumn(props: Props) {
 							</FlexboxGrid.Item>
 						</FlexboxGrid>
 					</FlexboxGrid.Item>
-					<FlexboxGrid.Item style={{ width: '80px' }}>
+					<FlexboxGrid.Item style={{ width: `${headerActionsWidth}px` }}>
 						<FlexboxGrid align="middle" justify="end">
+							{minIdMode && (
+								<FlexboxGrid.Item>
+									<Button
+										appearance="subtle"
+										size="xs"
+										onClick={() => void toggleMinIdMode()}
+										style={{ padding: '4px 6px' }}
+										startIcon={<Icon as={BsArrowReturnLeft} />}
+										title={formatMessage({ id: 'timeline.minId.unmarkUnread' })}
+									>
+										<FormattedMessage id="timeline.minId.unmarkUnread" />
+									</Button>
+								</FlexboxGrid.Item>
+							)}
 							<FlexboxGrid.Item>
 								<Button appearance="subtle" onClick={reload} style={{ padding: '4px' }} title={formatMessage({ id: 'timeline.reload' })}>
 									<Icon as={BsArrowClockwise} />
@@ -827,7 +842,7 @@ const OptionPopover = forwardRef<HTMLDivElement, { timeline: Timeline; close: ()
 							title={formatMessage({ id: props.minIdMode ? 'timeline.minId.restore' : 'timeline.minId.show' })}
 							aria-label={formatMessage({ id: props.minIdMode ? 'timeline.minId.restore' : 'timeline.minId.show' })}
 						>
-							<FormattedMessage id="walkthrough.timeline.unread.title" />
+							<FormattedMessage id={props.minIdMode ? 'timeline.minId.turnOff' : 'walkthrough.timeline.unread.title'} />
 						</Button>
 						<Divider style={{ margin: '8px 0' }} />
 					</>

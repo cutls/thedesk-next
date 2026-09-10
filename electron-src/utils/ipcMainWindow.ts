@@ -10,9 +10,12 @@ import { ElectronDownloadManager } from 'electron-dl-manager'
 import os from 'node:os'
 import { join } from 'node:path'
 
-import { auth } from './auth'
+import { auth } from './auth.js'
 
-import defaultConfig from '../defaultConfig.json'
+const defaultConfig: SystemConfig = {
+	hardwareAcceleration: true,
+	allowDoH: true
+}
 import fs from 'node:fs'
 type SystemConfig = {
 	hardwareAcceleration: boolean
@@ -125,7 +128,14 @@ export const ipcMainWindow = (mainWindow: Electron.BrowserWindow | null, ipcMain
 	ipcMain.on('imageOperation', async (_event: IpcMainEvent, { image, operation }: { image: string; operation: 'copy' | 'download' }) => {
 		if (operation === 'download') return mainWindow?.webContents.downloadURL(image)
 		const blob = await fetch(image).then((r) => r.blob())
-		if (operation === 'copy') clipboard.writeImage(nativeImage.createFromBuffer(Buffer.from(await blob.arrayBuffer())))
+		const imageNative = nativeImage.createFromBuffer(Buffer.from(await blob.arrayBuffer()))
+		const type = blob.type
+		const isPng = type === 'image/png'
+		const obj = isPng ? imageNative.toPNG() : imageNative.toJPEG(100)
+		const content = new Electron.ClipboardItem({
+			[isPng ? 'image/png' : 'image/jpeg']: new Blob([obj], { type })
+		})
+		if (operation === 'copy') clipboard.write([content])
 	})
 	ipcMain.on('openInAppBrowser', async (_event: IpcMainEvent, message: any) => {
 		if (!mainWindow) return

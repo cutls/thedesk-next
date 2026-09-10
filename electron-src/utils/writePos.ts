@@ -1,5 +1,5 @@
 import fs from 'node:fs'
-import type { WindowState } from '../types'
+import type { WindowState } from '../types.js'
 import { screen, app } from 'electron'
 import { join } from 'node:path'
 

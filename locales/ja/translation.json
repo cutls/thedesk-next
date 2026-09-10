@@ -347,7 +347,9 @@
 		"reload": "再読み込み",
 		"minId": {
 			"show": "最後に読んだ位置以降の投稿を表示",
-			"restore": "元のタイムラインに戻る"
+			"restore": "元のタイムラインに戻る",
+			"turnOff": "オフにする",
+			"unmarkUnread": "未読表示を解除"
 		},
 		"settings": {
 			"title": "設定",

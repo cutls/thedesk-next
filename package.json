@@ -7,7 +7,7 @@
 		"email": "p@cutls.dev",
 		"url": "https://cutls.dev"
 	},
-	"version": "25.5.0",
+	"version": "25.5.1",
 	"codename": "Aiko",
 	"homepage": "https://github.com/cutls/thedesk-next",
 	"packageManager": "pnpm@10.5.2",
@@ -18,6 +18,7 @@
 		"build-electron": "tsc -p electron-src",
 		"build": "npm run thirdparty && npm run build-renderer && npm run build-electron && node scripts/toRelativePath.js",
 		"pack:mac": "electron-builder --mac --universal",
+		"pack:macArm64": "electron-builder --mac --arm64",
 		"pack:mas": "sh build/mas.delete.sh && electron-builder --mac --universal --config electron-builder.mas.json",
 		"pack:linux": "electron-builder --linux --x64",
 		"pack:win": "electron-builder --windows --x64",
@@ -38,7 +39,7 @@
 		"electron-is-dev": "^3.0.1",
 		"electron-native-auth": "^0.2.0",
 		"electron-next": "^3.1.5",
-		"electron-serve": "^3.0.0",
+		"electron-serve": "^3.0.1",
 		"electron-window-state": "^5.0.3",
 		"emoji-mart": "^5.6.0",
 		"font-list": "^2.0.1",
@@ -59,7 +60,7 @@
 		"sass": "^1.93.2",
 		"semver": "^7.7.3",
 		"superagent": "^10.0.3",
-		"tar": "^7.5.2"
+		"tar": "^7.5.22"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.0.6",
@@ -74,14 +75,25 @@
 		"@types/semver": "^7.7.1",
 		"@types/superagent": "^8.1.9",
 		"concurrently": "^9.2.1",
-		"electron": "37",
-		"electron-builder": "26.8.1",
+		"electron": "44",
+		"electron-builder": "26.16.1",
 		"license-checker": "^25.0.1",
 		"rimraf": "^6.0.1",
 		"typescript": "^5.9.3"
 	},
 	"resolutions": {
 		"react": "18.2.0",
-		"react-dom": "18.2.0"
+		"react-dom": "18.2.0",
+		"dmg-builder": "26.16.1",
+		"node-abi": "4.35.0",
+		"electron-builder-squirrel-windows": "26.16.1"
+	},
+	"pnpm": {
+		"onlyBuiltDependencies": [
+			"@parcel/watcher",
+			"electron",
+			"electron-native-auth",
+			"electron-winstaller"
+		]
 	}
 }

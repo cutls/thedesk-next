@@ -1,4 +1,3 @@
-
 import serve from 'electron-serve'
 import fs from 'node:fs'
 // Native
@@ -9,15 +8,18 @@ type SystemConfig = {
 	allowDoH: boolean
 }
 
-
 // Packages
 import { app, BrowserWindow, clipboard, type IpcMainEvent, ipcMain, Menu, type MenuItemConstructorOptions, shell } from 'electron'
 import isDev from 'electron-is-dev'
-import defaultConfig from './defaultConfig.json'
-import type { WindowState } from './types'
-import { writePos } from './utils/writePos'
-import { copyDir } from './utils/copyDir'
-import { ipcMainWindow } from './utils/ipcMainWindow'
+const defaultConfig: SystemConfig = {
+	hardwareAcceleration: true,
+	allowDoH: true
+}
+
+import type { WindowState } from './types.js'
+import { writePos } from './utils/writePos.js'
+import { copyDir } from './utils/copyDir.js'
+import { ipcMainWindow } from './utils/ipcMainWindow.js'
 
 const appDataPath = join(app.getPath('appData'), app.getName())
 const baseDir = join(appDataPath, 'thedesk-next')
