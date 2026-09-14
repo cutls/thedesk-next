@@ -188,7 +188,7 @@ const Profile: React.FC<Props> = (props) => {
 
 	return (
 		<>
-			<Header style={{ backgroundColor: 'var(--rs-border-secondary)' }}>
+			<Header style={{ backgroundColor: 'var(--background-overlay)' }}>
 				<FlexboxGrid justify="space-between">
 					<FlexboxGrid.Item>
 						<Button appearance="link" onClick={back}>

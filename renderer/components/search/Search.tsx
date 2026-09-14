@@ -139,7 +139,7 @@ export default function Search(props: Props) {
 		}, [handleKeyPress])
 
 	return (
-		<Container style={{ backgroundColor: 'var(--rs-border-secondary)', height: '100%' }}>
+		<Container style={{ backgroundColor: 'var(--background-overlay)', height: '100%' }}>
 			<Header style={{ borderBottom: '1px solid var(--rs-divider-border)', backgroundColor: 'var(--rs-state-hover-bg)' }}>
 				<FlexboxGrid justify="space-between" align="middle">
 					<FlexboxGrid.Item style={{ lineHeight: '53px', paddingLeft: '12px', fontSize: '18px' }}>
@@ -152,7 +152,7 @@ export default function Search(props: Props) {
 					</FlexboxGrid.Item>
 				</FlexboxGrid>
 			</Header>
-			<Content style={{ height: '100%', padding: '12px', backgroundColor: 'var(--rs-border-secondary)' }} className="sidepanel-scrollable">
+			<Content style={{ height: '100%', padding: '12px', backgroundColor: 'var(--background-overlay)' }} className="sidepanel-scrollable">
 				<FlexboxGrid>
 					<FlexboxGrid.Item>
 						<Dropdown renderToggle={(props, ref) => renderAccountIcon(props, ref, fromAccount)} onSelect={selectAccount}>
