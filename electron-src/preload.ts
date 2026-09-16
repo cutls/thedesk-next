@@ -6,7 +6,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
 	openInAppBrowser: (url: string) => ipcRenderer.send('openInAppBrowser', url),
 	openAppDataFolder: () => ipcRenderer.send('openAppDataFolder'),
 	requestInitialInfo: (init: boolean) => ipcRenderer.send('requestInitialInfo', init),
-	requestAppleMusic: (fallback: boolean) => ipcRenderer.send('requestAppleMusic', { fallback }),
 	imageOperation: (image: string, operation: 'copy' | 'download') => {
 		ipcRenderer.send('imageOperation', { image, operation })
 	},

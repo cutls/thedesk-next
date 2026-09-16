@@ -1,13 +1,9 @@
 {
   "productName": "TheDesk",
   "appId": "next.top.thedesk",
-  "asarUnpack": [
-    "native/**"
-  ],
   "files": [
     "main-build",
     "renderer/out",
-    "native",
     "!node_modules/electron-native-auth/build/Release/electron_native_auth.node.dSYM"
   ],
   "mas": {

@@ -96,34 +96,6 @@ export const ipcMainWindow = (mainWindow: Electron.BrowserWindow | null, ipcMain
 		}
 		mainWindow?.webContents.send('initialInfo', info)
 	})
-	ipcMain.on('requestAppleMusic', async (_event: IpcMainEvent) => {
-		let song: Record<string, any> = {}
-		try {
-			const prodFile = join(__dirname, '..', '..', 'native', 'nowplaying-info.js').replace('app.asar', 'app.asar.unpacked')
-			const devFile = join(__dirname, '..', '..', 'native', 'nowplaying-info.js')
-			const { stdout } = await promisifyExecFile(isDev ? devFile : prodFile)
-			if (!stdout) throw new Error('no stdout')
-			song = JSON.parse(stdout)
-			if (!song || !song.name) throw new Error('no song data')
-			if (!song.databaseID) return mainWindow?.webContents.send('appleMusic', song)
-		} catch (e) {
-			logger(`Failed to get Apple Music info: ${(e as Error).message}`)
-			return mainWindow?.webContents.send('appleMusic', { error: true, message: 'unknown error' })
-		}
-		try {
-			const prodFile = join(__dirname, '..', '..', 'native', 'get-artwork').replace('app.asar', 'app.asar.unpacked')
-			const devFile = join(__dirname, '..', '..', 'native', 'get-artwork')
-
-			const { stdout: artwork } = await promisifyExecFile(isDev ? devFile : prodFile, [song.databaseID.toString()], {
-				maxBuffer: 64 * 1024 * 1024,
-				encoding: 'buffer'
-			})
-			song.artwork = artwork.toString('base64')
-			mainWindow?.webContents.send('appleMusic', song)
-		} catch {
-			mainWindow?.webContents.send('appleMusic', song)
-		}
-	})
 
 	ipcMain.on('imageOperation', async (_event: IpcMainEvent, { image, operation }: { image: string; operation: 'copy' | 'download' }) => {
 		if (operation === 'download') return mainWindow?.webContents.downloadURL(image)

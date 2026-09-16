@@ -4,14 +4,12 @@ export type IPCEvent = (ev: { payload: T }) => void
 export interface IElectronAPI {
 	writeText: (text: string) => void
 	requestInitialInfo: (init: boolean) => void
-	requestAppleMusic: (fallback: boolean) => void
 	openBrowser: (url: string) => void
 	openInAppBrowser: (url: string) => void
 	onInitialInfo: (callback: (event: Electron.IpcRendererEvent, data: any) => void) => void
 	showAbout: (callback: (event: Electron.IpcRendererEvent) => void) => void
 	onWindowBlur: (callback: () => void) => () => void
 	customUrl: (callback: (event: Electron.IpcRendererEvent, data: any) => void) => void
-	appleMusic: (callback: (event: Electron.IpcRendererEvent, data: any) => void) => void
 	openAppDataFolder: () => void
 	imageOperation: (image: string, operation: 'copy' | 'download') => void
 	fetch: () => void

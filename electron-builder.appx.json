@@ -2,13 +2,9 @@
 	"productName": "TheDeskPC",
 	"appId": "next.top.thedesk",
 	"artifactName": "${productName}-${version}-store-${os}-${arch}.${ext}",
-	"asarUnpack": [
-		"native/**"
-	],
 	"files": [
 		"main-build",
-		"renderer/out",
-		"native"
+		"renderer/out"
 	],
 	"win": {
 		"target": [
