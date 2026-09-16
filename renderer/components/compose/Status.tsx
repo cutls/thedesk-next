@@ -108,6 +108,7 @@ const Status: React.FC<Props> = (props) => {
 	const emojiPickerRef = useRef(null)
 	const uploaderRef = useRef<HTMLInputElement>()
 	const toast = useToaster()
+	const isDarwin = localStorage.getItem('os') === 'darwin'
 	useEffect(() => {
 		if (isSortedLanguage) {
 			const lastUsed = JSON.parse(localStorage.getItem('lastUseedLanguage')) || []
@@ -583,9 +584,11 @@ const Status: React.FC<Props> = (props) => {
 					<Dropdown.Item eventKey={'spotify'} icon={<Icon as={BsSpotify} />}>
 						Spotify
 					</Dropdown.Item>
-					<Dropdown.Item eventKey={'appleMusic'} icon={<Icon as={BsMusicNoteBeamed} />}>
-						Apple Music
-					</Dropdown.Item>
+					{isDarwin && (
+						<Dropdown.Item eventKey={'appleMusic'} icon={<Icon as={BsMusicNoteBeamed} />}>
+							Apple Music
+						</Dropdown.Item>
+					)}
 				</Dropdown.Menu>
 			</Popover>
 		)
