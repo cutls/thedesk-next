@@ -4,7 +4,6 @@ import ntpClient from 'ntp-client'
 import { execFile } from 'node:child_process'
 import { promisify } from 'node:util'
 import { app, clipboard, type IpcMainEvent, nativeImage, shell } from 'electron'
-import isDev from 'electron-is-dev'
 import { ElectronDownloadManager } from 'electron-dl-manager'
 
 import os from 'node:os'
@@ -21,7 +20,6 @@ type SystemConfig = {
 	hardwareAcceleration: boolean
 	allowDoH: boolean
 }
-const promisifyExecFile = promisify(execFile)
 const appDataPath = join(app.getPath('appData'), app.getName())
 const configPath = join(appDataPath, 'config.json')
 const baseDir = join(appDataPath, 'thedesk-next')
