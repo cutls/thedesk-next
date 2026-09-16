@@ -316,6 +316,8 @@
 			"again": "The integration with Spotify has been completed. Please run NowPlaying again.",
 			"error": "Error has occurred. Please run NowPlaying again.",
 			"unkwnownAaBtn": "Get not-found artwork from network",
+			"np6Required": "You need the np6 software. Please make sure it is running and that “Local JSON server” is enabled in the np6 settings.",
+			"np6Download": "Download np6",
 			"accessibilityError": "Cannot access music information. Please make sure TheDesk has permission to control the music app in System Preferences > Security & Privacy > Privacy > Accessibility."
 		},
 		"editMyPost": "Editing my post",

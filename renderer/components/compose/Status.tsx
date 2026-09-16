@@ -16,6 +16,7 @@ import {
 	IconButton,
 	Input,
 	InputPicker,
+	Modal,
 	Popover,
 	Radio,
 	SelectPicker,
@@ -33,6 +34,7 @@ import { Context } from '@/theme'
 import { data, mapCustomEmojiCategory } from '@/utils/emojiData'
 import { languagesDefault, sortedLanguages } from '@/utils/languages'
 import { getUnknownAA, nowplaying } from '@/utils/nowplaying'
+import { open as openBrowser } from '@/utils/openBrowser'
 import { privacyColor, privacyIcon, quoteIcon } from '@/utils/statusParser'
 import { readSettings } from '@/utils/storage'
 import AutoCompleteTextarea, { type ArgProps as AutoCompleteTextareaProps } from './AutoCompleteTextarea'
@@ -92,6 +94,7 @@ const Status: React.FC<Props> = (props) => {
 	const [config, setConfig] = useState<Settings['compose']>(defaultSetting.compose)
 	const [language, setLanguage] = useState<string>('en')
 	const [searchAA, setSearchAA] = useState('')
+	const [np6ErrorOpen, setNp6ErrorOpen] = useState(false)
 	const [editMediaModal, setEditMediaModal] = useState(false)
 	const [editMedia, setEditMedia] = useState<Entity.Attachment | null>(null)
 	const [maxCharacters, setMaxCharacters] = useState<number | null>(null)
@@ -551,9 +554,21 @@ const Status: React.FC<Props> = (props) => {
 
 	const NowPlayingDropdown = ({ onClose, left, top, className }, ref: any) => {
 		const handleSelect = async (key: string) => {
-			const showToaster = (message: string, duration?: number) => toast.push(alert('info', formatMessage({ id: message })), { placement: 'topStart', duration })
+			let errorHandled = false
+			const showToaster = (message: string, duration?: number) => {
+				errorHandled = true
+				if (message === 'compose.nowplaying.np6Required') {
+					setNp6ErrorOpen(true)
+					return
+				}
+				toast.push(alert('info', formatMessage({ id: message })), { placement: 'topStart', duration })
+			}
 			const ret = await nowplaying(key as 'spotify' | 'appleMusic', showToaster)
-			if (!ret) return toast.push(alert('info', formatMessage({ id: 'compose.nowplaying.error' })), { placement: 'topStart' })
+			if (!ret) {
+				onClose()
+				if (!errorHandled) toast.push(alert('info', formatMessage({ id: 'compose.nowplaying.error' })), { placement: 'topStart' })
+				return
+			}
 			if (!ret.file) setSearchAA(ret.title)
 			if (ret.file) coreUploader(ret.file)
 			setFormValue({
@@ -765,6 +780,19 @@ const Status: React.FC<Props> = (props) => {
 					<FormattedMessage id="compose.nowplaying.unkwnownAaBtn" />
 				</Button>
 			)}
+			<Modal size="xs" open={np6ErrorOpen} onClose={() => setNp6ErrorOpen(false)}>
+				<Modal.Header>
+					<Modal.Title>Apple Music Now Playing</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>
+					<FormattedMessage id="compose.nowplaying.np6Required" />
+				</Modal.Body>
+				<Modal.Footer>
+					<Button appearance="primary" onClick={() => openBrowser('https://np6-lp.vercel.app/')}>
+						<FormattedMessage id="compose.nowplaying.np6Download" />
+					</Button>
+				</Modal.Footer>
+			</Modal>
 			<EditMedia
 				opened={editMediaModal}
 				attachment={editMedia}

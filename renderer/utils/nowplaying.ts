@@ -65,46 +65,49 @@ export async function nowplaying(key: 'spotify' | 'appleMusic', showToaster: (me
 			return null
 		}
 	} else if (key === 'appleMusic') {
-		console.log('request')
-		window.electronAPI.requestAppleMusic(true)
-		const data: INowPlaying = await new Promise((resolve) => {
-			window.electronAPI.appleMusic(async (_, itemRaw) => {
-				console.log(itemRaw)
-				if (itemRaw.data && itemRaw.data.error) {
-					if (itemRaw.data.error) showToaster(itemRaw.data.error)
-					showToaster('compose.nowplaying.accessibilityError', 10000)
-					return
-				}
-				const item = itemRaw.type === 'dock' ? await getUnknownData(itemRaw.data) : itemRaw
-				const contentRaw = localStorage.getItem('nowplayingTemplate')
-				const artwork = item.artwork ? new File([Buffer.from(item.artwork, 'base64')], 'cover.jpg', { type: 'image/jpeg' }) : null
-				let content = contentRaw === 'null' || !contentRaw ? '#NowPlaying {song} / {album} / {artist}\n{url} #{Source}WithTheDesk' : contentRaw
-				const regExp1 = /{song}/g
-				content = content.replace(regExp1, item.name)
-				const regExp2 = /{album}/g
-				content = content.replace(regExp2, item.album)
-				const regExp3 = /{artist}/g
-				content = content.replace(regExp3, item.artist)
-				const regExp4 = /{url}/g
-				content = content.replace(regExp4, '')
-				const regExp5 = /{composer}/g
-				content = content.replace(regExp5, item.composer)
-				const regExp6 = /{hz}/g
-				content = content.replace(regExp6, item.sampleRate)
-				const regExp7 = /{bitRate}/g
-				content = content.replace(regExp7, '')
-				const regExp8 = /{lyricist}/g
-				content = content.replace(regExp8, '')
-				const regExp9 = /{bpm}/g
-				content = content.replace(regExp9, '')
-				const regExp0 = /{genre}/g
-				content = content.replace(regExp0, '')
-				const regExpS = /{Source}/g
-				content = content.replace(regExpS, 'AppleMusic')
-				resolve({ text: content, file: artwork, title: `${item.name} ${item.album} ${item.artist}`, song: item.name, album: item.album, artist: item.artist, isPlaying: true })
-			})
-	})
-		return data
+		try {
+			const response = await fetch('http://localhost:8193/np6', { cache: 'no-store' })
+			if (!response.ok) throw new Error('Could not retrieve Apple Music track')
+			const item = await response.json()
+			if (!item || item.error || !['name', 'album', 'artist', 'source'].every((key) => typeof item[key] === 'string')) {
+				throw new Error('Invalid Apple Music track')
+			}
+			const contentRaw = localStorage.getItem('nowplayingTemplate')
+			const template = contentRaw === 'null' || !contentRaw ? '#NowPlaying {song} / {album} / {artist}\n{url} #{Source}WithTheDesk' : contentRaw
+			const fields: Record<string, string> = {
+				song: item.name,
+				album: item.album,
+				artist: item.artist,
+				Source: item.source.replace(/\s/g, ''),
+				url: '',
+				composer: '',
+				hz: '',
+				bitRate: '',
+				lyricist: '',
+				bpm: '',
+				genre: ''
+			}
+			const content = template.replace(/{(song|album|artist|Source|url|composer|hz|bitRate|lyricist|bpm|genre)}/g, (_, key: string) => fields[key])
+			const artwork = await getAppleMusicArtwork()
+			return { text: content, file: artwork, title: `${item.name} ${item.album} ${item.artist}`, song: item.name, album: item.album, artist: item.artist, isPlaying: true }
+		} catch {
+			showToaster('compose.nowplaying.np6Required')
+			return null
+		}
+	}
+}
+async function getAppleMusicArtwork(): Promise<File | undefined> {
+	try {
+		const response = await fetch('http://localhost:8193/artwork', { cache: 'no-store' })
+		if (!response.ok) return
+		const blob = await response.blob()
+		const signature = new Uint8Array(await blob.slice(0, 8).arrayBuffer())
+		const isPng = [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a].every((byte, index) => signature[index] === byte)
+		const isJpeg = signature[0] === 0xff && signature[1] === 0xd8 && signature[2] === 0xff
+		if (isPng) return new File([blob], 'cover.png', { type: 'image/png' })
+		if (isJpeg) return new File([blob], 'cover.jpg', { type: 'image/jpeg' })
+	} catch {
+		// Artwork is optional; keep the track text when the server cannot supply it.
 	}
 }
 async function refreshSpotifyToken() {

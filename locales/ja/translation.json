@@ -316,6 +316,8 @@
 			"again": "Spotifyとの連携が完了しました。もう一度NowPlayingを実行してください。",
 			"error": "エラーが発生しました。もう一度NowPlayingを実行してください。",
 			"unkwnownAaBtn": "アートワークをネットワークから取得",
+			"np6Required": "np6が必要です。np6が起動していて、np6の設定で「Local JSON server」が有効になっていることを確認してください。",
+			"np6Download": "np6をダウンロード",
 			"accessibilityError": "音楽情報にアクセスできません。システム環境設定 > セキュリティとプライバシー > プライバシー > アクセシビリティでTheDeskが制御する許可があることを確認してください。"
 		},
 		"editMyPost": "自分の投稿を編集しています",
