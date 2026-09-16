@@ -1,8 +1,6 @@
 import { getFonts } from 'font-list'
 import * as tar from 'tar'
 import ntpClient from 'ntp-client'
-import { execFile } from 'node:child_process'
-import { promisify } from 'node:util'
 import { app, clipboard, type IpcMainEvent, nativeImage, shell } from 'electron'
 import { ElectronDownloadManager } from 'electron-dl-manager'
 
