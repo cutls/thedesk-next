@@ -4,6 +4,7 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { type CSSProperties, useCallback, useContext, useEffect, useReducer, useRef, useState } from 'react'
 import Draggable from 'react-draggable'
+import { BsCloudUpload } from 'react-icons/bs'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { ResizableBox } from 'react-resizable'
 import { Animation, Container, Content, DOMHelper, useToaster } from 'rsuite'
@@ -11,6 +12,7 @@ import { listAccounts, listServers, listTimelines, migrateTimelineV1toV2, readSe
 import AddListMember from '@/components/addListMember/AddListMember'
 import Announcements from '@/components/announcements/Announcements'
 import Compose from '@/components/compose/Compose'
+import type { StatusUploader } from '@/components/compose/Status'
 import Detail from '@/components/detail/Detail'
 import FromOtherAccount from '@/components/fromOtherAccount/FromOtherAccount'
 import ListMemberships from '@/components/listMemberships/ListMemberships'
@@ -51,6 +53,8 @@ function App() {
 	const [columnWidths, setColumnWidths] = useState<number[]>([])
 	const [unreads, setUnreads] = useState<Unread[]>([])
 	const [composeOpened, setComposeOpened] = useState<boolean>(false)
+	const [isDraggingFiles, setIsDraggingFiles] = useState(false)
+	const fileDragDepth = useRef(0)
 	const [searchOpened, setSearchOpened] = useState<boolean>(false)
 	const [isFloatingCompose, setIsFloatingCompose] = useState<boolean>(true)
 	const [style, setStyle] = useState<CSSProperties>({})
@@ -64,6 +68,7 @@ function App() {
 
 	const [modalState, dispatch] = useReducer(modalReducer, initialModalState)
 	const spaceRef = useRef<HTMLDivElement>()
+	const composeUploadRef = useRef<StatusUploader>(null)
 
 	const toaster = useToaster()
 	const { switchLang } = useContext(i18nContext)
@@ -289,13 +294,73 @@ function App() {
 	const draggalePosition = { x: Math.min(px >= 0 ? px : 0, width - 300), y: Math.min(py >= 0 ? py : 0, height - 300) }
 	const disableDrag = !isFloatingCompose
 	const composeClass = disableDrag ? 'compose-left-' : 'compose-drag-'
+	const clearFileDrag = () => {
+		fileDragDepth.current = 0
+		setIsDraggingFiles(false)
+	}
 
 	return (
 		<TimelineRefreshContext.Provider value={{ timelineRefresh, setTimelineStreamingPaused }}>
-			<div className="container index" onDragEnter={() => setComposeOpened(true)} style={Object.assign({ backgroundColor: 'var(--rs-bg-well)', width: '100%', overflow: 'hidden' }, style)}>
+			<div
+				className="container index"
+				onDragEnter={(e) => {
+					if (!e.dataTransfer.types.includes('Files')) return
+					fileDragDepth.current += 1
+					setIsDraggingFiles(true)
+					setComposeOpened(true)
+				}}
+				onDragOver={(e) => {
+					if (e.dataTransfer.types.includes('Files')) e.preventDefault()
+				}}
+				onDragLeave={() => {
+					fileDragDepth.current = Math.max(0, fileDragDepth.current - 1)
+					if (fileDragDepth.current === 0) setIsDraggingFiles(false)
+				}}
+				onDragEnd={clearFileDrag}
+				onDrop={async (e) => {
+					clearFileDrag()
+					if (!e.dataTransfer.files.length) return
+					e.preventDefault()
+					setComposeOpened(true)
+					await composeUploadRef.current?.uploadFiles(e.dataTransfer.files)
+				}}
+				style={Object.assign({ backgroundColor: 'var(--rs-bg-well)', width: '100%', overflow: 'hidden' }, style)}
+			>
 				<Head>
 					<title>TheDesk</title>
 				</Head>
+				{isDraggingFiles && (
+					<div
+						role="status"
+						style={{
+							position: 'fixed',
+							inset: 0,
+							zIndex: 2000,
+							pointerEvents: 'none',
+							backgroundColor: 'rgba(0, 0, 0, 0.55)',
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'center',
+							padding: 24
+						}}
+					>
+						<div
+							style={{
+								padding: '32px 48px',
+								border: '2px dashed var(--rs-primary-500)',
+								borderRadius: 16,
+								backgroundColor: 'var(--rs-bg-overlay)',
+								color: 'var(--rs-text-primary)',
+								textAlign: 'center'
+							}}
+						>
+							<BsCloudUpload aria-hidden="true" style={{ fontSize: 48, color: 'var(--rs-primary-500)', marginBottom: 12 }} />
+							<div style={{ fontSize: '1.25em' }}>
+								<FormattedMessage id="compose.dropFiles" />
+							</div>
+						</div>
+					</div>
+				)}
 				{/** Modals **/}
 				<Update version={version} />
 				<NewServer open={modalState.newServer.opened} onClose={() => dispatch({ target: 'newServer', value: false, object: null })} initialServer={modalState.newServer.object} />
@@ -346,7 +411,7 @@ function App() {
 						{(props, ref) => (
 							<Draggable handle=".draggable" disabled={disableDrag} position={disableDrag ? { x: 0, y: 0 } : draggalePosition} onStop={(_e, data) => setComposePosition([data.x, data.y])}>
 								<div {...props} ref={ref} style={disableDrag ? { width: '320px', flexGrow: 1, backgroundColor: 'var(--rs-border-secondary)' } : { position: 'fixed', zIndex: 4, width: '320px' }}>
-									<Compose setOpened={setComposeOpened} servers={servers} disableDrag={disableDrag} />
+									<Compose setOpened={setComposeOpened} servers={servers} disableDrag={disableDrag} uploadRef={composeUploadRef} />
 								</div>
 							</Draggable>
 						)}

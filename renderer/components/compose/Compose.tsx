@@ -1,6 +1,6 @@
 import generator, { type MegalodonInterface } from '@cutls/megalodon'
 import { Icon } from '@rsuite/icons'
-import { useContext, useEffect, useState } from 'react'
+import { type Ref, useContext, useEffect, useState } from 'react'
 import { BsMegaphone, BsPencil, BsQuote, BsReply, BsX } from 'react-icons/bs'
 import { FormattedMessage } from 'react-intl'
 import { Avatar, Button, Container, Content, Dropdown, FlexboxGrid, Header, Text } from 'rsuite'
@@ -9,7 +9,7 @@ import type { Account } from '@/entities/account'
 import type { Server, ServerSet } from '@/entities/server'
 import failoverImg from '@/utils/failoverImg'
 import { getUsualAccount, listAccounts, setUsualAccount } from '@/utils/storage'
-import Status from './Status'
+import Status, { type StatusUploader } from './Status'
 import { TheDeskContext } from '@/context'
 import { stripTags } from '@/utils/statusParser'
 
@@ -37,6 +37,7 @@ export const renderAccountIcon = (props: any, ref: any, account: [Account, Serve
 }
 
 type Props = {
+	uploadRef?: Ref<StatusUploader>
 	setOpened: (value: boolean) => void
 	servers: Array<ServerSet>
 	disableDrag: boolean
@@ -183,6 +184,7 @@ const Compose: React.FC<Props> = (props) => {
 				) : null}
 				{fromAccount && (
 					<Status
+						uploadRef={props.uploadRef}
 						client={client}
 						server={fromAccount[1]}
 						account={fromAccount[0]}

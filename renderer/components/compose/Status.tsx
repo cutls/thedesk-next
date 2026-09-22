@@ -1,7 +1,7 @@
 import type { Entity, MegalodonInterface } from '@cutls/megalodon'
 import Picker from '@emoji-mart/react'
 import { Icon } from '@rsuite/icons'
-import { type ChangeEvent, forwardRef, useCallback, useContext, useEffect, useRef, useState } from 'react'
+import { type ChangeEvent, type Ref, forwardRef, useCallback, useContext, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { BsClock, BsEmojiLaughing, BsEnvelope, BsGlobe, BsLock, BsMenuButtonWide, BsMusicNoteBeamed, BsPaperclip, BsPencil, BsSpotify, BsUnlock, BsX, BsXCircle } from 'react-icons/bs'
 import { FormattedMessage, useIntl } from 'react-intl'
 import {
@@ -40,7 +40,12 @@ import { readSettings } from '@/utils/storage'
 import AutoCompleteTextarea, { type ArgProps as AutoCompleteTextareaProps } from './AutoCompleteTextarea'
 import EditMedia from './EditMedia'
 
+export type StatusUploader = {
+	uploadFiles: (files: FileList) => Promise<void>
+}
+
 type Props = {
+	uploadRef?: Ref<StatusUploader>
 	server: Server
 	account: Account
 	client: MegalodonInterface
@@ -408,6 +413,8 @@ const Status: React.FC<Props> = (props) => {
 		const filesArray = Array.from(files)
 		for (const file of filesArray) await coreUploader(file)
 	}
+	useImperativeHandle(props.uploadRef, () => ({ uploadFiles: fileListCoreUploader }))
+
 	const coreUploader = async (file: File) => {
 		if (file === null || file === undefined) {
 			return
@@ -628,10 +635,6 @@ const Status: React.FC<Props> = (props) => {
 						name="status"
 						accepter={Textarea}
 						onPaste={async (e) => await fileListCoreUploader(e.clipboardData.files)}
-						onDrop={async (e) => {
-							e.preventDefault()
-							await fileListCoreUploader(e.dataTransfer.files)
-						}}
 						ref={statusRef}
 						placeholder={formatMessage({ id: 'compose.status.placeholder' })}
 						emojis={customEmojis}
