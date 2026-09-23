@@ -10,7 +10,7 @@ import type { Account } from '@/entities/account'
 import type { Server } from '@/entities/server'
 import { domainFromAcct } from '@/utils/domain'
 import emojify from '@/utils/emojify'
-import { open } from '@/utils/openBrowser'
+import { openInBrowser } from '@/utils/openBrowser'
 import { findLink } from '@/utils/statusParser'
 import { getAccount, getServer } from '@/utils/storage'
 import alert from '../utils/alert'
@@ -179,7 +179,7 @@ const Profile: React.FC<Props> = (props) => {
 	const onClick: MouseEventHandler<HTMLDivElement> = async (e) => {
 		const url = findLink(e.target as HTMLElement, 'status-body')
 		if (url) {
-			open(url)
+			openInBrowser(url)
 			e.preventDefault()
 			e.stopPropagation()
 		}
@@ -340,7 +340,7 @@ const profileMenu = ({ className, left, top, onClose, client, myself, user, rela
 		onClose()
 		switch (eventKey) {
 			case 'browser': {
-				open(user.url)
+				openInBrowser(user.url)
 				return
 			}
 			case 'mute': {

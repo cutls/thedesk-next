@@ -3,7 +3,7 @@ import Image from 'next/image'
 import { FlexboxGrid, Panel } from 'rsuite'
 
 import FailoverImg from '@/utils/failoverImg'
-import { open } from '@/utils/openBrowser'
+import { openInBrowser } from '@/utils/openBrowser'
 
 type Props = {
 	card: Entity.Card
@@ -11,7 +11,7 @@ type Props = {
 
 const LinkPreview: React.FC<Props> = (props) => {
 	const onClick = () => {
-		open(props.card.url)
+		openInBrowser(props.card.url)
 	}
 
 	return (

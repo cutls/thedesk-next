@@ -7,7 +7,7 @@ import { BsBoxArrowUpRight, BsCaretRightFill, BsEyeSlash, BsVolumeUp } from 'rea
 import { IconButton } from 'rsuite'
 import { TheDeskContext } from '@/context'
 import failoverImg from '@/utils/failoverImg'
-import { open } from '@/utils/openBrowser'
+import { openInBrowser } from '@/utils/openBrowser'
 
 type Props = {
 	attachments: Array<Entity.Attachment>
@@ -67,7 +67,7 @@ type AttachmentProps = {
 const Attachment: React.FC<AttachmentProps> = (props) => {
 	const { media, cropImage, changeSensitive, sensitive, width } = props
 	const externalWindow = async (url: string) => {
-		open(url)
+		openInBrowser(url)
 	}
 	const border = cropImage === 'contain' ? { backgroundColor: '#000' } : {}
 

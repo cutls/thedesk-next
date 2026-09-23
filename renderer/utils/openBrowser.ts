@@ -1,4 +1,4 @@
-export const open = (url: string) => {
+export const openInBrowser = (url: string) => {
     if (window.electronAPI) window.electronAPI.openBrowser(url)
     if (!window.electronAPI) window.open(url, '_blank')
 }

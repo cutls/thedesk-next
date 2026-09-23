@@ -11,7 +11,7 @@ import type { CustomEmojiCategory } from '@/entities/emoji'
 import type { Server } from '@/entities/server'
 import { Context } from '@/theme'
 import { data } from '@/utils/emojiData'
-import { open, writeText } from '@/utils/openBrowser'
+import { openInBrowser, writeText } from '@/utils/openBrowser'
 import ActionButton from './ActionButton'
 
 type Props = {
@@ -220,7 +220,7 @@ const Actions: React.FC<Props> = (props) => {
 									status: props.status,
 									disabled: typeof props.disabled === 'boolean' ? props.disabled : props.disabled.detail,
 									openBrowser: () => {
-										open(status.url)
+										openInBrowser(status.url)
 									},
 									copyLink: async () => {
 										writeText(status.url)

@@ -1,4 +1,4 @@
-import { open } from '@/utils/openBrowser'
+import { openInBrowser } from '@/utils/openBrowser'
 
 const apiGateway = 'https://ep9jquu2w4.execute-api.ap-northeast-1.amazonaws.com/thedesk/spotify'
 async function spotifyApi(url: string, showToaster: (message: string) => void) {
@@ -182,8 +182,8 @@ export async function getUnknownData(q: { trackName: string; artistAndAlbum: str
 	}
 }
 export async function nowplayingInit(isDev: boolean, showToaster: (m: string) => void) {
-	if (!isDev) open(`${apiGateway}?state=connect`)
-	if (isDev) open(`${apiGateway}?state=connectDev2`)
+	if (!isDev) openInBrowser(`${apiGateway}?state=connect`)
+	if (isDev) openInBrowser(`${apiGateway}?state=connectDev2`)
 
 	if (window.electronAPI)
 		window.electronAPI.customUrl(async (_, data) => {

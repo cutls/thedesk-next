@@ -10,7 +10,7 @@ import type { Account } from '@/entities/account'
 import type { CustomEmojiCategory } from '@/entities/emoji'
 import type { Server } from '@/entities/server'
 import emojify from '@/utils/emojify'
-import { open } from '@/utils/openBrowser'
+import { openInBrowser } from '@/utils/openBrowser'
 import { accountMatch, findAccount, findLink, findTag, type ParsedAccount } from '@/utils/statusParser'
 import Actions from '../status/Actions'
 import Body from '../status/Body'
@@ -183,7 +183,7 @@ const Reaction: React.FC<Props> = (props) => {
 						formatMessage({ id: 'dialog.accountNotFound.message' }),
 						formatMessage({ id: 'dialog.accountNotFound.button' }),
 						() => {
-							open(parsedAccount.url)
+							openInBrowser(parsedAccount.url)
 							toaster.remove(confirmToaster)
 						}
 					),
@@ -204,7 +204,7 @@ const Reaction: React.FC<Props> = (props) => {
 		// Check link
 		const url = findLink(e.target as HTMLElement, 'status-body')
 		if (url) {
-			open(url)
+			openInBrowser(url)
 			e.preventDefault()
 			e.stopPropagation()
 		} else {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Button, ButtonToolbar, DatePicker, Message, Modal, Progress, SelectPicker } from 'rsuite'
-import { open as openBrowser } from '@/utils/openBrowser'
+import { openInBrowser as openBrowser } from '@/utils/openBrowser'
 
 export default ({ version }: { version: string }) => {
 	const { formatMessage } = useIntl()

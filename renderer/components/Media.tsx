@@ -1,4 +1,4 @@
-import { open } from '@/utils/openBrowser'
+import { openInBrowser } from '@/utils/openBrowser'
 import type { Entity } from '@cutls/megalodon'
 import { Icon } from '@rsuite/icons'
 import dynamic from 'next/dynamic'
@@ -135,7 +135,7 @@ const mediaComponent = (media: Entity.Attachment): ReactElement => {
 					alt={media.description ? media.description : media.id}
 					title={media.description ? media.description : media.id}
 					style={{ objectFit: 'contain', cursor: 'pointer' }}
-					onClick={() => open(media.url)}
+					onClick={() => openInBrowser(media.url)}
 				/>
 			)
 	}

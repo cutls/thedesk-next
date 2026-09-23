@@ -3,7 +3,7 @@ import Image from 'next/image'
 import { BsGithub } from 'react-icons/bs'
 import { FormattedMessage } from 'react-intl'
 import { Button, FlexboxGrid, Heading, List, Modal } from 'rsuite'
-import { open } from '@/utils/openBrowser'
+import { openInBrowser } from '@/utils/openBrowser'
 import desk from '../../../assets/desk.png'
 import { packages, thirdparty } from '../../thirdparty'
 
@@ -34,18 +34,18 @@ const Thirdparty: React.FC<Props> = (props) => {
 				<p style={{ textAlign: 'center' }}>© cutls 2024</p>
 				<p style={{ textAlign: 'center' }}>
 					Strongly powered by{' '}
-					<Button startIcon={<Image src="https://fedistar.net/favicon/favicon.ico" alt="fedistar" width={20} height={20} />} onClick={() => open('https://fedistar.net/')}>
+					<Button startIcon={<Image src="https://fedistar.net/favicon/favicon.ico" alt="fedistar" width={20} height={20} />} onClick={() => openInBrowser('https://fedistar.net/')}>
 						Fedistar (© 2023 Akira Fukushima)
 					</Button>
 				</p>
 				<p style={{ textAlign: 'center' }}>
 					TheDesk (including Fedistar) is licensed under GPL-3.{' '}
-					<Button startIcon={<Icon as={BsGithub} />} onClick={() => open('https://github.com/cutls/thedesk-next')}>
+					<Button startIcon={<Icon as={BsGithub} />} onClick={() => openInBrowser('https://github.com/cutls/thedesk-next')}>
 						Source code
 					</Button>
 				</p>
 				<p style={{ textAlign: 'center' }}>
-					<Button appearance="link" onClick={() => open('https://thedesk.top/privacy')}>
+					<Button appearance="link" onClick={() => openInBrowser('https://thedesk.top/privacy')}>
 						<FormattedMessage id="settings.thirdparty.privacy" />
 					</Button>
 				</p>

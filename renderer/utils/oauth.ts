@@ -1,7 +1,7 @@
 import generator, { detector, type OAuth } from '@cutls/megalodon'
 import type { Account } from '@/entities/account'
 import type { Server } from '@/entities/server'
-import { open } from './openBrowser'
+import { openInBrowser } from './openBrowser'
 
 const misskeyPremission = [
 	'read:account',
@@ -53,7 +53,7 @@ export async function addApplication({ url, redirectUrl, inAppBrowser }: { url: 
 	const isMisskey = sns === 'misskey'
 	const scopes = isMisskey ? misskeyPremission : ['read', 'write', 'follow']
 	const app = await client.registerApp('TheDesk(Desktop)', { scopes, redirect_uris: !isMisskey ? redirectUrl : 'urn:ietf:wg:oauth:2.0:oob', website: 'https://thedesk.top' })
-	if (!inAppBrowser) open(app.url)
+	if (!inAppBrowser) openInBrowser(app.url)
 	if (inAppBrowser && window.electronAPI) window.electronAPI.openInAppBrowser(app.url)
 	return app
 }
